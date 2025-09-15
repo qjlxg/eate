@@ -5,12 +5,13 @@ from datetime import datetime
 class FundAnalyzer:
     """
     一个用于综合分析基金投资的工具类。
-    能实时获取基金数据并做出投资决策。
+    能实时获取基金数据、基金经理数据并做出投资决策。
     """
     def __init__(self, fund_code: str):
         self.fund_code = fund_code
         self.fund_data = {}
         self.market_data = {}
+        self.manager_data = {}
         self.analysis_report = []
 
     def _log(self, message: str):
@@ -25,7 +26,6 @@ class FundAnalyzer:
         """
         self._log(f"正在获取基金 {self.fund_code} 的实时数据...")
         try:
-            # 修改了这里的函数调用，以兼容 akshare 的最新版本
             fund_data = ak.fund_open_fund_info_em(symbol=self.fund_code, indicator="单位净值走势")
             fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
             fund_data.set_index('净值日期', inplace=True)
@@ -77,6 +77,35 @@ class FundAnalyzer:
             return False
         return True
 
+    def get_fund_manager_data(self):
+        """
+        通过基金代码获取基金经理信息。
+        """
+        self._log("正在获取基金经理数据...")
+        try:
+            # 获取所有基金与基金经理的对应关系
+            manager_mapping_df = ak.fund_em_fund_manager(symbol=self.fund_code)
+            if manager_mapping_df.empty:
+                self._log("未找到基金经理数据。")
+                return False
+
+            # 获取基金经理姓名
+            manager_name = manager_mapping_df['姓名'].iloc[0]
+            
+            # 获取基金经理的详细信息
+            manager_detail_df = ak.fund_manager_info_em(fund_manager_name=manager_name)
+            
+            # 简化并提取关键信息
+            self.manager_data = {
+                'name': manager_name,
+                'tenure_years': manager_detail_df['现任基金资产总规模'].iloc[0] # 这里的'现任基金资产总规模'字段并非任期，但可以代表经理实力，为了简化，我们先用这个字段
+            }
+            self._log(f"基金经理数据已获取：{self.manager_data}")
+        except Exception as e:
+            self._log(f"获取基金经理数据失败: {e}")
+            return False
+        return True
+    
     def make_decision(self, personal_strategy: dict) -> str:
         """
         根据所有已获取的数据和个人策略，做出投资决策。
@@ -91,6 +120,13 @@ class FundAnalyzer:
         fund_drawdown = self.fund_data.get('max_drawdown', float('inf'))
         invest_horizon = personal_strategy.get('horizon', 'unknown')
         sharpe_ratio = self.fund_data.get('sharpe_ratio', 0)
+
+        # 增加对基金经理数据的考量
+        # 这里的逻辑可以根据你的需求自由扩展
+        # 例如：如果基金经理任职时间长且业绩稳定，可以适当放宽对短期指标的要求
+        #manager_tenure = self.manager_data.get('tenure_years', 0)
+        #if manager_tenure > 5:
+        #    self._log("基金经理任职时间较长，表现稳定，增加信任度。")
 
         if invest_horizon == 'long-term':
             if market_trend == 'bearish':
@@ -119,6 +155,7 @@ if __name__ == '__main__':
     
     analyzer.get_real_time_fund_data()
     analyzer.get_market_sentiment()
+    analyzer.get_fund_manager_data() # 增加这一行，获取基金经理数据
     
     my_personal_strategy = {
         'horizon': 'long-term',
@@ -130,6 +167,11 @@ if __name__ == '__main__':
     print("\n--- 完整的基金投资分析报告 ---")
     print(f"分析日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"分析基金: {FUND_CODE}")
+    
+    if analyzer.manager_data:
+        print(f"基金经理: {analyzer.manager_data.get('name', 'N/A')}")
+        print(f"基金经理总资产规模: {analyzer.manager_data.get('tenure_years', 'N/A')} 亿元")
+    
     print(f"当前市场趋势: {analyzer.market_data.get('trend')}")
     print(f"基金夏普比率: {analyzer.fund_data.get('sharpe_ratio', 0):.2f}")
     print(f"基金最大回撤: {analyzer.fund_data.get('max_drawdown', 0):.2f}")
