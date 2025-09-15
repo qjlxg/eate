@@ -2,6 +2,7 @@ import pandas as pd
 import akshare as ak
 from datetime import datetime
 import numpy as np
+import time
 
 class FundAnalyzer:
     """
@@ -37,6 +38,7 @@ class FundAnalyzer:
             fund_data.set_index('净值日期', inplace=True)
             
             returns = fund_data['单位净值'].pct_change().dropna()
+            
             annual_returns = returns.mean() * 252
             annual_volatility = returns.std() * (252**0.5)
             sharpe_ratio = (annual_returns - self.risk_free_rate) / annual_volatility if annual_volatility != 0 else 0
@@ -88,21 +90,31 @@ class FundAnalyzer:
             return False
 
     def get_fund_manager_data(self, fund_code: str):
-        """获取基金经理数据（使用 ak.fund_open_fund_info_em 的 '基金经理' 指标）"""
+        """
+        获取基金经理数据（使用更稳定的 ak.fund_manager_info_em 接口）
+        """
         self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
         try:
-            manager_info = ak.fund_open_fund_info_em(symbol=fund_code, indicator="基金经理")
-            if manager_info.empty:
+            # 使用更稳定的接口，并通过基金代码查找经理
+            manager_df = ak.fund_manager_info_em(fund=fund_code)
+            
+            if manager_df.empty:
                 self._log(f"未找到基金 {fund_code} 的基金经理数据。")
                 self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
                 return False
 
-            manager_info = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
-            cumulative_return = float(manager_info['累计回报'].replace('%', '')) if isinstance(manager_info['累计回报'], str) else float(manager_info['累计回报'])
+            # 获取最新任职的基金经理
+            latest_manager = manager_df.sort_values(by='上任日期', ascending=False).iloc[0]
+            
+            # 确保字段存在且类型正确
+            name = latest_manager.get('姓名', 'N/A')
+            tenure_days = latest_manager.get('任职天数', np.nan)
+            cumulative_return = latest_manager.get('累计回报', '0%')
+            cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
             
             self.manager_data[fund_code] = {
-                'name': manager_info['姓名'],
-                'tenure_years': float(manager_info['任职天数']) / 365.0,
+                'name': name,
+                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
                 'cumulative_return': cumulative_return
             }
             self._log(f"基金 {fund_code} 经理数据已获取：{self.manager_data[fund_code]}")
@@ -125,20 +137,20 @@ class FundAnalyzer:
         sharpe_ratio = self.fund_data[fund_code].get('sharpe_ratio', 0)
         
         # 提取 CSV 数据
-        rose_3y = self.fund_info.get(fund_code, {}).get('rose(3y)', np.nan)
-        rank_r_3y = self.fund_info.get(fund_code, {}).get('rank_r(3y)', 1.0)
-        fund_name = self.fund_info.get(fund_code, {}).get('名称', '未知')
+        fund_info = self.fund_info.get(fund_code, {})
+        rose_3y = fund_info.get('rose(3y)', np.nan)
+        rank_r_3y = fund_info.get('rank_r(3y)', np.nan)
+        fund_name = fund_info.get('名称', '未知')
 
         # 基金经理数据
         manager_trust = False
-        manager_return = -1
-        tenure_years = 0
-        if fund_code in self.manager_data and not pd.isna(self.manager_data[fund_code]['cumulative_return']):
-            tenure_years = self.manager_data[fund_code].get('tenure_years', 0)
-            manager_return = self.manager_data[fund_code].get('cumulative_return', -1)
+        manager_return = self.manager_data.get(fund_code, {}).get('cumulative_return', np.nan)
+        tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
+
+        if pd.notna(manager_return):
             if tenure_years > 5 or manager_return > 20:
                 manager_trust = True
-                self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，管理能力较强。")
+            self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，增加信任度。")
 
         # 决策逻辑
         if invest_horizon == 'long-term':
@@ -148,55 +160,55 @@ class FundAnalyzer:
                 else:
                     return f"市场熊市，{fund_name} 回撤 {fund_drawdown:.2f}，风险较高。建议观望或选择更稳健的基金（如债券型基金）。"
             else:  # bullish or neutral
-                if (sharpe_ratio > 1.0 or rose_3y > 50 or manager_trust) and rank_r_3y < 0.05 and risk_tolerance != 'low':
-                    return (f"市场 {market_trend}，{fund_name} 夏普比率 {sharpe_ratio:.2f}，3年回报 {rose_3y:.2f}% "
-                            f"（排名前 {rank_r_3y*100:.2f}%），经理回报 {manager_return:.2f}%。适合继续持有或加仓。")
+                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_3y) and rose_3y > 50 or manager_trust)
+                if is_top_performer and pd.notna(rank_r_3y) and rank_r_3y < 0.05 and risk_tolerance != 'low':
+                    return (f"市场 {market_trend}，{fund_name} 表现优异，3年回报 {rose_3y:.2f}% "
+                            f"（排名前 {rank_r_3y*100:.2f}%）。适合继续持有或加仓。")
                 else:
-                    return (f"市场 {market_trend}，{fund_name} 夏普比率 {sharpe_ratio:.2f}，3年回报 {rose_3y:.2f}% "
-                            f"（排名前 {rank_r_3y*100:.2f}%）。建议评估其他排名更高的基金。")
+                    return (f"市场 {market_trend}，但 {fund_name} 表现平平（夏普 {sharpe_ratio:.2f}，3年排名 {rank_r_3y*100:.2f}%）。建议评估其他排名更高的基金。")
         elif invest_horizon == 'short-term':
             if sharpe_ratio > 1.5 and market_trend == 'bullish' and risk_tolerance != 'low':
-                return f"市场牛市，{fund_name} 夏普比率 {sharpe_ratio:.2f}，适合短期投资（风险承受能力 {risk_tolerance}）。建议适量买入。"
+                return f"市场牛市，{fund_name} 夏普比率 {sharpe_ratio:.2f}，适合短期投资。建议适量买入。"
             else:
-                return f"市场 {market_trend} 或 {fund_name} 不适合短期投资（夏普比率 {sharpe_ratio:.2f}）。建议保持谨慎。"
+                return f"市场 {market_trend} 或 {fund_name} 不适合短期投资。建议保持谨慎。"
         return "投资策略与市场状况不匹配，请重新审视。"
 
     def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = '代码', max_funds: int = None):
         """
         批量分析 CSV 文件中的基金代码，结合 CSV 数据、实时数据和经理数据。
-        :param csv_url: CSV 文件 URL
-        :param personal_strategy: 个人策略字典
-        :param code_column: CSV 中的基金代码列名
-        :param max_funds: 最大分析基金数量（None 表示全部）
         """
         self._log("正在从 CSV 导入基金代码列表...")
         try:
+            # 添加 encoding 参数修复编码问题
             funds_df = pd.read_csv(csv_url, encoding='gbk')
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
+            
             # 存储 CSV 数据（以代码为键）
-            self.fund_info = funds_df.set_index(code_column)[['名称', 'rose(3y)', 'rank_r(3y)']].to_dict('index')
-            fund_codes = funds_df[code_column].astype(str).str.zfill(6).unique().tolist()  # 补齐 6 位代码
+            funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
+            self.fund_info = funds_df.set_index(code_column).to_dict('index')
+
+            fund_codes = funds_df[code_column].unique().tolist()
             if max_funds:
                 fund_codes = fund_codes[:max_funds]
-                self._log(f"限制分析前 {max_funds} 个基金：{fund_codes[:5]}...")
+                self._log(f"限制分析前 {max_funds} 个基金：{fund_codes}...")
         except Exception as e:
             self._log(f"导入 CSV 失败: {e}")
             return None
 
-        # 获取市场情绪（共享）
         self.get_market_sentiment()
 
-        # 分析每个基金
         results = []
         for code in fund_codes:
             self.get_real_time_fund_data(code)
             self.get_fund_manager_data(code)
             decision = self.make_decision(code, personal_strategy)
+            
+            fund_info = self.fund_info.get(code, {})
             results.append({
                 'fund_code': code,
-                'fund_name': self.fund_info.get(code, {}).get('名称', '未知'),
-                'rose_3y': self.fund_info.get(code, {}).get('rose(3y)', np.nan),
-                'rank_r_3y': self.fund_info.get(code, {}).get('rank_r(3y)', np.nan),
+                'fund_name': fund_info.get('名称', '未知'),
+                'rose_3y': fund_info.get('rose(3y)', np.nan),
+                'rank_r_3y': fund_info.get('rank_r(3y)', np.nan),
                 'latest_nav': self.fund_data.get(code, {}).get('latest_nav', np.nan),
                 'sharpe_ratio': self.fund_data.get(code, {}).get('sharpe_ratio', np.nan),
                 'max_drawdown': self.fund_data.get(code, {}).get('max_drawdown', np.nan),
@@ -206,21 +218,21 @@ class FundAnalyzer:
                 'market_trend': self.market_data.get('trend', 'unknown'),
                 'decision': decision
             })
-            self._log("-" * 25)
+            time.sleep(1) # 增加延迟，避免请求过快被封
 
-        # 生成汇总报告表格
         results_df = pd.DataFrame(results)
-        # 筛选排名靠前的基金（rank_r_3y < 0.01）
-        top_funds = results_df[results_df['rank_r_3y'] < 0.01].sort_values('rank_r_3y')
         
         print("\n--- 批量基金分析报告 ---")
         print(f"分析日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"市场趋势: {self.market_data.get('trend', 'unknown')}")
-        print("\n所有基金分析结果（前 10 行）：")
-        print(results_df[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']].head(10).to_string(index=False))
+        
+        print("\n所有基金分析结果:")
+        print(results_df[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']].to_string(index=False))
+
+        top_funds = results_df[results_df['rank_r_3y'] < 0.01].sort_values('rank_r_3y')
         if not top_funds.empty:
-            print("\n推荐基金（3年排名前 1%）：")
-            print(top_funds[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']].to_string(index=False))
+            print("\n--- 推荐基金（3年排名前 1%）---")
+            print(top_funds[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years', 'decision']].to_string(index=False))
         else:
             print("\n没有基金满足 3 年排名前 1% 的条件。")
         print("-" * 25)
@@ -233,4 +245,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=10)  # 限制前 10 个基金以加快测试
+    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=10)
