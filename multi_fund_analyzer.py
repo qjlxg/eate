@@ -43,8 +43,8 @@ class FundAnalyzer:
             self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
             return risk_free_rate
         except Exception as e:
-            self._log(f"获取无风险利率失败，使用默认值 0.03: {e}")
-            return 0.03
+            self._log(f"获取无风险利率失败，使用默认值 0.018298: {e}")
+            return 0.018298
 
     def _load_cache(self, cache_file: str) -> dict:
         """从文件加载缓存"""
