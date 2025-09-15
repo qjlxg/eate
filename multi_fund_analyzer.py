@@ -171,7 +171,7 @@ class FundAnalyzer:
         """
         self._log("正在从 CSV 导入基金代码列表...")
         try:
-            funds_df = pd.read_csv(csv_url)
+            funds_df = pd.read_csv(csv_url, encoding='gbk')
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
             # 存储 CSV 数据（以代码为键）
             self.fund_info = funds_df.set_index(code_column)[['名称', 'rose(3y)', 'rank_r(3y)']].to_dict('index')
