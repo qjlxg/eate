@@ -3,50 +3,45 @@ name: Run Fund Analysis Script
 
 # 触发工作流的事件
 on:
-  # 在 main 或 master 分支有 push 时触发
-  push:
-    branches:
-      - main
-      - master
-  # 也可以设置定时任务，例如每天 UTC 时间 08:00 运行
+  # 允许手动在 GitHub 界面上运行工作流
+  workflow_dispatch:
+  # 定时任务，例如每天上海时间 08:00 运行
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 0 * * *' # UTC 时间 00:00，对应上海时间 08:00
+
+# 为整个工作流提供权限
+permissions:
+  contents: write
 
 # 定义工作任务
 jobs:
-  # 任务名称
   run-script-and-commit:
-    # 运行环境，使用最新的 Ubuntu 系统
     runs-on: ubuntu-latest
 
-    # 任务步骤
+    # 设置环境变量，包括时区
+    env:
+      TZ: Asia/Shanghai
+
     steps:
-      # 1. 检出仓库代码
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. 设置 Python 环境
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' # 推荐使用 3.10 或更新版本
+          python-version: '3.10'
 
-      # 3. 安装脚本所需的依赖
       - name: Install dependencies
         run: |
-          # 假设你的脚本只使用了 pandas，如果有其他库请一并安装
           python -m pip install --upgrade pip
           pip install pandas
 
-      # 4. 运行 Python 脚本并将结果保存到文件
       - name: Run Python script and save output
         id: run-script
         run: |
-          # 运行你的 Python 脚本，并捕获最后一行输出（即投资建议）
-          # 这是一种简化处理方式，如果输出复杂，需要调整脚本
           ANALYSIS_RESULT=$(python fund_analyzer.py | tail -n 1)
           
-          # 将结果写入一个 markdown 文件，以日期命名
+          # 注意：date 命令会自动使用上面 env 中设置的时区 (TZ)
           echo "### 基金分析报告 - $(date +'%Y-%m-%d')" > analysis_report.md
           echo "" >> analysis_report.md
           echo "#### 投资决策：" >> analysis_report.md
@@ -54,21 +49,15 @@ jobs:
           echo "$ANALYSIS_RESULT" >> analysis_report.md
           echo "\`\`\`" >> analysis_report.md
           
-          # 将文件名设置为一个环境变量，以便后续步骤使用
           echo "report_file=analysis_report.md" >> $GITHUB_ENV
 
-      # 5. 将新生成的结果文件提交到仓库
       - name: Commit new analysis report
         run: |
-          # 配置 Git
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # 添加新文件并提交
           git add ${{ env.report_file }}
           git commit -m "Auto-generated analysis report for $(date +'%Y-%m-%d')"
           
-      # 6. 推送更改到仓库
       - name: Push changes
         run: |
           git push
