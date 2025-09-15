@@ -3,6 +3,8 @@ import akshare as ak
 from datetime import datetime
 import numpy as np
 import time
+import requests
+from bs4 import BeautifulSoup
 
 class FundAnalyzer:
     """
@@ -60,6 +62,88 @@ class FundAnalyzer:
             self._log(f"获取基金 {fund_code} 数据失败: {e}")
             self.fund_data[fund_code] = {'latest_nav': np.nan, 'sharpe_ratio': np.nan, 'max_drawdown': np.nan}
             return False
+            
+    def _scrape_manager_data_from_web(self, fund_code: str) -> dict:
+        """
+        从天天基金网通过网页抓取获取基金经理数据
+        """
+        self._log(f"尝试通过网页抓取获取基金 {fund_code} 的基金经理数据...")
+        url = f"http://fund.eastmoney.com/{fund_code}.html"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            manager_section = soup.find('div', class_='manager-table')
+            if not manager_section:
+                self._log(f"网页中未找到基金 {fund_code} 的基金经理数据表。")
+                return None
+
+            manager_name_tag = manager_section.find('a', attrs={'href': lambda href: href and '/manager/' in href})
+            if not manager_name_tag:
+                self._log(f"网页中未找到基金 {fund_code} 的基金经理姓名。")
+                return None
+
+            manager_name = manager_name_tag.text.strip()
+            
+            # 找到任职天数和累计回报
+            tenure_tag = manager_section.find('span', string=lambda text: text and '任职天数' in text)
+            tenure_days_str = tenure_tag.find_next_sibling('span').text.strip() if tenure_tag else 'N/A'
+            tenure_days = float(tenure_days_str.replace('天', '')) if '天' in tenure_days_str else np.nan
+
+            return_tag = manager_section.find('span', string=lambda text: text and '累计回报' in text)
+            cumulative_return_str = return_tag.find_next_sibling('span').text.strip() if return_tag else 'N/A'
+            cumulative_return = float(cumulative_return_str.replace('%', '')) if '%' in cumulative_return_str else np.nan
+
+            return {
+                'name': manager_name,
+                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                'cumulative_return': cumulative_return
+            }
+        except requests.exceptions.RequestException as e:
+            self._log(f"网页抓取基金 {fund_code} 经理数据失败: {e}")
+            return None
+        except Exception as e:
+            self._log(f"解析网页内容失败: {e}")
+            return None
+
+    def get_fund_manager_data(self, fund_code: str):
+        """
+        获取基金经理数据（首先尝试使用 akshare，失败则通过网页抓取）
+        """
+        self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
+        try:
+            manager_info = ak.fund_open_fund_info_em(symbol=fund_code, indicator="基金经理")
+            if not manager_info.empty:
+                # 获取最新任职的基金经理
+                latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
+                name = latest_manager.get('姓名', 'N/A')
+                tenure_days = latest_manager.get('任职天数', np.nan)
+                cumulative_return = latest_manager.get('累计回报', '0%')
+                cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
+                
+                self.manager_data[fund_code] = {
+                    'name': name,
+                    'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                    'cumulative_return': cumulative_return
+                }
+                self._log(f"基金 {fund_code} 经理数据已通过akshare获取：{self.manager_data[fund_code]}")
+                return True
+        except Exception as e:
+            self._log(f"使用akshare获取基金 {fund_code} 经理数据失败: {e}")
+
+        # 如果akshare失败，尝试网页抓取
+        scraped_data = self._scrape_manager_data_from_web(fund_code)
+        if scraped_data:
+            self.manager_data[fund_code] = scraped_data
+            self._log(f"基金 {fund_code} 经理数据已通过网页抓取获取：{self.manager_data[fund_code]}")
+            return True
+        else:
+            self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
+            return False
 
     def get_market_sentiment(self):
         """获取市场情绪（仅调用一次，基于上证指数）"""
@@ -87,39 +171,6 @@ class FundAnalyzer:
         except Exception as e:
             self._log(f"获取市场数据失败: {e}")
             self.market_data = {'sentiment': 'unknown', 'trend': 'unknown'}
-            return False
-
-    def get_fund_manager_data(self, fund_code: str):
-        """
-        获取基金经理数据（使用 fund_open_fund_info_em 的 "基金经理" 参数）
-        """
-        self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
-        try:
-            manager_info = ak.fund_open_fund_info_em(symbol=fund_code, indicator="基金经理")
-            if manager_info.empty:
-                self._log(f"未找到基金 {fund_code} 的基金经理数据。")
-                self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
-                return False
-
-            # 获取最新任职的基金经理
-            latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
-            
-            # 确保字段存在且类型正确
-            name = latest_manager.get('姓名', 'N/A')
-            tenure_days = latest_manager.get('任职天数', np.nan)
-            cumulative_return = latest_manager.get('累计回报', '0%')
-            cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
-            
-            self.manager_data[fund_code] = {
-                'name': name,
-                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
-                'cumulative_return': cumulative_return
-            }
-            self._log(f"基金 {fund_code} 经理数据已获取：{self.manager_data[fund_code]}")
-            return True
-        except Exception as e:
-            self._log(f"获取基金 {fund_code} 经理数据失败: {e}")
-            self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
             return False
 
     def make_decision(self, fund_code: str, personal_strategy: dict) -> str:
