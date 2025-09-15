@@ -7,89 +7,79 @@
 限制分析前 10 个基金：['001407', '001724', '002052', '002112', '002163', '002170', '002555', '002580', '002771', '005118']...
 正在获取市场情绪数据...
 市场情绪数据已获取：{'sentiment': 'optimistic', 'trend': 'bullish'}
-正在获取基金 001407 的实时数据...
-基金 001407 数据已获取：{'latest_nav': 3.801, 'sharpe_ratio': 0.7406021365371167, 'max_drawdown': 0.2682819383259912}
+使用缓存数据 for 基金 001407
 正在获取基金 001407 的基金经理数据...
-尝试通过网页抓取获取基金 001407 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_001407.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_001407.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_001407.html 中未找到基金经理变动表格。
+未找到基金 001407 的基金经理数据。
+正在获取基金 001407 的持仓数据...
+通过akshare获取基金 001407 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 001407 持仓数据失败: 未找到持仓表格。
 开始做出 001407 的投资决策:
-正在获取基金 001724 的实时数据...
-基金 001724 数据已获取：{'latest_nav': 2.245, 'sharpe_ratio': 0.3877832648590231, 'max_drawdown': 0.3572755417956656}
+使用缓存数据 for 基金 001724
 正在获取基金 001724 的基金经理数据...
-尝试通过网页抓取获取基金 001724 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_001724.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_001724.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_001724.html 中未找到基金经理变动表格。
+未找到基金 001724 的基金经理数据。
+正在获取基金 001724 的持仓数据...
+通过akshare获取基金 001724 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 001724 持仓数据失败: 未找到持仓表格。
 开始做出 001724 的投资决策:
-正在获取基金 002052 的实时数据...
-基金 002052 数据已获取：{'latest_nav': 1.822, 'sharpe_ratio': 0.13454914800662857, 'max_drawdown': 0.5360824742268041}
+使用缓存数据 for 基金 002052
 正在获取基金 002052 的基金经理数据...
-尝试通过网页抓取获取基金 002052 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_002052.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002052.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002052.html 中未找到基金经理变动表格。
+未找到基金 002052 的基金经理数据。
+正在获取基金 002052 的持仓数据...
+通过akshare获取基金 002052 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002052 持仓数据失败: 未找到持仓表格。
 开始做出 002052 的投资决策:
-正在获取基金 002112 的实时数据...
-基金 002112 数据已获取：{'latest_nav': 3.2556, 'sharpe_ratio': 0.5201672317310346, 'max_drawdown': 0.37050518420472095}
+使用缓存数据 for 基金 002112
 正在获取基金 002112 的基金经理数据...
-尝试通过网页抓取获取基金 002112 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_002112.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002112.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002112.html 中未找到基金经理变动表格。
+未找到基金 002112 的基金经理数据。
+正在获取基金 002112 的持仓数据...
+通过akshare获取基金 002112 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002112 持仓数据失败: 未找到持仓表格。
 开始做出 002112 的投资决策:
-正在获取基金 002163 的实时数据...
-基金 002163 数据已获取：{'latest_nav': 1.2901, 'sharpe_ratio': 0.14197841809063147, 'max_drawdown': 0.776266517453622}
+使用缓存数据 for 基金 002163
 正在获取基金 002163 的基金经理数据...
-尝试通过网页抓取获取基金 002163 的基金经理数据...
-网页抓取基金 002163 经理数据失败 (尝试 1/3): HTTPConnectionPool(host='fundf10.eastmoney.com', port=80): Read timed out.
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002163.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002163.html 中未找到基金经理变动表格。
+未找到基金 002163 的基金经理数据。
+正在获取基金 002163 的持仓数据...
+通过akshare获取基金 002163 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002163 持仓数据失败: 未找到持仓表格。
 开始做出 002163 的投资决策:
-正在获取基金 002170 的实时数据...
-基金 002170 数据已获取：{'latest_nav': 5.5421, 'sharpe_ratio': 0.669593072684165, 'max_drawdown': 0.39573643410852716}
+使用缓存数据 for 基金 002170
 正在获取基金 002170 的基金经理数据...
-尝试通过网页抓取获取基金 002170 的基金经理数据...
-网页抓取基金 002170 经理数据失败 (尝试 1/3): HTTPConnectionPool(host='fundf10.eastmoney.com', port=80): Read timed out.
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002170.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002170.html 中未找到基金经理变动表格。
+未找到基金 002170 的基金经理数据。
+正在获取基金 002170 的持仓数据...
+通过akshare获取基金 002170 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002170 持仓数据失败: 未找到持仓表格。
 开始做出 002170 的投资决策:
-正在获取基金 002555 的实时数据...
-基金 002555 数据已获取：{'latest_nav': 1.617, 'sharpe_ratio': 0.3869231731180158, 'max_drawdown': 0.626858275520317}
+使用缓存数据 for 基金 002555
 正在获取基金 002555 的基金经理数据...
-尝试通过网页抓取获取基金 002555 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_002555.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002555.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002555.html 中未找到基金经理变动表格。
+未找到基金 002555 的基金经理数据。
+正在获取基金 002555 的持仓数据...
+通过akshare获取基金 002555 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002555 持仓数据失败: 未找到持仓表格。
 开始做出 002555 的投资决策:
-正在获取基金 002580 的实时数据...
-基金 002580 数据已获取：{'latest_nav': 1.386, 'sharpe_ratio': 0.1780184403768519, 'max_drawdown': 0.6884862653419053}
+使用缓存数据 for 基金 002580
 正在获取基金 002580 的基金经理数据...
-尝试通过网页抓取获取基金 002580 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_002580.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002580.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002580.html 中未找到基金经理变动表格。
+未找到基金 002580 的基金经理数据。
+正在获取基金 002580 的持仓数据...
+通过akshare获取基金 002580 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002580 持仓数据失败: 未找到持仓表格。
 开始做出 002580 的投资决策:
-正在获取基金 002771 的实时数据...
-基金 002771 数据已获取：{'latest_nav': 4.5072, 'sharpe_ratio': 0.744100764704963, 'max_drawdown': 0.5270900609974883}
+使用缓存数据 for 基金 002771
 正在获取基金 002771 的基金经理数据...
-尝试通过网页抓取获取基金 002771 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_002771.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 2/3): 在 http://fundf10.eastmoney.com/jjjl_002771.html 中未找到基金经理变动表格。
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_002771.html 中未找到基金经理变动表格。
+未找到基金 002771 的基金经理数据。
+正在获取基金 002771 的持仓数据...
+通过akshare获取基金 002771 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 002771 持仓数据失败: 未找到持仓表格。
 开始做出 002771 的投资决策:
-正在获取基金 005118 的实时数据...
-基金 005118 数据已获取：{'latest_nav': 1.6556, 'sharpe_ratio': 0.2647898737168624, 'max_drawdown': 0.4983863080684596}
+使用缓存数据 for 基金 005118
 正在获取基金 005118 的基金经理数据...
-尝试通过网页抓取获取基金 005118 的基金经理数据...
-解析网页内容失败 (尝试 1/3): 在 http://fundf10.eastmoney.com/jjjl_005118.html 中未找到基金经理变动表格。
-网页抓取基金 005118 经理数据失败 (尝试 2/3): HTTPConnectionPool(host='fundf10.eastmoney.com', port=80): Read timed out.
-解析网页内容失败 (尝试 3/3): 在 http://fundf10.eastmoney.com/jjjl_005118.html 中未找到基金经理变动表格。
+未找到基金 005118 的基金经理数据。
+正在获取基金 005118 的持仓数据...
+通过akshare获取基金 005118 持仓数据失败: module 'akshare' has no attribute 'fund_open_fund_portfolio_em'
+获取基金 005118 持仓数据失败: 未找到持仓表格。
 开始做出 005118 的投资决策:
 
 --- 批量基金分析报告 ---
-分析日期: 2025-09-15 15:51:01
+分析日期: 2025-09-15 15:55:53
 市场趋势: bullish
 
 所有基金分析结果:
@@ -109,5 +99,6 @@ fund_code      fund_name  rose_3y  rank_r_3y  sharpe_ratio  max_drawdown manager
 fund_code     fund_name  rose_3y  rank_r_3y  sharpe_ratio  max_drawdown manager_name  manager_return  tenure_years                                                          decision
    002112 德邦鑫星价值灵活配置混合C   259.93     0.0004      0.520167      0.370505          N/A             NaN           NaN 市场 bullish，德邦鑫星价值灵活配置混合C 表现优异，3年回报 259.93% （排名前 0.04%）。适合继续持有或加仓。
    001407   景顺长城稳健回报混合C   186.87     0.0040      0.740602      0.268282          N/A             NaN           NaN   市场 bullish，景顺长城稳健回报混合C 表现优异，3年回报 186.87% （排名前 0.40%）。适合继续持有或加仓。
+-------------------------
 -------------------------
 ```
