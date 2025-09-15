@@ -5,11 +5,13 @@
 基金 005827 数据已获取：{'fund_code': '005827', 'latest_nav': np.float64(2.0649), 'sharpe_ratio': np.float64(0.4833793396381792), 'max_drawdown': np.float64(0.579136792586505)}
 正在获取市场情绪数据...
 市场情绪数据已获取：{'sentiment': 'optimistic', 'trend': 'bullish'}
+正在获取基金经理数据...
+获取基金经理数据失败: module 'akshare' has no attribute 'fund_em_fund_manager'
 -------------------------
 开始做出投资决策:
 
 --- 完整的基金投资分析报告 ---
-分析日期: 2025-09-15 11:34:37
+分析日期: 2025-09-15 11:37:48
 分析基金: 005827
 当前市场趋势: bullish
 基金夏普比率: 0.48
