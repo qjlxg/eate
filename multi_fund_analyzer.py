@@ -78,7 +78,7 @@ class FundAnalyzer:
                 
                 # 数据清洗：去除异常值和缺失值
                 fund_data = fund_data.dropna()
-                if len(fund_data) < 252:  # 至少一年数据
+                if len(fund_data) < 252 * 5:  # 至少五年数据
                     raise ValueError("数据不足，无法计算可靠的夏普比率和回撤")
 
                 returns = fund_data['单位净值'].pct_change().dropna()
@@ -311,8 +311,8 @@ class FundAnalyzer:
         
         # 提取 CSV 数据
         fund_info = self.fund_info.get(fund_code, {})
-        rose_3y = fund_info.get('rose(3y)', np.nan)
-        rank_r_3y = fund_info.get('rank_r(3y)', np.nan)
+        rose_5y = fund_info.get('rose(5y)', np.nan)
+        rank_r_5y = fund_info.get('rank_r(5y)', np.nan)
         fund_name = fund_info.get('名称', '未知')
 
         # 基金经理数据
@@ -351,25 +351,25 @@ class FundAnalyzer:
         if invest_horizon == 'long-term':
             if market_trend == 'bearish':
                 if fund_drawdown <= 0.2 and (risk_tolerance in ['medium', 'high'] or manager_trust):
-                    return f"市场熊市，{fund_name} 回撤 {fund_drawdown:.2f} 控制良好，适合长期布局。建议分批买入。"
+                    return f"建议分批买入。市场熊市，{fund_name} 回撤 {fund_drawdown:.2f} 控制良好，适合长期布局。"
                 else:
-                    return f"市场熊市，{fund_name} 回撤 {fund_drawdown:.2f}，风险较高。建议观望或选择更稳健的基金（如债券型基金）。"
+                    return f"建议观望。市场熊市，{fund_name} 回撤 {fund_drawdown:.2f}，风险较高。"
             else:  # bullish or neutral
-                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_3y) and rose_3y > 50 or manager_trust)
-                if is_top_performer and pd.notna(rank_r_3y) and rank_r_3y < 0.05 and risk_tolerance != 'low':
+                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_5y) and rose_5y > 80 or manager_trust)
+                if is_top_performer and pd.notna(rank_r_5y) and rank_r_5y < 0.05 and risk_tolerance != 'low':
                     if holdings and fund_risk_high:
-                         return f"市场 {market_trend}，{fund_name} 表现优异，但持仓集中度高，潜在风险大。建议谨慎加仓。"
-                    return (f"市场 {market_trend}，{fund_name} 表现优异，3年回报 {rose_3y:.2f}% "
-                            f"（排名前 {rank_r_3y*100:.2f}%）。适合继续持有或加仓。")
+                         return f"建议谨慎加仓。市场 {market_trend}，{fund_name} 表现优异，但持仓集中度高，潜在风险大。"
+                    return (f"适合继续持有或加仓。市场 {market_trend}，{fund_name} 表现优异，5年回报 {rose_5y:.2f}% "
+                            f"（排名前 {rank_r_5y*100:.2f}%）。")
                 else:
-                    return (f"市场 {market_trend}，但 {fund_name} 表现平平（夏普 {sharpe_ratio:.2f}，3年排名 {rank_r_3y*100:.2f}%）。建议评估其他排名更高的基金。")
+                    return (f"建议评估其他基金。市场 {market_trend}，但 {fund_name} 表现平平（夏普 {sharpe_ratio:.2f}，5年排名 {rank_r_5y*100:.2f}%）。")
         elif invest_horizon == 'short-term':
             if sharpe_ratio > 1.5 and market_trend == 'bullish' and risk_tolerance != 'low':
                 if holdings and fund_risk_high:
-                    return f"市场牛市，{fund_name} 夏普比率 {sharpe_ratio:.2f}，适合短期投资，但持仓集中度高，需注意风险。"
-                return f"市场牛市，{fund_name} 夏普比率 {sharpe_ratio:.2f}，适合短期投资。建议适量买入。"
+                    return f"建议适量买入。市场牛市，{fund_name} 夏普比率 {sharpe_ratio:.2f}，适合短期投资，但持仓集中度高，需注意风险。"
+                return f"建议适量买入。市场牛市，{fund_name} 夏普比率 {sharpe_ratio:.2f}，适合短期投资。"
             else:
-                return f"市场 {market_trend} 或 {fund_name} 不适合短期投资。建议保持谨慎。"
+                return f"建议保持谨慎。市场 {market_trend} 或 {fund_name} 不适合短期投资。"
         return "投资策略与市场状况不匹配，请重新审视。"
 
     def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = '代码', max_funds: int = None):
@@ -405,8 +405,8 @@ class FundAnalyzer:
             results.append({
                 'fund_code': code,
                 'fund_name': fund_info.get('名称', '未知'),
-                'rose_3y': fund_info.get('rose(3y)', np.nan),
-                'rank_r_3y': fund_info.get('rank_r(3y)', np.nan),
+                'rose_5y': fund_info.get('rose(5y)', np.nan),
+                'rank_r_5y': fund_info.get('rank_r(5y)', np.nan),
                 'latest_nav': self.fund_data.get(code, {}).get('latest_nav', np.nan),
                 'sharpe_ratio': self.fund_data.get(code, {}).get('sharpe_ratio', np.nan),
                 'max_drawdown': self.fund_data.get(code, {}).get('max_drawdown', np.nan),
@@ -424,16 +424,17 @@ class FundAnalyzer:
         print("\n--- 批量基金分析报告 ---")
         print(f"分析日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"市场趋势: {self.market_data.get('trend', 'unknown')}")
+
+        top_funds = results_df[results_df['rank_r_5y'] < 0.01].sort_values('rank_r_5y')
+        if not top_funds.empty:
+            print("\n--- 推荐基金（5年排名前 1%）---")
+            print(top_funds[['fund_code', 'fund_name', 'rose_5y', 'rank_r_5y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years', 'decision']].to_string(index=False))
+        else:
+            print("\n没有基金满足 5 年排名前 1% 的条件。")
+        print("-" * 25)
         
         print("\n所有基金分析结果:")
-        print(results_df[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']].to_string(index=False))
-
-        top_funds = results_df[results_df['rank_r_3y'] < 0.01].sort_values('rank_r_3y')
-        if not top_funds.empty:
-            print("\n--- 推荐基金（3年排名前 1%）---")
-            print(top_funds[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years', 'decision']].to_string(index=False))
-        else:
-            print("\n没有基金满足 3 年排名前 1% 的条件。")
+        print(results_df[['fund_code', 'fund_name', 'rose_5y', 'rank_r_5y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']].to_string(index=False))
         print("-" * 25)
         
         # 新增：输出持仓报告
@@ -453,4 +454,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=288)
+    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=10)
