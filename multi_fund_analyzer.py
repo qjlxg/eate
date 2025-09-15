@@ -1,0 +1,600 @@
+import pandas as pd
+import akshare as ak
+from datetime import datetime, timedelta
+import numpy as np
+import aiohttp
+import asyncio
+import json
+import os
+from collections import defaultdict
+import requests
+from bs4 import BeautifulSoup
+import re
+
+class FundAnalyzer:
+    """
+    一个用于综合分析基金投资的工具类。
+    支持异步并发数据获取、行业分布分析、扩展指标（Alpha、信息比率）及优化缓存机制。
+    """
+    def __init__(self, cache_data: bool = True, cache_file: str = 'fund_cache.json', cache_expiry_hours: int = 24):
+        self.fund_data = {}
+        self.fund_info = {}  # 存储 CSV 数据
+        self.market_data = {}
+        self.manager_data = {}
+        self.holdings_data = {}  # 存储持仓数据
+        self.analysis_report = []
+        self.cache_data = cache_data
+        self.cache_expiry_hours = cache_expiry_hours
+        self.risk_free_rate = self._get_risk_free_rate()
+        self.cache = self._load_cache(cache_file)
+        self.cache_file = cache_file
+        self._clean_expired_cache()
+
+    def _log(self, message: str):
+        """将日志信息添加到报告列表中，带时间戳"""
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_message = f"[{timestamp}] {message}"
+        print(log_message)
+        self.analysis_report.append(log_message)
+
+    def _get_risk_free_rate(self) -> float:
+        """从东方财富获取最新 10 年期国债收益率作为无风险利率"""
+        try:
+            bond_data = ak.bond_zh_us_rate()
+            risk_free_rate = bond_data[bond_data['item_name'] == '中国10年期国债']['value'].iloc[-1] / 100
+            self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
+            return risk_free_rate
+        except Exception as e:
+            self._log(f"获取无风险利率失败，使用默认值 0.03: {e}")
+            return 0.03
+
+    def _load_cache(self, cache_file: str) -> dict:
+        """从文件加载缓存"""
+        if os.path.exists(cache_file):
+            try:
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                self._log(f"缓存文件加载失败，可能是格式错误或编码问题。将创建新缓存。")
+                return {}
+        return {}
+
+    def _clean_expired_cache(self):
+        """清理过期的缓存数据"""
+        if not self.cache_data:
+            return
+        expiry_time = datetime.now() - timedelta(hours=self.cache_expiry_hours)
+        for data_type in ['fund', 'manager', 'holdings']:
+            if data_type in self.cache:
+                expired_keys = [
+                    key for key, data in self.cache[data_type].items()
+                    if datetime.fromisoformat(data.get('timestamp', '2000-01-01')).timestamp() < expiry_time.timestamp()
+                ]
+                for key in expired_keys:
+                    del self.cache[data_type][key]
+                self._log(f"清理 {data_type} 缓存，移除 {len(expired_keys)} 条过期数据")
+        self._save_cache()
+
+    def _save_cache(self):
+        """将缓存保存到文件"""
+        with open(self.cache_file, 'w', encoding='utf-8') as f:
+            json.dump(self.cache, f, indent=4, ensure_ascii=False)
+
+    async def _fetch_url(self, session: aiohttp.ClientSession, url: str, headers: dict) -> str:
+        """异步获取网页内容"""
+        try:
+            async with session.get(url, headers=headers, timeout=10) as response:
+                response.raise_for_status()
+                return await response.text()
+        except Exception as e:
+            self._log(f"异步请求 {url} 失败: {e}")
+            return None
+
+    async def get_real_time_fund_data(self, fund_code: str):
+        """异步获取单个基金的实时数据（净值、夏普比率、最大回撤、Alpha、信息比率）"""
+        if self.cache_data and fund_code in self.cache.get('fund', {}):
+            cache_data = self.cache['fund'][fund_code]
+            if datetime.fromisoformat(cache_data.get('timestamp', '2000-01-01')).timestamp() >= (
+                datetime.now() - timedelta(hours=self.cache_expiry_hours)
+            ).timestamp():
+                self._log(f"使用缓存数据 for 基金 {fund_code}")
+                self.fund_data[fund_code] = cache_data['data']
+                return True
+
+        self._log(f"正在异步获取基金 {fund_code} 的实时数据...")
+        try:
+            fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
+            fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
+            fund_data.set_index('净值日期', inplace=True)
+
+            # 数据清洗
+            fund_data = fund_data.dropna()
+            if len(fund_data) < 252:
+                raise ValueError("数据不足，无法计算可靠的指标")
+
+            returns = fund_data['单位净值'].pct_change().dropna()
+            annual_returns = returns.mean() * 252
+            annual_volatility = returns.std() * (252**0.5)
+            sharpe_ratio = (annual_returns - self.risk_free_rate) / annual_volatility if annual_volatility != 0 else 0
+
+            # 计算最大回撤
+            rolling_max = fund_data['单位净值'].cummax()
+            daily_drawdown = (fund_data['单位净值'] - rolling_max) / rolling_max
+            max_drawdown = daily_drawdown.min() * -1
+
+            # 计算 Alpha 和信息比率（以沪深300为基准）
+            benchmark_data = ak.stock_zh_index_daily_em(symbol="sh000300")
+            benchmark_data['date'] = pd.to_datetime(benchmark_data['date'])
+            benchmark_data.set_index('date', inplace=True)
+            benchmark_returns = benchmark_data['close'].pct_change().dropna()
+
+            # 确保时间对齐
+            common_dates = returns.index.intersection(benchmark_returns.index)
+            if len(common_dates) < 252:
+                raise ValueError("与基准指数的公共数据不足")
+            fund_returns_aligned = returns.loc[common_dates]
+            benchmark_returns_aligned = benchmark_returns.loc[common_dates]
+
+            # 计算 Alpha 和信息比率
+            cov_matrix = np.cov(fund_returns_aligned, benchmark_returns_aligned)
+            beta = cov_matrix[0, 1] / cov_matrix[1, 1] if cov_matrix[1, 1] != 0 else 0
+            alpha = (annual_returns - self.risk_free_rate) - beta * (benchmark_returns_aligned.mean() * 252 - self.risk_free_rate)
+            tracking_error = (fund_returns_aligned - benchmark_returns_aligned).std() * (252**0.5)
+            information_ratio = alpha / tracking_error if tracking_error != 0 else 0
+
+            self.fund_data[fund_code] = {
+                'latest_nav': float(fund_data['单位净值'].iloc[-1]),
+                'sharpe_ratio': float(sharpe_ratio),
+                'max_drawdown': float(max_drawdown),
+                'alpha': float(alpha),
+                'information_ratio': float(information_ratio),
+                'timestamp': datetime.now().isoformat()
+            }
+            if self.cache_data:
+                self.cache.setdefault('fund', {})[fund_code] = {
+                    'data': self.fund_data[fund_code],
+                    'timestamp': datetime.now().isoformat()
+                }
+                self._save_cache()
+            self._log(f"基金 {fund_code} 数据已获取：{self.fund_data[fund_code]}")
+            return True
+        except Exception as e:
+            self._log(f"获取基金 {fund_code} 数据失败: {e}")
+            self.fund_data[fund_code] = {
+                'latest_nav': np.nan, 'sharpe_ratio': np.nan, 'max_drawdown': np.nan,
+                'alpha': np.nan, 'information_ratio': np.nan, 'timestamp': datetime.now().isoformat()
+            }
+            return False
+
+    async def _scrape_manager_data_from_web(self, session: aiohttp.ClientSession, fund_code: str) -> dict:
+        """异步从天天基金网抓取基金经理数据"""
+        self._log(f"尝试异步抓取基金 {fund_code} 的基金经理数据...")
+        manager_url = f"http://fundf10.eastmoney.com/jjjl_{fund_code}.html"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        try:
+            text = await self._fetch_url(session, manager_url, headers)
+            if not text:
+                return None
+            soup = BeautifulSoup(text, 'html.parser')
+
+            title_label = soup.find('label', string='基金经理变动一览')
+            if not title_label:
+                self._log(f"在 {manager_url} 中未找到基金经理变动表格的标题。")
+                return None
+
+            manager_table = title_label.find_parent().find_next_sibling('table')
+            if not manager_table:
+                self._log(f"在 {manager_url} 中未找到基金经理变动表格。")
+                return None
+
+            rows = manager_table.find_all('tr')
+            if len(rows) < 2:
+                self._log("基金经理变动表格数据不完整。")
+                return None
+
+            latest_manager_row = rows[1]
+            cols = latest_manager_row.find_all('td')
+            if len(cols) < 5:
+                self._log("基金经理变动表格列数不正确。")
+                return None
+
+            manager_name = cols[2].text.strip()
+            tenure_str = cols[3].text.strip()
+            cumulative_return_str = cols[4].text.strip()
+
+            tenure_days = np.nan
+            if '年又' in tenure_str:
+                tenure_parts = tenure_str.split('年又')
+                years = float(re.search(r'\d+', tenure_parts[0]).group())
+                days = float(re.search(r'\d+', tenure_parts[1]).group())
+                tenure_days = years * 365 + days
+            elif '天' in tenure_str:
+                tenure_days = float(re.search(r'\d+', tenure_str).group())
+            elif '年' in tenure_str:
+                tenure_days = float(re.search(r'\d+', tenure_str).group()) * 365
+
+            cumulative_return = float(re.search(r'[-+]?\d*\.?\d+', cumulative_return_str).group()) if '%' in cumulative_return_str else np.nan
+
+            return {
+                'name': manager_name,
+                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                'cumulative_return': cumulative_return,
+                'timestamp': datetime.now().isoformat()
+            }
+        except Exception as e:
+            self._log(f"解析网页内容失败: {e}")
+            return None
+
+    async def get_fund_manager_data(self, fund_code: str, session: aiohttp.ClientSession):
+        """异步获取基金经理数据（优先 akshare，失败则网页抓取）"""
+        if self.cache_data and fund_code in self.cache.get('manager', {}):
+            cache_data = self.cache['manager'][fund_code]
+            if datetime.fromisoformat(cache_data.get('timestamp', '2000-01-01')).timestamp() >= (
+                datetime.now() - timedelta(hours=self.cache_expiry_hours)
+            ).timestamp():
+                self._log(f"使用缓存的基金经理数据 for {fund_code}")
+                self.manager_data[fund_code] = cache_data['data']
+                return True
+
+        self._log(f"正在异步获取基金 {fund_code} 的基金经理数据...")
+        try:
+            manager_info = ak.fund_manager_info_em(fund_code=fund_code)
+            if not manager_info.empty:
+                latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
+                name = latest_manager.get('姓名', 'N/A')
+                tenure_days = latest_manager.get('任职天数', np.nan)
+                cumulative_return = latest_manager.get('任职回报', '0%')
+                cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
+
+                self.manager_data[fund_code] = {
+                    'name': name,
+                    'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                    'cumulative_return': cumulative_return,
+                    'timestamp': datetime.now().isoformat()
+                }
+                if self.cache_data:
+                    self.cache.setdefault('manager', {})[fund_code] = {
+                        'data': self.manager_data[fund_code],
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    self._save_cache()
+                self._log(f"基金 {fund_code} 经理数据已通过akshare获取：{self.manager_data[fund_code]}")
+                return True
+        except Exception as e:
+            self._log(f"使用akshare获取基金 {fund_code} 经理数据失败: {e}")
+
+        scraped_data = await self._scrape_manager_data_from_web(session, fund_code)
+        if scraped_data:
+            self.manager_data[fund_code] = scraped_data
+            if self.cache_data:
+                self.cache.setdefault('manager', {})[fund_code] = {
+                    'data': scraped_data,
+                    'timestamp': datetime.now().isoformat()
+                }
+                self._save_cache()
+            self._log(f"基金 {fund_code} 经理数据已通过网页抓取获取：{self.manager_data[fund_code]}")
+            return True
+        else:
+            self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan, 'timestamp': datetime.now().isoformat()}
+            return False
+
+    async def _scrape_holdings_data_from_web(self, session: aiohttp.ClientSession, fund_code: str) -> list:
+        """异步从天天基金网抓取基金持仓数据"""
+        self._log(f"正在异步抓取基金 {fund_code} 的持仓数据...")
+        holdings_url = f"http://fundf10.eastmoney.com/ccmx_{fund_code}.html"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        try:
+            text = await self._fetch_url(session, holdings_url, headers)
+            if not text:
+                return []
+
+            soup = BeautifulSoup(text, 'html.parser')
+            holdings_header = soup.find('h4', string=lambda t: t and '股票投资明细' in t)
+            if not holdings_header:
+                raise ValueError("未找到持仓表格标题。")
+
+            holdings_table = holdings_header.find_next('table')
+            if not holdings_table:
+                raise ValueError("未找到持仓表格。")
+
+            rows = holdings_table.find_all('tr')[1:]
+            holdings = []
+            for row in rows:
+                cols = row.find_all('td')
+                if len(cols) >= 5:
+                    holdings.append({
+                        '股票代码': cols[1].text.strip(),
+                        '股票名称': cols[2].text.strip(),
+                        '占净值比例': float(cols[4].text.strip().replace('%', '')),
+                        '持仓市值（万元）': float(cols[6].text.strip().replace(',', '')),
+                    })
+            return holdings
+        except Exception as e:
+            self._log(f"获取基金 {fund_code} 持仓数据失败: {e}")
+            return []
+
+    async def get_fund_holdings_data(self, fund_code: str, session: aiohttp.ClientSession):
+        """异步获取基金持仓数据（优先 akshare，失败则网页抓取）"""
+        if self.cache_data and fund_code in self.cache.get('holdings', {}):
+            cache_data = self.cache['holdings'][fund_code]
+            if datetime.fromisoformat(cache_data.get('timestamp', '2000-01-01')).timestamp() >= (
+                datetime.now() - timedelta(hours=self.cache_expiry_hours)
+            ).timestamp():
+                self._log(f"使用缓存的持仓数据 for {fund_code}")
+                self.holdings_data[fund_code] = cache_data['data']
+                return True
+
+        self._log(f"正在异步获取基金 {fund_code} 的持仓数据...")
+        try:
+            holdings_df = ak.fund_portfolio_hold_em(symbol=fund_code)
+            if not holdings_df.empty:
+                self.holdings_data[fund_code] = holdings_df.to_dict('records')
+                if self.cache_data:
+                    self.cache.setdefault('holdings', {})[fund_code] = {
+                        'data': self.holdings_data[fund_code],
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    self._save_cache()
+                self._log(f"基金 {fund_code} 持仓数据已通过akshare获取。")
+                return True
+        except Exception as e:
+            self._log(f"通过akshare获取基金 {fund_code} 持仓数据失败: {e}")
+
+        holdings = await self._scrape_holdings_data_from_web(session, fund_code)
+        self.holdings_data[fund_code] = holdings
+        if self.cache_data:
+            self.cache.setdefault('holdings', {})[fund_code] = {
+                'data': holdings,
+                'timestamp': datetime.now().isoformat()
+            }
+            self._save_cache()
+        self._log(f"基金 {fund_code} 持仓数据已通过网页抓取获取。")
+        return bool(holdings)
+
+    def _analyze_industry_distribution(self, holdings: list) -> dict:
+        """分析持仓的行业分布"""
+        industry_weights = defaultdict(float)
+        total_weight = 0
+        try:
+            for holding in holdings:
+                stock_code = holding['股票代码']
+                weight = holding['占净值比例']
+                try:
+                    stock_info = ak.stock_individual_info_em(symbol=stock_code)
+                    industry = stock_info.get('行业', '未知')
+                    industry_weights[industry] += weight
+                    total_weight += weight
+                except Exception as e:
+                    self._log(f"获取股票 {stock_code} 行业信息失败: {e}")
+                    industry_weights['未知'] += weight
+                    total_weight += weight
+            if total_weight > 0:
+                industry_weights = {k: v / total_weight * 100 for k, v in industry_weights.items()}
+            return industry_weights
+        except Exception as e:
+            self._log(f"行业分布分析失败: {e}")
+            return {}
+
+    def get_market_sentiment(self):
+        """获取市场情绪（仅调用一次，基于上证指数）"""
+        if self.market_data:
+            self._log("使用缓存的市场情绪数据")
+            return True
+        self._log("正在获取市场情绪数据...")
+        try:
+            index_data = ak.stock_zh_index_daily_em(symbol="sh000001")
+            index_data['date'] = pd.to_datetime(index_data['date'])
+            last_week_data = index_data.iloc[-7:]
+
+            price_change = last_week_data['close'].iloc[-1] / last_week_data['close'].iloc[0] - 1
+            volume_change = last_week_data['volume'].mean() / last_week_data['volume'].iloc[:-1].mean() - 1
+            if price_change > 0.01 and volume_change > 0:
+                sentiment, trend = 'optimistic', 'bullish'
+            elif price_change < -0.01:
+                sentiment, trend = 'pessimistic', 'bearish'
+            else:
+                sentiment, trend = 'neutral', 'neutral'
+
+            self.market_data = {'sentiment': sentiment, 'trend': trend}
+            self._log(f"市场情绪数据已获取：{self.market_data}")
+            return True
+        except Exception as e:
+            self._log(f"获取市场数据失败: {e}")
+            self.market_data = {'sentiment': 'unknown', 'trend': 'unknown'}
+            return False
+
+    def make_decision(self, fund_code: str, personal_strategy: dict) -> str:
+        """根据基金数据、CSV 数据和个人策略做出投资决策"""
+        self._log(f"开始为 {fund_code} 制定投资决策:")
+        if fund_code not in self.fund_data or not self.market_data:
+            return "数据获取不完整，无法给出明确建议。"
+
+        market_trend = self.market_data.get('trend', 'unknown')
+        fund_drawdown = self.fund_data[fund_code].get('max_drawdown', float('inf'))
+        invest_horizon = personal_strategy.get('horizon', 'unknown')
+        risk_tolerance = personal_strategy.get('risk_tolerance', 'medium')
+        sharpe_ratio = self.fund_data[fund_code].get('sharpe_ratio', 0)
+        alpha = self.fund_data[fund_code].get('alpha', np.nan)
+        information_ratio = self.fund_data[fund_code].get('information_ratio', np.nan)
+
+        # 提取 CSV 数据
+        fund_info = self.fund_info.get(fund_code, {})
+        rose_3y = fund_info.get('rose(3y)', np.nan)
+        rank_r_3y = fund_info.get('rank_r(3y)', np.nan)
+        fund_name = fund_info.get('名称', '未知')
+
+        # 基金经理数据
+        manager_trust = False
+        manager_return = self.manager_data.get(fund_code, {}).get('cumulative_return', np.nan)
+        tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
+        if pd.notna(manager_return) and pd.notna(tenure_years):
+            if tenure_years > 5 or manager_return > 20:
+                manager_trust = True
+            self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，增加信任度。")
+        else:
+            self._log("未能获取基金经理数据，无法评估其表现。")
+
+        # 持仓数据分析
+        holdings = self.holdings_data.get(fund_code, [])
+        holdings_report = ""
+        fund_risk_high = False
+        industry_concentration = ""
+        if holdings:
+            holdings_df = pd.DataFrame(holdings)
+            top_10_holdings_sum = holdings_df['占净值比例'].iloc[:10].sum()
+            holdings_report += f"前十持仓集中度为 {top_10_holdings_sum:.2f}%。"
+            if top_10_holdings_sum > 60:
+                holdings_report += "集中度较高，风险偏大。"
+                fund_risk_high = True
+            else:
+                holdings_report += "集中度适中，风险可控。"
+            
+            # 行业分布分析
+            industry_dist = self._analyze_industry_distribution(holdings)
+            if industry_dist:
+                top_industries = sorted(industry_dist.items(), key=lambda x: x[1], reverse=True)[:3]
+                industry_concentration = f"主要行业：{', '.join([f'{k} ({v:.2f}%)' for k, v in top_industries])}"
+                if any(weight > 40 for _, weight in top_industries):
+                    holdings_report += " 行业集中度较高，需注意行业风险。"
+                    fund_risk_high = True
+                else:
+                    holdings_report += " 行业分布较为均衡。"
+            self._log(f"持仓分析：{holdings_report} {industry_concentration}")
+
+        # 决策逻辑
+        performance_summary = (
+            f"夏普比率 {sharpe_ratio:.2f}，最大回撤 {fund_drawdown:.2f}，"
+            f"Alpha {alpha:.4f}，信息比率 {information_ratio:.2f}"
+        )
+        if invest_horizon == 'long-term':
+            if market_trend == 'bearish':
+                if fund_drawdown <= 0.2 and (risk_tolerance in ['medium', 'high'] or manager_trust) and information_ratio > 0:
+                    return (f"市场熊市，{fund_name} 回撤控制良好 ({performance_summary})，适合长期布局。建议分批买入。")
+                else:
+                    return (f"市场熊市，{fund_name} 回撤 {fund_drawdown:.2f} 或风险指标不足 ({performance_summary})。"
+                            "建议观望或选择更稳健的基金（如债券型基金）。")
+            else:
+                is_top_performer = (
+                    sharpe_ratio > 1.0 or (pd.notna(rose_3y) and rose_3y > 50) or
+                    manager_trust or alpha > 0 or information_ratio > 0.5
+                )
+                if is_top_performer and pd.notna(rank_r_3y) and rank_r_3y < 0.05 and risk_tolerance != 'low':
+                    if fund_risk_high:
+                        return (f"市场 {market_trend}，{fund_name} 表现优异 ({performance_summary})，但持仓或行业集中度高，"
+                                f"建议谨慎加仓。{industry_concentration}")
+                    return (f"市场 {market_trend}，{fund_name} 表现优异，3年回报 {rose_3y:.2f}% "
+                            f"（排名前 {rank_r_3y*100:.2f}%，{performance_summary}）。适合继续持有或加仓。{industry_concentration}")
+                else:
+                    return (f"市场 {market_trend}，但 {fund_name} 表现平平（排名 {rank_r_3y*100:.2f}%，{performance_summary}）。"
+                            f"建议评估其他排名更高的基金。{industry_concentration}")
+        elif invest_horizon == 'short-term':
+            if sharpe_ratio > 1.5 and information_ratio > 0.5 and market_trend == 'bullish' and risk_tolerance != 'low':
+                if fund_risk_high:
+                    return (f"市场牛市，{fund_name} 风险调整后表现优异 ({performance_summary})，但持仓集中度高，"
+                            f"需注意风险。建议适量买入。{industry_concentration}")
+                return (f"市场牛市，{fund_name} 风险调整后表现优异 ({performance_summary})，适合短期投资。"
+                        f"建议适量买入。{industry_concentration}")
+            else:
+                return (f"市场 {market_trend} 或 {fund_name} 不适合短期投资 ({performance_summary})。"
+                        f"建议保持谨慎。{industry_concentration}")
+        return "投资策略与市场状况不匹配，请重新审视。"
+
+    async def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = '代码', max_funds: int = None):
+        """异步批量分析 CSV 文件中的基金代码"""
+        self._log("正在从 CSV 导入基金代码列表...")
+        try:
+            funds_df = pd.read_csv(csv_url, encoding='gbk')
+            self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
+            funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
+            self.fund_info = funds_df.set_index(code_column).to_dict('index')
+            fund_codes = funds_df[code_column].unique().tolist()
+            if max_funds:
+                fund_codes = fund_codes[:max_funds]
+                self._log(f"限制分析前 {max_funds} 个基金：{fund_codes}...")
+        except Exception as e:
+            self._log(f"导入 CSV 失败: {e}")
+            return None
+
+        self.get_market_sentiment()
+
+        async def fetch_fund_data(code: str, session: aiohttp.ClientSession):
+            await self.get_real_time_fund_data(code)
+            await self.get_fund_manager_data(code, session)
+            await self.get_fund_holdings_data(code, session)
+            decision = self.make_decision(code, personal_strategy)
+            fund_info = self.fund_info.get(code, {})
+            return {
+                'fund_code': code,
+                'fund_name': fund_info.get('名称', '未知'),
+                'rose_3y': fund_info.get('rose(3y)', np.nan),
+                'rank_r_3y': fund_info.get('rank_r(3y)', np.nan),
+                'latest_nav': self.fund_data.get(code, {}).get('latest_nav', np.nan),
+                'sharpe_ratio': self.fund_data.get(code, {}).get('sharpe_ratio', np.nan),
+                'max_drawdown': self.fund_data.get(code, {}).get('max_drawdown', np.nan),
+                'alpha': self.fund_data.get(code, {}).get('alpha', np.nan),
+                'information_ratio': self.fund_data.get(code, {}).get('information_ratio', np.nan),
+                'manager_name': self.manager_data.get(code, {}).get('name', 'N/A'),
+                'manager_return': self.manager_data.get(code, {}).get('cumulative_return', np.nan),
+                'tenure_years': self.manager_data.get(code, {}).get('tenure_years', np.nan),
+                'market_trend': self.market_data.get('trend', 'unknown'),
+                'decision': decision,
+                'top_10_holdings': self.holdings_data.get(code, [])[:10],
+                'industry_distribution': self._analyze_industry_distribution(self.holdings_data.get(code, []))
+            }
+
+        results = []
+        async with aiohttp.ClientSession() as session:
+            tasks = [fetch_fund_data(code, session) for code in fund_codes]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        results_df = pd.DataFrame([r for r in results if not isinstance(r, Exception)])
+        self._log(f"批量分析完成，共处理 {len(results_df)} 只基金")
+
+        # 生成详细报告
+        print("\n--- 批量基金分析报告 ---")
+        print(f"分析日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"市场趋势: {self.market_data.get('trend', 'unknown')}")
+        print("\n所有基金分析结果:")
+        print(results_df[[
+            'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown',
+            'alpha', 'information_ratio', 'manager_name', 'decision'
+        ]].to_string(index=False))
+
+        top_funds = results_df[results_df['rank_r_3y'] < 0.01].sort_values('rank_r_3y')
+        if not top_funds.empty:
+            print("\n--- 推荐基金（3年排名前 1%）---")
+            print(top_funds[[
+                'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown',
+                'alpha', 'information_ratio', 'manager_name', 'manager_return', 'tenure_years', 'decision'
+            ]].to_string(index=False))
+        else:
+            print("\n没有基金满足 3 年排名前 1% 的条件。")
+        print("-" * 50)
+
+        for _, result in results_df.iterrows():
+            if result['top_10_holdings']:
+                print(f"\n--- 基金 {result['fund_code']} ({result['fund_name']}) 前十持仓 ---")
+                holdings_df = pd.DataFrame(result['top_10_holdings'])
+                print(holdings_df.to_string(index=False))
+            if result['industry_distribution']:
+                print(f"\n行业分布：{', '.join([f'{k} ({v:.2f}%)' for k, v in result['industry_distribution'].items()])}")
+        print("-" * 50)
+
+        return results_df
+
+if __name__ == '__main__':
+    async def main():
+        CSV_URL = "https://raw.githubusercontent.com/qjlxg/rep/main/recommended_cn_funds.csv"
+        analyzer = FundAnalyzer(cache_data=True, cache_expiry_hours=24)
+        my_personal_strategy = {
+            'horizon': 'long-term',
+            'risk_tolerance': 'medium'
+        }
+        results_df = await analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=10)
+        return results_df
+
+    asyncio.run(main())
