@@ -219,7 +219,7 @@ class FundAnalyzer:
         # 基金经理数据
         manager_trust = False
         manager_return = self.manager_data.get(fund_code, {}).get('cumulative_return', np.nan)
-        tenure_years = self.manager_data.get(code, {}).get('tenure_years', np.nan)
+        tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
 
         if pd.notna(manager_return):
             if tenure_years > 5 or manager_return > 20:
