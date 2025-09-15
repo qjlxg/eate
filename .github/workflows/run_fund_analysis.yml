@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas
+          pip install pandas akshare
 
       - name: Run Python script and save output
         id: run-script
