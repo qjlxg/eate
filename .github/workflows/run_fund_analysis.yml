@@ -7,7 +7,12 @@ on:
   workflow_dispatch:
   # 定时任务，例如每天上海时间 08:00 运行
   schedule:
-    - cron: '0 0 * * *' # UTC 时间 00:00，对应上海时间 08:00
+    - cron: '0 0 * * *'
+  # 当 fund_analyzer.py 或工作流文件本身被修改并推送时，自动运行
+  push:
+    paths:
+      - 'fund_analyzer.py'
+      - '.github/workflows/run_fund_analysis.yml'
 
 # 为整个工作流提供权限
 permissions:
@@ -34,30 +39,37 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          # 安装 akshare 和 pandas
           pip install pandas akshare
 
       - name: Run Python script and save output
         id: run-script
         run: |
-          ANALYSIS_RESULT=$(python fund_analyzer.py | tail -n 1)
+          # 运行你的 Python 脚本，并捕获完整输出
+          OUTPUT=$(python fund_analyzer.py)
           
-          # 注意：date 命令会自动使用上面 env 中设置的时区 (TZ)
+          # 将结果写入一个 Markdown 文件，以日期命名
           echo "### 基金分析报告 - $(date +'%Y-%m-%d')" > analysis_report.md
           echo "" >> analysis_report.md
-          echo "#### 投资决策：" >> analysis_report.md
           echo "\`\`\`" >> analysis_report.md
-          echo "$ANALYSIS_RESULT" >> analysis_report.md
+          echo "$OUTPUT" >> analysis_report.md
           echo "\`\`\`" >> analysis_report.md
           
+          # 将文件名设置为一个环境变量，以便后续步骤使用
           echo "report_file=analysis_report.md" >> $GITHUB_ENV
 
       - name: Commit new analysis report
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # 添加新文件
           git add ${{ env.report_file }}
-          git commit -m "Auto-generated analysis report for $(date +'%Y-%m-%d')"
+
+          # 检查是否有需要提交的更改，避免空提交
+          git diff --staged --quiet || git commit -m "Auto-generated analysis report for $(date +'%Y-%m-%d')"
           
       - name: Push changes
         run: |
-          git push
+          # 仅在有新提交时才推送
+          git push || echo "No changes to push."
