@@ -17,7 +17,7 @@ class FundAnalyzer:
     """
     def __init__(self, cache_data: bool = True, cache_file: str = 'fund_cache.json'):
         self.fund_data = {}
-        self.fund_info = {}  # 存储 CSV 数据
+        self.fund_info = pd.DataFrame()  # 存储 CSV 数据
         self.market_data = {}
         self.manager_data = {}
         self.holdings_data = {} # 新增：存储持仓数据
@@ -324,7 +324,15 @@ class FundAnalyzer:
     def load_funds_from_csv(self, file_path: str):
         """从 CSV 文件加载基金代码和名称"""
         try:
-            self.fund_info = pd.read_csv(file_path, encoding='utf-8')
+            # 修复：确保fund_code列是字符串类型，并补齐6位
+            df = pd.read_csv(file_path, encoding='utf-8')
+            if '代码' in df.columns:
+                df = df.rename(columns={'代码': 'fund_code'})
+            
+            if '名称' in df.columns:
+                df = df.rename(columns={'名称': 'fund_name'})
+
+            self.fund_info = df
             self._log(f"成功从 {file_path} 加载基金信息。共 {len(self.fund_info)} 只基金。")
         except FileNotFoundError:
             self._log(f"错误: 文件 {file_path} 未找到。请检查路径。")
@@ -362,11 +370,15 @@ class FundAnalyzer:
     
     def generate_report(self):
         """生成并打印综合分析报告"""
+        if self.fund_info.empty:
+            self._log("没有基金信息可供生成报告。")
+            return
+
         results = []
-        for fund_code, fund_data in self.fund_data.items():
-            fund_info = self.fund_info[self.fund_info['fund_code'] == int(fund_code)].iloc[0]
-            fund_name = fund_info['fund_name']
+        for index, fund_info_row in self.fund_info.iterrows():
+            fund_code = str(fund_info_row['fund_code']).zfill(6)
             
+            fund_data = self.fund_data.get(fund_code, {})
             manager_data = self.manager_data.get(fund_code, {})
             holdings_data = self.holdings_data.get(fund_code, {})
 
@@ -376,11 +388,16 @@ class FundAnalyzer:
             elif fund_data.get('sharpe_ratio', 0) < 0.5:
                 decision = "慎重考虑"
             
+            # 动态获取 CSV 文件中的列，以确保准确性
+            # 这里只考虑3年期的收益和排名，如果需要其他时间段，可以修改这里
+            rose_3y = fund_info_row['rose(3y)'] if 'rose(3y)' in fund_info_row else np.nan
+            rank_r_3y = fund_info_row['rank_r(3y)'] if 'rank_r(3y)' in fund_info_row else np.nan
+            
             results.append({
                 'fund_code': fund_code,
-                'fund_name': fund_name,
-                'rose_3y': fund_info.get('rose_3y'),
-                'rank_r_3y': fund_info.get('rank_r_3y'),
+                'fund_name': fund_info_row['fund_name'],
+                'rose_3y': rose_3y,
+                'rank_r_3y': rank_r_3y,
                 'sharpe_ratio': fund_data.get('sharpe_ratio'),
                 'max_drawdown': fund_data.get('max_drawdown'),
                 'manager_name': manager_data.get('name', 'N/A'),
@@ -400,17 +417,27 @@ class FundAnalyzer:
         print(f"市场趋势: {self.market_data.get('trend', 'unknown')}")
         
         print("\n所有基金分析结果:")
-        print(results_df[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']].to_string(index=False))
+        # 动态筛选要打印的列
+        cols_to_print = ['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'decision']
+        present_cols = [col for col in cols_to_print if col in results_df.columns]
+        print(results_df[present_cols].to_string(index=False))
 
-        top_funds = results_df[results_df['rank_r_3y'] < 0.01].sort_values('rank_r_3y')
-        if not top_funds.empty:
-            print("\n--- 推荐基金（3年排名前 1%）---")
-            print(top_funds[['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years', 'decision']].to_string(index=False))
+        # 基于 rank_r_3y 进行推荐筛选
+        if 'rank_r_3y' in results_df.columns:
+            top_funds = results_df[results_df['rank_r_3y'].astype(float) < 0.01].sort_values('rank_r_3y')
+            if not top_funds.empty:
+                print("\n--- 推荐基金（3年排名前 1%）---")
+                top_funds_cols = ['fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years', 'decision']
+                present_top_funds_cols = [col for col in top_funds_cols if col in top_funds.columns]
+                print(top_funds[present_top_funds_cols].to_string(index=False))
+            else:
+                print("\n没有基金满足 3 年排名前 1% 的条件。")
         else:
-            print("\n没有基金满足 3 年排名前 1% 的条件。")
+            print("\n未找到 'rank_r_3y' 列，无法进行排名筛选。")
+            
         print("-" * 25)
         
-        # 新增：输出持仓报告
+        # 输出持仓报告
         for result in results:
             if result.get('top_10_holdings'):
                 print(f"\n--- 基金 {result['fund_code']} ({result['fund_name']}) 前十持仓 ---")
@@ -435,7 +462,7 @@ class FundAnalyzer:
 
 def main():
     analyzer = FundAnalyzer()
-    analyzer.load_funds_from_csv('fund_list.csv')
+    analyzer.load_funds_from_csv('recommended_cn_funds.csv')
     analyzer.analyze_funds()
     analyzer.generate_report()
 
