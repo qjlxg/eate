@@ -91,20 +91,18 @@ class FundAnalyzer:
 
     def get_fund_manager_data(self, fund_code: str):
         """
-        获取基金经理数据（使用更稳定的 ak.fund_manager_info_em 接口）
+        获取基金经理数据（使用 fund_open_fund_info_em 的 "基金经理" 参数）
         """
         self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
         try:
-            # 使用更稳定的接口，并通过基金代码查找经理
-            manager_df = ak.fund_manager_info_em(fund=fund_code)
-            
-            if manager_df.empty:
+            manager_info = ak.fund_open_fund_info_em(symbol=fund_code, indicator="基金经理")
+            if manager_info.empty:
                 self._log(f"未找到基金 {fund_code} 的基金经理数据。")
                 self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
                 return False
 
             # 获取最新任职的基金经理
-            latest_manager = manager_df.sort_values(by='上任日期', ascending=False).iloc[0]
+            latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
             
             # 确保字段存在且类型正确
             name = latest_manager.get('姓名', 'N/A')
@@ -179,11 +177,9 @@ class FundAnalyzer:
         """
         self._log("正在从 CSV 导入基金代码列表...")
         try:
-            # 添加 encoding 参数修复编码问题
             funds_df = pd.read_csv(csv_url, encoding='gbk')
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
             
-            # 存储 CSV 数据（以代码为键）
             funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
             self.fund_info = funds_df.set_index(code_column).to_dict('index')
 
