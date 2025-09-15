@@ -5,6 +5,7 @@ import numpy as np
 import time
 import requests
 from bs4 import BeautifulSoup
+import re
 
 class FundAnalyzer:
     """
@@ -77,8 +78,14 @@ class FundAnalyzer:
             response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
 
-            # 找到基金经理变动一览的表格
-            manager_table = soup.find('table', class_='comm jloff')
+            # 找到包含“基金经理变动一览”文本的标题
+            title_tag = soup.find('h4', string=lambda text: text and '基金经理变动一览' in text)
+            if not title_tag:
+                self._log(f"在 {manager_url} 中未找到基金经理变动表格的标题。")
+                return None
+            
+            # 从父容器中查找表格
+            manager_table = title_tag.find_parent().find('table', class_='comm')
             if not manager_table:
                 self._log(f"在 {manager_url} 中未找到基金经理变动表格。")
                 return None
@@ -102,14 +109,17 @@ class FundAnalyzer:
             
             # 解析任职天数和累计回报
             tenure_days = np.nan
-            tenure_parts = tenure_str.split('年又')
-            if len(tenure_parts) > 1:
+            if '年又' in tenure_str:
+                tenure_parts = tenure_str.split('年又')
                 years = float(tenure_parts[0].replace('年', ''))
                 days = float(tenure_parts[1].replace('天', ''))
                 tenure_days = years * 365 + days
+            elif '天' in tenure_str:
+                tenure_days = float(tenure_str.replace('天', ''))
+            elif '年' in tenure_str:
+                tenure_days = float(tenure_str.replace('年', '')) * 365
             else:
-                if '天' in tenure_str:
-                    tenure_days = float(tenure_str.replace('天', ''))
+                tenure_days = np.nan
                 
             cumulative_return = float(cumulative_return_str.replace('%', '')) if '%' in cumulative_return_str else np.nan
 
@@ -280,7 +290,7 @@ class FundAnalyzer:
                 'market_trend': self.market_data.get('trend', 'unknown'),
                 'decision': decision
             })
-            time.sleep(1) # 增加延迟，避免请求过快被封
+            time.sleep(5) # 增加延迟，避免请求过快被封
 
         results_df = pd.DataFrame(results)
         
@@ -307,4 +317,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=10)
+    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=100)
