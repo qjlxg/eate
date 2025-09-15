@@ -38,6 +38,7 @@ class FundAnalyzer:
             # 修复 akshare 数据结构变化导致的问题
             bond_data = ak.bond_zh_us_rate()
             # 找到中国10年期国债的数据行，并获取最新值
+            # 注意：akshare接口返回的列名经常变化，这里使用最新发现的列名'value'
             risk_free_rate = bond_data[bond_data['item_name'] == '中国10年期国债']['value'].iloc[-1] / 100
             self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
             return risk_free_rate
@@ -108,76 +109,74 @@ class FundAnalyzer:
 
     def _scrape_manager_data_from_web(self, fund_code: str) -> dict:
         """
-        通过网页抓取获取基金经理数据
+        从天天基金网通过网页抓取获取基金经理数据
         """
         self._log(f"尝试通过网页抓取获取基金 {fund_code} 的基金经理数据...")
         manager_url = f"http://fundf10.eastmoney.com/jjjl_{fund_code}.html"
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
-        for attempt in range(3):  # 手动重试机制
-            try:
-                response = requests.get(manager_url, headers=headers, timeout=10)
-                response.raise_for_status()
-                soup = BeautifulSoup(response.text, 'html.parser')
-                
-                # 修复：更精确地定位基金经理表格
-                # 1. 找到包含 "基金经理" 文本的 h4 标签
-                manager_header = soup.find('h4', text=lambda t: t and '基金经理' in t)
-                if not manager_header:
-                    raise ValueError(f"在 {manager_url} 中未找到基金经理标题。")
+        try:
+            response = requests.get(manager_url, headers=headers, timeout=10)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-                # 2. 从该标签开始查找下一个表格
-                manager_table = manager_header.find_next_sibling('table')
-                if not manager_table:
-                    raise ValueError(f"在 {manager_url} 中未找到基金经理变动表格。")
-
-                rows = manager_table.find_all('tr')
-                if len(rows) < 2:
-                    raise ValueError("基金经理变动表格数据不完整。")
-                
-                # 找到第一行数据，即最新任职的经理
-                latest_manager_row = rows[1]
-                cols = latest_manager_row.find_all('td')
-                
-                if len(cols) < 5:
-                    raise ValueError("基金经理变动表格列数不正确。")
-                
-                manager_name = cols[2].text.strip()
-                tenure_str = cols[3].text.strip()
-                cumulative_return_str = cols[4].text.strip()
-                
-                # 解析任职天数，使用更鲁棒的正则
+            # 找到包含“基金经理变动一览”文本的标签
+            title_label = soup.find('label', string='基金经理变动一览')
+            if not title_label:
+                self._log(f"在 {manager_url} 中未找到基金经理变动表格的标题。")
+                return None
+            
+            # 从父容器中找到表格
+            manager_table = title_label.find_parent().find_next_sibling('table')
+            if not manager_table:
+                self._log(f"在 {manager_url} 中未找到基金经理变动表格。")
+                return None
+            
+            rows = manager_table.find_all('tr')
+            if len(rows) < 2:
+                self._log("基金经理变动表格数据不完整。")
+                return None
+            
+            # 找到第一行数据，即最新任职的经理
+            latest_manager_row = rows[1]
+            cols = latest_manager_row.find_all('td')
+            
+            if len(cols) < 5:
+                self._log("基金经理变动表格列数不正确。")
+                return None
+            
+            manager_name = cols[2].text.strip()
+            tenure_str = cols[3].text.strip()
+            cumulative_return_str = cols[4].text.strip()
+            
+            # 解析任职天数和累计回报
+            tenure_days = np.nan
+            if '年又' in tenure_str:
+                tenure_parts = tenure_str.split('年又')
+                years = float(re.search(r'\d+', tenure_parts[0]).group())
+                days = float(re.search(r'\d+', tenure_parts[1]).group())
+                tenure_days = years * 365 + days
+            elif '天' in tenure_str:
+                tenure_days = float(re.search(r'\d+', tenure_str).group())
+            elif '年' in tenure_str:
+                tenure_days = float(re.search(r'\d+', tenure_str).group()) * 365
+            else:
                 tenure_days = np.nan
-                tenure_pattern = re.compile(r'(\d+)\s*年(?:又)?\s*(\d+)\s*天|(\d+)\s*年|(\d+)\s*天')
-                match = tenure_pattern.search(tenure_str)
-                if match:
-                    if match.group(1) and match.group(2):  # 年又天
-                        tenure_days = float(match.group(1)) * 365 + float(match.group(2))
-                    elif match.group(3):  # 仅年
-                        tenure_days = float(match.group(3)) * 365
-                    elif match.group(4):  # 仅天
-                        tenure_days = float(match.group(4))
                 
-                # 解析累计回报
-                cumulative_return = np.nan
-                return_pattern = re.compile(r'([+-]?\d+\.?\d*)%?')
-                match = return_pattern.search(cumulative_return_str)
-                if match:
-                    cumulative_return = float(match.group(1))
+            cumulative_return = float(re.search(r'[-+]?\d*\.?\d+', cumulative_return_str).group()) if '%' in cumulative_return_str else np.nan
 
-                return {
-                    'name': manager_name,
-                    'tenure_years': tenure_days / 365.0 if pd.notna(tenure_days) else np.nan,
-                    'cumulative_return': cumulative_return
-                }
-            except requests.exceptions.RequestException as e:
-                self._log(f"网页抓取基金 {fund_code} 经理数据失败 (尝试 {attempt+1}/3): {e}")
-                time.sleep(2)
-            except Exception as e:
-                self._log(f"解析网页内容失败 (尝试 {attempt+1}/3): {e}")
-                time.sleep(2)
-        return None
+            return {
+                'name': manager_name,
+                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                'cumulative_return': cumulative_return
+            }
+        except requests.exceptions.RequestException as e:
+            self._log(f"网页抓取基金 {fund_code} 经理数据失败: {e}")
+            return None
+        except Exception as e:
+            self._log(f"解析网页内容失败: {e}")
+            return None
 
     def get_fund_manager_data(self, fund_code: str):
         """
@@ -185,13 +184,13 @@ class FundAnalyzer:
         """
         self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
         try:
-            manager_info = ak.fund_manager_info_em(fund_code=fund_code, manager_name="-")
+            # 修复：akshare接口已变更为fund_manager_info_em
+            manager_info = ak.fund_manager_info_em(fund_code=fund_code)
             if not manager_info.empty:
-                # 获取最新任职的基金经理
                 latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
                 name = latest_manager.get('姓名', 'N/A')
                 tenure_days = latest_manager.get('任职天数', np.nan)
-                cumulative_return = latest_manager.get('任职回报', '0.0%')
+                cumulative_return = latest_manager.get('任职回报', '0%')
                 cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
                 
                 self.manager_data[fund_code] = {
@@ -216,7 +215,6 @@ class FundAnalyzer:
 
     def get_market_sentiment(self):
         """获取市场情绪（仅调用一次，基于上证指数）"""
-        # ... (此方法保持不变) ...
         if self.market_data:
             self._log("使用缓存的市场情绪数据")
             return True
@@ -270,8 +268,12 @@ class FundAnalyzer:
             response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # 修复：更精确地定位持仓表格
-            holdings_table = soup.find('table', {'class': 'w780 comm tzxq'})
+            # 修复：使用更稳健的 find_next 方法，并精确匹配h4标签
+            holdings_header = soup.find('h4', string=lambda t: t and '股票投资明细' in t)
+            if not holdings_header:
+                raise ValueError("未找到持仓表格标题。")
+            
+            holdings_table = holdings_header.find_next('table')
             if not holdings_table:
                 raise ValueError("未找到持仓表格。")
             
