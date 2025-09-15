@@ -68,41 +68,55 @@ class FundAnalyzer:
         从天天基金网通过网页抓取获取基金经理数据
         """
         self._log(f"尝试通过网页抓取获取基金 {fund_code} 的基金经理数据...")
-        url = f"http://fund.eastmoney.com/{fund_code}.html"
+        fund_url = f"http://fund.eastmoney.com/{fund_code}.html"
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         try:
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, 'html.parser')
+            # 第一步：从基金详情页获取基金经理个人页面的URL
+            fund_response = requests.get(fund_url, headers=headers, timeout=10)
+            fund_response.raise_for_status()
+            fund_soup = BeautifulSoup(fund_response.text, 'html.parser')
+
+            manager_link_tag = fund_soup.find('a', attrs={'href': lambda href: href and '/manager/' in href})
+            if not manager_link_tag:
+                self._log(f"在基金 {fund_code} 详情页中未找到基金经理链接。")
+                return None
             
-            manager_section = soup.find('div', class_='manager-table')
-            if not manager_section:
-                self._log(f"网页中未找到基金 {fund_code} 的基金经理数据表。")
+            manager_url = f"http://fund.eastmoney.com{manager_link_tag['href']}"
+            manager_name = manager_link_tag.text.strip()
+            
+            # 第二步：从基金经理个人页面抓取数据
+            self._log(f"已找到基金经理 {manager_name} 的链接，正在获取其个人数据...")
+            manager_response = requests.get(manager_url, headers=headers, timeout=10)
+            manager_response.raise_for_status()
+            manager_soup = BeautifulSoup(manager_response.text, 'html.parser')
+            
+            # 查找任职天数和累计回报
+            manager_table_tag = manager_soup.find('table', class_='datalist')
+            if not manager_table_tag:
+                self._log("在基金经理个人页中未找到数据表格。")
                 return None
 
-            manager_name_tag = manager_section.find('a', attrs={'href': lambda href: href and '/manager/' in href})
-            if not manager_name_tag:
-                self._log(f"网页中未找到基金 {fund_code} 的基金经理姓名。")
-                return None
+            rows = manager_table_tag.find_all('tr')
+            for row in rows:
+                cols = row.find_all('td')
+                if len(cols) >= 5 and cols[1].text.strip() == manager_name:
+                    tenure_days_str = cols[4].text.strip()
+                    cumulative_return_str = cols[6].text.strip()
 
-            manager_name = manager_name_tag.text.strip()
+                    tenure_days = float(tenure_days_str.replace('天', '').replace('又', '').replace('年', '')) if '天' in tenure_days_str else np.nan
+                    cumulative_return = float(cumulative_return_str.replace('%', '')) if '%' in cumulative_return_str else np.nan
+
+                    return {
+                        'name': manager_name,
+                        'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                        'cumulative_return': cumulative_return
+                    }
             
-            # 找到任职天数和累计回报
-            tenure_tag = manager_section.find('span', string=lambda text: text and '任职天数' in text)
-            tenure_days_str = tenure_tag.find_next_sibling('span').text.strip() if tenure_tag else 'N/A'
-            tenure_days = float(tenure_days_str.replace('天', '')) if '天' in tenure_days_str else np.nan
+            self._log("在基金经理个人页中未找到匹配的数据行。")
+            return None
 
-            return_tag = manager_section.find('span', string=lambda text: text and '累计回报' in text)
-            cumulative_return_str = return_tag.find_next_sibling('span').text.strip() if return_tag else 'N/A'
-            cumulative_return = float(cumulative_return_str.replace('%', '')) if '%' in cumulative_return_str else np.nan
-
-            return {
-                'name': manager_name,
-                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
-                'cumulative_return': cumulative_return
-            }
         except requests.exceptions.RequestException as e:
             self._log(f"网页抓取基金 {fund_code} 经理数据失败: {e}")
             return None
@@ -265,7 +279,7 @@ class FundAnalyzer:
                 'market_trend': self.market_data.get('trend', 'unknown'),
                 'decision': decision
             })
-            time.sleep(1) # 增加延迟，避免请求过快被封
+            time.sleep(5) # 增加延迟，避免请求过快被封
 
         results_df = pd.DataFrame(results)
         
