@@ -42,6 +42,7 @@ jobs:
           pip install pandas 
           pip install requests beautifulsoup4
           pip install akshare --upgrade
+          pip install aiohttp
 
 
 
