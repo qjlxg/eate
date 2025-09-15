@@ -41,10 +41,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas akshare
 
-      # 新增步骤：下载远程 CSV 文件到工作流运行环境中
-      - name: Download fund list CSV
-        run: |
-          curl -LJO https://github.com/qjlxg/rep/raw/refs/heads/main/recommended_cn_funds.csv
+
 
       - name: Run Python script and save output
         id: run-script
