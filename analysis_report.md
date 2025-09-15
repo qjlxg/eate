@@ -1,23 +1,39 @@
 ### 基金分析报告 - 2025-09-15
 
 ```
-正在获取基金 005827 的实时数据...
-基金 005827 数据已获取：{'fund_code': '005827', 'latest_nav': np.float64(2.0649), 'sharpe_ratio': np.float64(0.4833793396381792), 'max_drawdown': np.float64(0.579136792586505)}
-正在获取市场情绪数据...
-市场情绪数据已获取：{'sentiment': 'optimistic', 'trend': 'bullish'}
-正在获取基金经理数据...
-获取基金经理数据失败: module 'akshare' has no attribute 'fund_em_info'
--------------------------
-开始做出投资决策:
+未找到 recommended_cn_funds.csv 文件，使用默认列表。
 
---- 完整的基金投资分析报告 ---
-分析日期: 2025-09-15 11:41:56
-分析基金: 005827
-当前市场趋势: bullish
-基金夏普比率: 0.48
-基金最大回撤: 0.58
--------------------------
-投资决策:
-市场上涨，但该基金表现平平。建议深入研究其投资策略，或寻找更具潜力的基金。
--------------------------
+--- 开始多基金分析，共 5 支 ---
+正在获取市场情绪数据...
+市场情绪数据已获取：{'sentiment': 'neutral', 'trend': 'neutral'}
+
+--- 开始分析基金: 005827 ---
+获取基金经理数据失败 for 005827: module 'akshare' has no attribute 'fund_manager'
+基金 005827 数据分析完成。
+
+--- 开始分析基金: 001938 ---
+获取基金经理数据失败 for 001938: module 'akshare' has no attribute 'fund_manager'
+基金 001938 数据分析完成。
+
+--- 开始分析基金: 110011 ---
+获取基金经理数据失败 for 110011: module 'akshare' has no attribute 'fund_manager'
+基金 110011 数据分析完成。
+
+--- 开始分析基金: 000001 ---
+获取基金经理数据失败 for 000001: module 'akshare' has no attribute 'fund_manager'
+基金 000001 数据分析完成。
+
+--- 开始分析基金: 001639 ---
+获取基金经理数据失败 for 001639: module 'akshare' has no attribute 'fund_manager'
+基金 001639 数据分析完成。
+
+--- 所有基金分析已完成 ---
+--- 生成横向对比报告 ---
+
+  基金代码 夏普比率 最大回撤 基金经理 任职年限 任职总回报(%)
+005827 0.44 0.58  N/A  N/A      N/A
+001938 0.24 0.53  N/A  N/A      N/A
+110011 0.44 0.61  N/A  N/A      N/A
+000001 0.01 0.72  N/A  N/A      N/A
+001639 0.13 0.02  N/A  N/A      N/A
 ```
