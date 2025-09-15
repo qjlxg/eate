@@ -78,14 +78,14 @@ class FundAnalyzer:
             response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
 
-            # 找到包含“基金经理变动一览”文本的标题
-            title_tag = soup.find('h4', string=lambda text: text and '基金经理变动一览' in text)
-            if not title_tag:
+            # 找到包含“基金经理变动一览”文本的标签，它通常是一个<label>
+            title_label = soup.find('label', string='基金经理变动一览')
+            if not title_label:
                 self._log(f"在 {manager_url} 中未找到基金经理变动表格的标题。")
                 return None
             
-            # 从父容器中查找表格
-            manager_table = title_tag.find_parent().find('table', class_='comm')
+            # 从父容器中找到表格
+            manager_table = title_label.find_parent().find_next_sibling('table')
             if not manager_table:
                 self._log(f"在 {manager_url} 中未找到基金经理变动表格。")
                 return None
@@ -219,7 +219,7 @@ class FundAnalyzer:
         # 基金经理数据
         manager_trust = False
         manager_return = self.manager_data.get(fund_code, {}).get('cumulative_return', np.nan)
-        tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
+        tenure_years = self.manager_data.get(code, {}).get('tenure_years', np.nan)
 
         if pd.notna(manager_return):
             if tenure_years > 5 or manager_return > 20:
@@ -317,4 +317,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=100)
+    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=10)
