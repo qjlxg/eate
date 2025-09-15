@@ -35,8 +35,10 @@ class FundAnalyzer:
     def _get_risk_free_rate(self) -> float:
         """从东方财富获取最新 10 年期国债收益率作为无风险利率"""
         try:
+            # 修复 akshare 数据结构变化导致的问题
             bond_data = ak.bond_zh_us_rate()
-            risk_free_rate = bond_data[bond_data['指标名称'] == '中国10年期国债']['数值'].iloc[-1] / 100
+            # 找到中国10年期国债的数据行，并获取最新值
+            risk_free_rate = bond_data[bond_data['item_name'] == '中国10年期国债']['value'].iloc[-1] / 100
             self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
             return risk_free_rate
         except Exception as e:
@@ -57,46 +59,159 @@ class FundAnalyzer:
     def _save_cache(self):
         """将缓存保存到文件"""
         with open(self.cache_file, 'w') as f:
-            json.dump(self.cache, f, indent=4) # 使用 indent 让文件更易读
+            json.dump(self.cache, f, indent=4, ensure_ascii=False)
 
     def get_real_time_fund_data(self, fund_code: str):
         """获取单个基金的实时数据（净值、夏普比率、最大回撤）"""
-        # ... (此方法保持不变，或使用我们最新讨论的带重试功能的版本) ...
-        # 为了简洁，这里使用原版本。
         if self.cache_data and fund_code in self.cache.get('fund', {}):
             self._log(f"使用缓存数据 for 基金 {fund_code}")
             self.fund_data[fund_code] = self.cache['fund'][fund_code]
             return True
 
         self._log(f"正在获取基金 {fund_code} 的实时数据...")
+        for attempt in range(3):  # 手动重试机制，最多3次
+            try:
+                fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
+                fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
+                fund_data.set_index('净值日期', inplace=True)
+                
+                # 数据清洗：去除异常值和缺失值
+                fund_data = fund_data.dropna()
+                if len(fund_data) < 252:  # 至少一年数据
+                    raise ValueError("数据不足，无法计算可靠的夏普比率和回撤")
+
+                returns = fund_data['单位净值'].pct_change().dropna()
+                
+                annual_returns = returns.mean() * 252
+                annual_volatility = returns.std() * (252**0.5)
+                sharpe_ratio = (annual_returns - self.risk_free_rate) / annual_volatility if annual_volatility != 0 else 0
+                
+                rolling_max = fund_data['单位净值'].cummax()
+                daily_drawdown = (fund_data['单位净值'] - rolling_max) / rolling_max
+                max_drawdown = daily_drawdown.min() * -1
+                
+                self.fund_data[fund_code] = {
+                    'latest_nav': float(fund_data['单位净值'].iloc[-1]),
+                    'sharpe_ratio': float(sharpe_ratio),
+                    'max_drawdown': float(max_drawdown)
+                }
+                if self.cache_data:
+                    self.cache.setdefault('fund', {})[fund_code] = self.fund_data[fund_code]
+                    self._save_cache()
+                self._log(f"基金 {fund_code} 数据已获取：{self.fund_data[fund_code]}")
+                return True
+            except Exception as e:
+                self._log(f"获取基金 {fund_code} 数据失败 (尝试 {attempt+1}/3): {e}")
+                time.sleep(2)  # 等待2秒后重试
+        self.fund_data[fund_code] = {'latest_nav': np.nan, 'sharpe_ratio': np.nan, 'max_drawdown': np.nan}
+        return False
+
+    def _scrape_manager_data_from_web(self, fund_code: str) -> dict:
+        """
+        通过网页抓取获取基金经理数据
+        """
+        self._log(f"尝试通过网页抓取获取基金 {fund_code} 的基金经理数据...")
+        manager_url = f"http://fundf10.eastmoney.com/jjjl_{fund_code}.html"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        for attempt in range(3):  # 手动重试机制
+            try:
+                response = requests.get(manager_url, headers=headers, timeout=10)
+                response.raise_for_status()
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # 修复：更精确地定位基金经理表格
+                # 1. 找到包含 "基金经理" 文本的 h4 标签
+                manager_header = soup.find('h4', text=lambda t: t and '基金经理' in t)
+                if not manager_header:
+                    raise ValueError(f"在 {manager_url} 中未找到基金经理标题。")
+
+                # 2. 从该标签开始查找下一个表格
+                manager_table = manager_header.find_next_sibling('table')
+                if not manager_table:
+                    raise ValueError(f"在 {manager_url} 中未找到基金经理变动表格。")
+
+                rows = manager_table.find_all('tr')
+                if len(rows) < 2:
+                    raise ValueError("基金经理变动表格数据不完整。")
+                
+                # 找到第一行数据，即最新任职的经理
+                latest_manager_row = rows[1]
+                cols = latest_manager_row.find_all('td')
+                
+                if len(cols) < 5:
+                    raise ValueError("基金经理变动表格列数不正确。")
+                
+                manager_name = cols[2].text.strip()
+                tenure_str = cols[3].text.strip()
+                cumulative_return_str = cols[4].text.strip()
+                
+                # 解析任职天数，使用更鲁棒的正则
+                tenure_days = np.nan
+                tenure_pattern = re.compile(r'(\d+)\s*年(?:又)?\s*(\d+)\s*天|(\d+)\s*年|(\d+)\s*天')
+                match = tenure_pattern.search(tenure_str)
+                if match:
+                    if match.group(1) and match.group(2):  # 年又天
+                        tenure_days = float(match.group(1)) * 365 + float(match.group(2))
+                    elif match.group(3):  # 仅年
+                        tenure_days = float(match.group(3)) * 365
+                    elif match.group(4):  # 仅天
+                        tenure_days = float(match.group(4))
+                
+                # 解析累计回报
+                cumulative_return = np.nan
+                return_pattern = re.compile(r'([+-]?\d+\.?\d*)%?')
+                match = return_pattern.search(cumulative_return_str)
+                if match:
+                    cumulative_return = float(match.group(1))
+
+                return {
+                    'name': manager_name,
+                    'tenure_years': tenure_days / 365.0 if pd.notna(tenure_days) else np.nan,
+                    'cumulative_return': cumulative_return
+                }
+            except requests.exceptions.RequestException as e:
+                self._log(f"网页抓取基金 {fund_code} 经理数据失败 (尝试 {attempt+1}/3): {e}")
+                time.sleep(2)
+            except Exception as e:
+                self._log(f"解析网页内容失败 (尝试 {attempt+1}/3): {e}")
+                time.sleep(2)
+        return None
+
+    def get_fund_manager_data(self, fund_code: str):
+        """
+        获取基金经理数据（首先尝试使用 akshare，失败则通过网页抓取）
+        """
+        self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
         try:
-            fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
-            fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
-            fund_data.set_index('净值日期', inplace=True)
-            
-            returns = fund_data['单位净值'].pct_change().dropna()
-            
-            annual_returns = returns.mean() * 252
-            annual_volatility = returns.std() * (252**0.5)
-            sharpe_ratio = (annual_returns - self.risk_free_rate) / annual_volatility if annual_volatility != 0 else 0
-            
-            rolling_max = fund_data['单位净值'].cummax()
-            daily_drawdown = (fund_data['单位净值'] - rolling_max) / rolling_max
-            max_drawdown = daily_drawdown.min() * -1
-            
-            self.fund_data[fund_code] = {
-                'latest_nav': float(fund_data['单位净值'].iloc[-1]),
-                'sharpe_ratio': float(sharpe_ratio),
-                'max_drawdown': float(max_drawdown)
-            }
-            if self.cache_data:
-                self.cache.setdefault('fund', {})[fund_code] = self.fund_data[fund_code]
-                self._save_cache()
-            self._log(f"基金 {fund_code} 数据已获取：{self.fund_data[fund_code]}")
-            return True
+            manager_info = ak.fund_manager_info_em(fund_code=fund_code, manager_name="-")
+            if not manager_info.empty:
+                # 获取最新任职的基金经理
+                latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
+                name = latest_manager.get('姓名', 'N/A')
+                tenure_days = latest_manager.get('任职天数', np.nan)
+                cumulative_return = latest_manager.get('任职回报', '0.0%')
+                cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
+                
+                self.manager_data[fund_code] = {
+                    'name': name,
+                    'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
+                    'cumulative_return': cumulative_return
+                }
+                self._log(f"基金 {fund_code} 经理数据已通过akshare获取：{self.manager_data[fund_code]}")
+                return True
         except Exception as e:
-            self._log(f"获取基金 {fund_code} 数据失败: {e}")
-            self.fund_data[fund_code] = {'latest_nav': np.nan, 'sharpe_ratio': np.nan, 'max_drawdown': np.nan}
+            self._log(f"使用akshare获取基金 {fund_code} 经理数据失败: {e}")
+
+        # 如果akshare失败，尝试网页抓取
+        scraped_data = self._scrape_manager_data_from_web(fund_code)
+        if scraped_data:
+            self.manager_data[fund_code] = scraped_data
+            self._log(f"基金 {fund_code} 经理数据已通过网页抓取获取：{self.manager_data[fund_code]}")
+            return True
+        else:
+            self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
             return False
 
     def get_market_sentiment(self):
@@ -128,47 +243,15 @@ class FundAnalyzer:
             self.market_data = {'sentiment': 'unknown', 'trend': 'unknown'}
             return False
 
-    def get_fund_manager_data(self, fund_code: str):
-        """
-        获取基金经理数据（使用 fund_open_fund_info_em 的 "基金经理" 参数）
-        """
-        # ... (此方法保持不变) ...
-        self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
-        try:
-            manager_info = ak.fund_open_fund_info_em(symbol=fund_code, indicator="基金经理")
-            if manager_info.empty:
-                self._log(f"未找到基金 {fund_code} 的基金经理数据。")
-                self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
-                return False
-
-            latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
-            
-            name = latest_manager.get('姓名', 'N/A')
-            tenure_days = latest_manager.get('任职天数', np.nan)
-            cumulative_return = latest_manager.get('累计回报', '0%')
-            cumulative_return = float(str(cumulative_return).replace('%', '')) if isinstance(cumulative_return, str) else float(cumulative_return)
-            
-            self.manager_data[fund_code] = {
-                'name': name,
-                'tenure_years': float(tenure_days) / 365.0 if pd.notna(tenure_days) else np.nan,
-                'cumulative_return': cumulative_return
-            }
-            self._log(f"基金 {fund_code} 经理数据已获取：{self.manager_data[fund_code]}")
-            return True
-        except Exception as e:
-            self._log(f"获取基金 {fund_code} 经理数据失败: {e}")
-            self.manager_data[fund_code] = {'name': 'N/A', 'tenure_years': np.nan, 'cumulative_return': np.nan}
-            return False
-
     def get_fund_holdings_data(self, fund_code: str):
         """
         新增方法：抓取基金的股票持仓数据。
         """
         self._log(f"正在获取基金 {fund_code} 的持仓数据...")
         
-        # 尝试使用 akshare 获取持仓数据
+        # 修复：使用更稳定和正确的 akshare 接口
         try:
-            holdings_df = ak.fund_open_fund_portfolio_em(symbol=fund_code, year='2025', quarter='2')
+            holdings_df = ak.fund_portfolio_hold_em(symbol=fund_code)
             if not holdings_df.empty:
                 self.holdings_data[fund_code] = holdings_df.to_dict('records')
                 self._log(f"基金 {fund_code} 持仓数据已通过akshare获取。")
@@ -187,6 +270,7 @@ class FundAnalyzer:
             response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             
+            # 修复：更精确地定位持仓表格
             holdings_table = soup.find('table', {'class': 'w780 comm tzxq'})
             if not holdings_table:
                 raise ValueError("未找到持仓表格。")
@@ -234,14 +318,17 @@ class FundAnalyzer:
         manager_return = self.manager_data.get(fund_code, {}).get('cumulative_return', np.nan)
         tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
 
-        if pd.notna(manager_return):
+        if pd.notna(manager_return) and pd.notna(tenure_years):
             if tenure_years > 5 or manager_return > 20:
                 manager_trust = True
             self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，增加信任度。")
+        else:
+            self._log("未能获取基金经理数据，无法评估其表现。")
 
         # 新增：持仓数据分析
         holdings = self.holdings_data.get(fund_code, [])
         holdings_report = ""
+        fund_risk_high = False
         if holdings:
             holdings_df = pd.DataFrame(holdings)
             # 计算前十持仓集中度
