@@ -625,9 +625,23 @@ if __name__ == '__main__':
     # 获取基金代码列表
     try:
         logger.info("正在从 CSV 导入基金代码列表...")
-        df_funds = pd.read_csv(funds_list_url)
-        fund_codes_to_analyze = df_funds['fund_code'].unique().tolist()
-        logger.info(f"导入成功，共 {len(fund_codes_to_analyze)} 个基金代码")
+        # 修复：尝试多种可能的编码格式来读取文件
+        encodings = ['utf-8', 'gbk', 'gb18030']
+        df_funds = None
+        for enc in encodings:
+            try:
+                df_funds = pd.read_csv(funds_list_url, encoding=enc)
+                logger.info(f"成功使用 '{enc}' 编码导入文件。")
+                break  # 成功后退出循环
+            except UnicodeDecodeError:
+                logger.warning(f"使用 '{enc}' 编码失败，尝试下一种。")
+        
+        if df_funds is not None:
+            fund_codes_to_analyze = df_funds['fund_code'].unique().tolist()
+            logger.info(f"导入成功，共 {len(fund_codes_to_analyze)} 个基金代码")
+        else:
+            raise ValueError("所有尝试的编码都无法正确读取文件。")
+            
     except Exception as e:
         logger.error(f"导入基金列表失败: {e}")
         fund_codes_to_analyze = []
