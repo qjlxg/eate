@@ -8,6 +8,18 @@ from bs4 import BeautifulSoup
 import re
 import json
 import os
+import logging
+
+# 配置日志记录
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('fund_analyzer.log', encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger('FundAnalyzer')
 
 class FundDataFetcher:
     """负责所有数据获取、清洗和缓存管理。"""
@@ -19,7 +31,7 @@ class FundDataFetcher:
         self._web_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
     def _log(self, message: str):
-        print(f"[数据获取] {message}")
+        logger.info(f"[数据获取] {message}")
 
     def _load_cache(self) -> dict:
         """从文件加载缓存并检查时效性。"""
@@ -246,7 +258,6 @@ class FundDataFetcher:
             self._log(f"获取基金 {fund_code} 持仓数据失败: {e}")
             return {'holdings': [], 'sectors': []}
 
-
 class InvestmentStrategy:
     """封装所有投资决策逻辑。"""
     def __init__(self, market_data: dict, personal_strategy: dict):
@@ -255,7 +266,7 @@ class InvestmentStrategy:
         self.points_log = {}
 
     def _log(self, message: str):
-        print(f"[决策引擎] {message}")
+        logger.info(f"[决策引擎] {message}")
 
     def score_fund(self, fund_data: dict, fund_info: dict, manager_data: dict, holdings_data: dict) -> tuple[float, dict]:
         """
@@ -351,8 +362,18 @@ class FundAnalyzer:
         self.analysis_report = []
 
     def _log(self, message: str):
+        """记录分析报告到列表，稍后写入 Markdown 文件"""
         print(f"[分析报告] {message}")
         self.analysis_report.append(message)
+
+    def _save_report_to_markdown(self):
+        """将分析报告保存为 Markdown 文件"""
+        with open('analysis_report.md', 'w', encoding='utf-8') as f:
+            f.write("# 基金分析报告\n\n")
+            f.write(f"**分析日期**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            for message in self.analysis_report:
+                f.write(f"{message}\n\n")
+        logger.info("分析报告已保存至 analysis_report.md")
 
     def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = 'code', max_funds: int = None):
         """批量分析 CSV 文件中的基金。"""
@@ -415,16 +436,15 @@ class FundAnalyzer:
         top_funds = results_df.sort_values('score', ascending=False).head(10)
         if not top_funds.empty:
             self._log("\n--- 推荐基金（综合评分前10名）---")
-            print(top_funds[['decision', 'score', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio']].to_string(index=False))
+            self._log("\n" + top_funds[['decision', 'score', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio']].to_markdown(index=False))
         else:
             self._log("\n没有基金获得有效评分。")
         
         self._log("\n--- 所有基金分析结果 ---")
-        print(results_df[['decision', 'score', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y']].to_string(index=False))
+        self._log("\n" + results_df[['decision', 'score', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y']].to_markdown(index=False))
         
-        self._log("\n--- 完整分析报告 ---")
-        for log in self.analysis_report:
-            print(log)
+        # 保存分析报告到 Markdown 文件
+        self._save_report_to_markdown()
         
         return results_df
 
