@@ -23,14 +23,17 @@ logger = logging.getLogger('FundAnalyzer')
 
 class FundDataFetcher:
     """负责所有数据获取、清洗和缓存管理。"""
+    # 将 _web_headers 定义为类变量，确保在任何实例方法中都可访问
+    _web_headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Referer': 'http://fund.eastmoney.com/'
+    }
     def __init__(self, cache_data: bool = True, cache_file: str = 'fund_cache.json'):
         self.cache_data = cache_data
         self.cache_file = cache_file
         self.cache = self._load_cache()
         self.risk_free_rate = self._get_risk_free_rate()
-        self._web_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        
 
     def _log(self, message: str):
         logger.info(f"[数据获取] {message}")
@@ -80,7 +83,7 @@ class FundDataFetcher:
                 url = "http://yield.chinabond.com.cn/cbweb/cb/yield_main"
                 response = requests.get(url, headers=self._web_headers, timeout=10)
                 soup = BeautifulSoup(response.text, 'html.parser')
-                rate_text = soup.find('td', text='10年期国债').find_next('td').text
+                rate_text = soup.find('td', text=re.compile('10年期国债')).find_next_sibling('td').text
                 risk_free_rate = float(re.search(r'\d+\.\d+', rate_text).group()) / 100
                 self._log(f"网页抓取无风险利率成功：{risk_free_rate:.4f}")
                 return risk_free_rate
@@ -119,6 +122,25 @@ class FundDataFetcher:
             self._log(f"获取市场数据失败: {e}")
             return {'sentiment': 'unknown', 'trend': 'unknown'}
 
+    def _get_historical_nav(self, fund_code: str) -> pd.DataFrame:
+        """
+        统一的内部方法，用于获取基金历史净值数据。
+        首选 akshare，失败则返回空 DataFrame。
+        """
+        self._log(f"正在获取基金 {fund_code} 历史净值数据...")
+        try:
+            # 尝试使用 akshare
+            fund_data_ak = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
+            fund_data_ak['净值日期'] = pd.to_datetime(fund_data_ak['净值日期'])
+            fund_data_ak.set_index('净值日期', inplace=True)
+            fund_data_ak = fund_data_ak.dropna()
+            self._log(f"akshare 获取基金 {fund_code} 历史净值数据成功。")
+            return fund_data_ak
+        except Exception as e:
+            self._log(f"akshare 获取基金 {fund_code} 历史净值失败: {e}")
+            return pd.DataFrame()
+
+
     def get_real_time_fund_data(self, fund_code: str, fund_name: str) -> dict:
         """获取单个基金的实时数据和性能指标，失败则抓取网页。"""
         cache_key = f"{fund_code}_{fund_name}"
@@ -127,69 +149,57 @@ class FundDataFetcher:
             return self.cache['fund_metrics'][cache_key]
 
         self._log(f"正在获取基金 {fund_code} ({fund_name}) 的实时数据和性能指标...")
-        for attempt in range(3):
-            try:
-                fund_data_ak = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
-                self._log(f"基金 {fund_code} 原始数据: {fund_data_ak.head(2).to_dict()}")
-                fund_data_ak['净值日期'] = pd.to_datetime(fund_data_ak['净值日期'])
-                fund_data_ak.set_index('净值日期', inplace=True)
-                fund_data_ak = fund_data_ak.dropna()
-
-                if len(fund_data_ak) < 252:
-                    raise ValueError("数据不足，无法计算可靠的指标")
-
-                returns = fund_data_ak['单位净值'].pct_change().dropna()
-                annual_returns_calc = returns.mean() * 252
-                annual_volatility_calc = returns.std() * (252**0.5)
-                sharpe_ratio = (annual_returns_calc - self.risk_free_rate) / annual_volatility_calc if annual_volatility_calc != 0 else 0
-                
-                rolling_max = fund_data_ak['单位净值'].cummax()
-                daily_drawdown = (fund_data_ak['单位净值'] - rolling_max) / rolling_max
-                max_drawdown = daily_drawdown.min() * -1
-                
-                data = {
-                    'latest_nav': float(fund_data_ak['单位净值'].iloc[-1]),
-                    'sharpe_ratio': float(sharpe_ratio),
-                    'max_drawdown': float(max_drawdown),
-                    'tracking_error': np.nan
-                }
-                
-                if self.cache_data:
-                    self.cache.setdefault('fund_metrics', {})[cache_key] = data
-                    self._save_cache()
-                self._log(f"基金 {fund_code} 数据获取成功：{data}")
-                return data
-            except Exception as e:
-                self._log(f"akshare 获取基金 {fund_code} 数据失败 (尝试 {attempt+1}/3): {e}")
-                time.sleep(2)
         
-        self._log(f"akshare 获取基金 {fund_code} 数据失败，尝试网页抓取...")
-        try:
-            url = f"http://fund.eastmoney.com/{fund_code}.html"
-            response = requests.get(url, headers=self._web_headers, timeout=10)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            nav_text = soup.find('dd', class_='data-item').text  # 示例，需根据实际网页结构调整
-            latest_nav = float(re.search(r'\d+\.\d+', nav_text).group())
-            self._log(f"基金 {fund_code} 网页抓取净值成功: {latest_nav}")
-            # 简化处理，仅返回净值，夏普比率和回撤需更多数据
+        hist_data = self._get_historical_nav(fund_code)
+        
+        if hist_data.empty or len(hist_data) < 252:
+            self._log(f"基金 {fund_code} 历史数据不足，无法计算性能指标。")
+            try:
+                url = f"http://fund.eastmoney.com/{fund_code}.html"
+                response = requests.get(url, headers=self._web_headers, timeout=10)
+                soup = BeautifulSoup(response.text, 'html.parser')
+                # 修正：从 dataOfFund 下的 dataNums 中获取最新净值
+                nav_element = soup.find('div', class_='dataOfFund').find('dd', class_='dataNums').find('span', class_='ui-font-large')
+                latest_nav = float(nav_element.text.strip()) if nav_element else np.nan
+                self._log(f"网页抓取基金 {fund_code} 最新净值成功: {latest_nav}")
+            except Exception as e:
+                self._log(f"网页抓取最新净值失败: {e}")
+                latest_nav = np.nan
+            
             data = {
                 'latest_nav': latest_nav,
                 'sharpe_ratio': np.nan,
                 'max_drawdown': np.nan,
-                'tracking_error': np.nan
+                'beta': np.nan,
             }
-            if self.cache_data:
-                self.cache.setdefault('fund_metrics', {})[cache_key] = data
-                self._save_cache()
             return data
-        except Exception as e:
-            self._log(f"网页抓取基金 {fund_code} 数据失败: {e}")
-            return {
-                'latest_nav': np.nan,
-                'sharpe_ratio': np.nan,
-                'max_drawdown': np.nan,
-                'tracking_error': np.nan
-            }
+        
+        # 计算性能指标
+        returns = hist_data['单位净值'].pct_change().dropna()
+        annual_returns_calc = returns.mean() * 252
+        annual_volatility_calc = returns.std() * np.sqrt(252)
+        sharpe_ratio = (annual_returns_calc - self.risk_free_rate) / annual_volatility_calc if annual_volatility_calc != 0 else np.nan
+        
+        rolling_max = hist_data['单位净值'].cummax()
+        daily_drawdown = (hist_data['单位净值'] - rolling_max) / rolling_max
+        max_drawdown = daily_drawdown.min() * -1
+        
+        # 计算 Beta
+        beta = self.calculate_beta(fund_code, hist_data)
+
+        data = {
+            'latest_nav': float(hist_data['单位净值'].iloc[-1]),
+            'sharpe_ratio': float(sharpe_ratio) if pd.notna(sharpe_ratio) else np.nan,
+            'max_drawdown': float(max_drawdown) if pd.notna(max_drawdown) else np.nan,
+            'beta': float(beta) if pd.notna(beta) else np.nan,
+        }
+        
+        if self.cache_data:
+            self.cache.setdefault('fund_metrics', {})[cache_key] = data
+            self._save_cache()
+            
+        self._log(f"基金 {fund_code} 数据获取成功：{data}")
+        return data
 
     def get_fund_manager_data(self, fund_code: str) -> dict:
         """获取基金经理数据。"""
@@ -388,10 +398,22 @@ class FundDataFetcher:
         """计算基金的 Beta 系数。"""
         try:
             market_data = ak.stock_zh_index_daily_em(symbol="sh000001")
-            fund_returns = fund_data['单位净值'].pct_change().dropna()
-            market_returns = market_data['close'].pct_change().dropna()
-            aligned = pd.concat([fund_returns, market_returns], axis=1).dropna()
-            beta = aligned.cov().iloc[0, 1] / aligned['close'].var()
+            market_data.rename(columns={'close': 'market_close'}, inplace=True)
+            
+            fund_data.index = pd.to_datetime(fund_data.index)
+            market_data.index = pd.to_datetime(market_data.index)
+            
+            combined_data = pd.merge(fund_data['单位净值'], market_data['market_close'], left_index=True, right_index=True, how='inner')
+            
+            fund_returns = combined_data['单位净值'].pct_change().dropna()
+            market_returns = combined_data['market_close'].pct_change().dropna()
+            
+            if market_returns.var() == 0:
+                self._log(f"市场回报方差为零，无法计算Beta。")
+                return np.nan
+                
+            beta = fund_returns.cov(market_returns) / market_returns.var()
+            
             self._log(f"基金 {fund_code} Beta系数计算完成：{beta:.2f}")
             return beta
         except Exception as e:
@@ -598,8 +620,6 @@ class FundAnalyzer:
             self._log(f"\n--- 正在分析基金 {code} ({fund_info.get('name', '未知')}) ---")
             
             fund_data = self.data_fetcher.get_real_time_fund_data(code, fund_info.get('name', '未知'))
-            if len(fund_data) > 1:  # 确保有足够数据计算 Beta
-                fund_data['beta'] = self.data_fetcher.calculate_beta(code, pd.DataFrame(fund_data))
             manager_data = self.data_fetcher.get_fund_manager_data(code)
             holdings_data = self.data_fetcher.get_fund_holdings_data(code)
             fund_metadata = self.data_fetcher.get_fund_info(code)
@@ -639,7 +659,6 @@ class FundAnalyzer:
         else:
             self._log("\n没有基金获得有效评分。")
         
-        self._log("\n--- 所有基金分析结果 ---")
         self._log("\n" + results_df[['decision', 'score', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'scale']].to_markdown(index=False))
         
         self._save_report_to_markdown()
