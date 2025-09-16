@@ -22,23 +22,27 @@ class FundDataFetcher:
 
     def _load_cache(self) -> dict:
         """从文件加载缓存并检查时效性。"""
-        if os.path.exists(self.cache_file):
-            try:
-                with open(self.cache_file, 'r', encoding='utf-8') as f:
-                    cache = json.load(f)
-                
-                # 检查缓存时效性，超过1天则认为过期
-                last_updated = datetime.strptime(cache.get('last_updated'), '%Y-%m-%d')
-                if (datetime.now() - last_updated).days > 1:
-                    self._log("缓存数据已过期，将重新获取。")
-                    return {}
-                
-                self._log("使用有效缓存数据。")
-                return cache
-            except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as e:
-                self._log(f"缓存文件加载失败或格式错误: {e}。将创建新缓存。")
+        if not os.path.exists(self.cache_file):
+            return {}
+            
+        try:
+            with open(self.cache_file, 'r', encoding='utf-8') as f:
+                cache = json.load(f)
+            
+            if 'last_updated' not in cache:
+                self._log("缓存文件缺少 'last_updated' 键，将重新生成缓存。")
                 return {}
-        return {}
+            
+            last_updated = datetime.strptime(cache.get('last_updated'), '%Y-%m-%d')
+            if (datetime.now() - last_updated).days > 1:
+                self._log("缓存数据已过期，将重新获取。")
+                return {}
+            
+            self._log("使用有效缓存数据。")
+            return cache
+        except (json.JSONDecodeError, UnicodeDecodeError, ValueError) as e:
+            self._log(f"缓存文件加载失败或格式错误: {e}。将创建新缓存。")
+            return {}
 
     def _save_cache(self):
         """将缓存保存到文件。"""
@@ -306,7 +310,6 @@ class FundAnalyzer:
             funds_df = pd.read_csv(csv_url, encoding='gbk')
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
             
-            # 兼容性处理：检查是否有3年数据列
             if 'rose(3y)' not in funds_df.columns:
                 self._log("未找到 'rose(3y)' 列，将使用 'rose(5y)' 作为替代。")
                 funds_df['rose(3y)'] = funds_df.get('rose(5y)', np.nan)
@@ -324,7 +327,6 @@ class FundAnalyzer:
             self._log(f"导入 CSV 失败: {e}")
             return None
 
-        # 获取市场情绪
         market_data = self.data_fetcher.get_market_sentiment()
         strategy_engine = InvestmentStrategy(market_data, personal_strategy)
 
