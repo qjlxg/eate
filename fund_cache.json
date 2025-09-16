@@ -1177,5 +1177,97 @@
             "max_drawdown": 0.30127901468498347,
             "tracking_error": NaN
         }
+    },
+    "fund_info": {
+        "000363_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "000796_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "000850_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001174_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001326_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001388_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001407_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001426_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001467_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001515_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001557_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN,
+            "pe": 11.101168846973975,
+            "pb": 1.9080261158471288,
+            "is_low_valuation": true
+        },
+        "001559_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001593_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001618_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001630_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001644_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001665_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001676_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001724_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        },
+        "001770_info": {
+            "scale": NaN,
+            "years_since_establishment": NaN
+        }
+    },
+    "valuation": {
+        "001557_valuation": {
+            "pe": 11.101168846973975,
+            "pb": 1.9080261158471288,
+            "is_low_valuation": true
+        }
     }
 }
