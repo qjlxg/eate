@@ -393,16 +393,16 @@ class FundAnalyzer:
         beta = self.fund_data[fund_code].get('beta', np.nan)
         
         fund_info = self.fund_info.get(fund_code, {})
-        rose_4y = fund_info.get('rose(4y)', np.nan)
-        rank_r_4y = fund_info.get('rank_r(4y)', np.nan)
+        rose_3y = fund_info.get('rose(3y)', np.nan)
+        rank_r_3y = fund_info.get('rank_r(3y)', np.nan)
         fund_name = fund_info.get('名称', '未知')
 
         manager_trust = False
         manager_return = self.manager_data.get(fund_code, {}).get('cumulative_return', np.nan)
-        tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
+        tenure_years = self.manager_data.get(code, {}).get('tenure_years', np.nan)
 
         if pd.notna(manager_return) and pd.notna(tenure_years):
-            if tenure_years > 4 or manager_return > 20:
+            if tenure_years > 3 or manager_return > 20:
                 manager_trust = True
             self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，增加信任度。")
         else:
@@ -485,12 +485,13 @@ class FundAnalyzer:
             
             funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
 
-            if 'rose(4y)' not in funds_df.columns:
-                self._log("未找到 'rose(4y)' 列，将使用 'rose(5y)' 作为替代。")
-                funds_df['rose(4y)'] = funds_df.get('rose(5y)', np.nan)
-            if 'rank_r(4y)' not in funds_df.columns:
-                self._log("未找到 'rank_r(4y)' 列，将使用 'rank_r(5y)' 作为替代。")
-                funds_df['rank_r(4y)'] = funds_df.get('rank_r(5y)', np.nan)
+            # 检查是否有3年数据列，如果没有，则使用5年数据列
+            if 'rose(3y)' not in funds_df.columns:
+                self._log("未找到 'rose(3y)' 列，将使用 'rose(5y)' 作为替代。")
+                funds_df['rose(3y)'] = funds_df.get('rose(5y)', np.nan)
+            if 'rank_r(3y)' not in funds_df.columns:
+                self._log("未找到 'rank_r(3y)' 列，将使用 'rank_r(5y)' 作为替代。")
+                funds_df['rank_r(3y)'] = funds_df.get('rank_r(5y)', np.nan)
 
             self.fund_info = funds_df.set_index(code_column).to_dict('index')
 
@@ -527,8 +528,8 @@ class FundAnalyzer:
             results.append({
                 'fund_code': code,
                 'fund_name': fund_info.get('名称', '未知'),
-                'rose_4y': fund_info.get('rose(4y)', np.nan),
-                'rank_r_4y': fund_info.get('rank_r(4y)', np.nan),
+                'rose_3y': fund_info.get('rose(3y)', np.nan),
+                'rank_r_3y': fund_info.get('rank_r(3y)', np.nan),
                 'latest_nav': fund_data_ext.get('latest_nav', np.nan),
                 'sharpe_ratio': fund_data_ext.get('sharpe_ratio', np.nan),
                 'max_drawdown': fund_data_ext.get('max_drawdown', np.nan),
@@ -552,15 +553,15 @@ class FundAnalyzer:
         print(f"分析日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"市场趋势: {self.market_data.get('trend', 'unknown')}")
         
-        top_funds = results_df[results_df['rank_r_4y'] < 0.01].sort_values('rank_r_4y')
+        top_funds = results_df[results_df['rank_r_3y'] < 0.01].sort_values('rank_r_3y')
         if not top_funds.empty:
-            print("\n--- 推荐基金（4年排名前 1%）---")
-            print(top_funds[['decision', 'fund_code', 'fund_name', 'rose_4y', 'rank_r_4y', 'sharpe_ratio', 'max_drawdown', 'annual_return', 'volatility', 'alpha', 'beta', 'manager_name']].to_string(index=False))
+            print("\n--- 推荐基金（3年排名前 1%）---")
+            print(top_funds[['decision', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'annual_return', 'volatility', 'alpha', 'beta', 'manager_name']].to_string(index=False))
         else:
-            print("\n没有基金满足 4 年排名前 1% 的条件。")
+            print("\n没有基金满足 3 年排名前 1% 的条件。")
         
         print("\n--- 所有基金分析结果 ---")
-        print(results_df[['decision', 'fund_code', 'fund_name', 'rose_4y', 'rank_r_4y', 'sharpe_ratio', 'max_drawdown', 'annual_return', 'volatility', 'alpha', 'beta', 'manager_name']].to_string(index=False))
+        print(results_df[['decision', 'fund_code', 'fund_name', 'rose_3y', 'rank_r_3y', 'sharpe_ratio', 'max_drawdown', 'annual_return', 'volatility', 'alpha', 'beta', 'manager_name']].to_string(index=False))
 
         print("-" * 25)
         
@@ -586,4 +587,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=3)
+    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=100)
