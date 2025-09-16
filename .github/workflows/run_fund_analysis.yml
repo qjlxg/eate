@@ -1,5 +1,5 @@
 # 工作流名称，将显示在 GitHub Actions 页面
-name: Run Fund Analysis Script
+name: Run Fund Analysis Script with Selenium
 
 # 触发工作流的事件
 on:
@@ -11,7 +11,7 @@ on:
   # 当 fund_analyzer.py 或工作流文件本身被修改并推送时，自动运行
   push:
     paths:
-      - 'multi_fund_analyzer.py'
+      - 'fund_analyzer.py'
       - '.github/workflows/run_fund_analysis.yml'
 
 # 为整个工作流提供权限
@@ -23,9 +23,11 @@ jobs:
   run-script-and-commit:
     runs-on: ubuntu-latest
 
-    # 设置环境变量，包括时区
+    # 设置环境变量，包括时区和 ChromeDriver 路径
     env:
       TZ: Asia/Shanghai
+      # 指定 ChromeDriver 的位置。对于 Ubuntu 环境，默认路径即可
+      CHROMEDRIVER_PATH: /usr/lib/chromium-browser/chromedriver
 
     steps:
       - name: Checkout repository
@@ -38,35 +40,33 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # 更新 pip
           python -m pip install --upgrade pip
-          pip install pandas numpy scipy requests beautifulsoup4 aiohttp matplotlib
-          pip install akshare --upgrade
+          # 安装 Python 库，特别是 selenium
+          pip install pandas numpy requests beautifulsoup4 lxml akshare selenium --upgrade
+          # 安装 Chromium 浏览器和 ChromeDriver
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          # 检查 Chromium 和 ChromeDriver 版本
+          chromium-browser --version
+          chromedriver --version
 
-
-
-      - name: Run Python script and save output
-        id: run-script
+      - name: Run Python script
         run: |
-          # 运行多基金分析脚本，并捕获完整输出
-          OUTPUT=$(python multi_fund_analyzer.py)
-          
-          # 将结果写入一个 Markdown 文件，以日期命名
-          echo "### 基金分析报告 - $(date +'%Y-%m-%d')" > analysis_report.md
-          echo "" >> analysis_report.md
-          echo "\`\`\`" >> analysis_report.md
-          echo "$OUTPUT" >> analysis_report.md
-          echo "\`\`\`" >> analysis_report.md
-          
-          # 将文件名设置为一个环境变量，以便后续步骤使用
-          echo "report_file=analysis_report.md" >> $GITHUB_ENV
+          # 直接运行脚本，脚本本身会生成 analysis_report.md
+          python fund_analyzer.py
 
-      - name: Commit new analysis report
+      - name: Commit new analysis report and data
         run: |
+          # 配置 Git
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add ${{ env.report_file }} fund_cache.json fund_analyzer.log
+          # 添加生成的报告、缓存和日志文件
+          git add analysis_report.md fund_cache.json fund_analyzer.log
+          # 如果有更改，则提交
           git diff --staged --quiet || git commit -m "Auto-generated analysis report for $(date +'%Y-%m-%d')"
           
       - name: Push changes
         run: |
+          # 推送更改到仓库，如果无更改则忽略错误
           git push || echo "No changes to push."
