@@ -2,18 +2,15 @@ import pandas as pd
 import akshare as ak
 from datetime import datetime, timedelta
 import numpy as np
-import time
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
 import os
-from collections import defaultdict
 import logging
 import asyncio
 import aiohttp
-import matplotlib.pyplot as plt
-from scipy import stats  # 用于异常值检测
+from scipy import stats
 
 # 配置日志
 logging.basicConfig(
@@ -24,17 +21,15 @@ logging.basicConfig(
 
 class FundAnalyzer:
     """
-    一个用于综合分析基金投资的工具类。
-    能从 CSV 文件导入基金代码，结合收益率、排名、实时数据、基金经理、基金持仓和Beta系数进行投资决策。
-    支持异步数据获取和可视化报告。
+    综合分析基金投资的工具类，优化异步数据获取，移除可视化功能。
     """
     def __init__(self, cache_data: bool = True, cache_file: str = 'fund_cache.json', cache_expiry_days: int = 7):
         self.fund_data = {}
-        self.fund_info = {}  # 存储 CSV 数据
+        self.fund_info = {}
         self.market_data = {}
         self.manager_data = {}
-        self.holdings_data = {}  # 存储持仓数据
-        self.beta_data = {}  # 新增：存储Beta系数
+        self.holdings_data = {}
+        self.beta_data = {}
         self.analysis_report = []
         self.cache_data = cache_data
         self.cache_expiry_days = cache_expiry_days
@@ -53,23 +48,42 @@ class FundAnalyzer:
         self.analysis_report.append(message)
 
     def _get_risk_free_rate(self) -> float:
-        """从东方财富获取最新 10 年期国债收益率作为无风险利率"""
+        """获取最新 10 年期国债收益率，添加备用抓取逻辑"""
         try:
             bond_data = ak.bond_zh_us_rate()
-            risk_free_rate = bond_data[bond_data['item_name'] == '中国10年期国债']['value'].iloc[-1] / 100
-            self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
-            return risk_free_rate
+            # 模糊匹配列名
+            if 'item_name' not in bond_data.columns:
+                for col in bond_data.columns:
+                    if 'name' in col.lower():
+                        bond_data = bond_data.rename(columns={col: 'item_name'})
+                        break
+            if 'item_name' in bond_data.columns:
+                risk_free_rate = bond_data[bond_data['item_name'].str.contains('中国10年期国债', na=False)]['value'].iloc[-1] / 100
+                self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
+                return risk_free_rate
+            raise ValueError("未找到中国10年期国债数据")
         except Exception as e:
-            self._log(f"获取无风险利率失败，使用默认值 0.018298: {e}", 'error')
-            return 0.018298
+            self._log(f"akshare 获取无风险利率失败，尝试网页抓取: {e}", 'warning')
+            try:
+                url = "http://www.chinabond.com.cn/"
+                headers = {'User-Agent': 'Mozilla/5.0'}
+                response = requests.get(url, headers=headers, timeout=5)
+                soup = BeautifulSoup(response.text, 'html.parser')
+                rate_text = soup.find(string=re.compile(r'10年期国债.*?\d+\.\d+%'))
+                if rate_text:
+                    rate = float(re.search(r'\d+\.\d+%', rate_text).group().replace('%', '')) / 100
+                    self._log(f"通过网页抓取获取无风险利率：{rate:.4f}")
+                    return rate
+            except Exception as e2:
+                self._log(f"网页抓取无风险利率失败，使用默认值 0.018298: {e2}", 'error')
+                return 0.018298
 
     def _load_cache(self, cache_file: str) -> dict:
-        """从文件加载缓存，并检查过期"""
+        """从文件加载缓存，检查过期"""
         if os.path.exists(cache_file):
             try:
                 with open(cache_file, 'r', encoding='utf-8') as f:
                     cache = json.load(f)
-                # 检查缓存时间
                 if 'timestamp' in cache and datetime.now() - datetime.fromisoformat(cache['timestamp']) > timedelta(days=self.cache_expiry_days):
                     self._log("缓存已过期，重新创建。", 'warning')
                     return {}
@@ -80,14 +94,14 @@ class FundAnalyzer:
         return {}
 
     def _save_cache(self):
-        """将缓存保存到文件，添加时间戳"""
+        """保存缓存，添加时间戳"""
         with open(self.cache_file, 'w', encoding='utf-8') as f:
             json.dump({'timestamp': datetime.now().isoformat(), 'data': self.cache}, f, indent=4, ensure_ascii=False)
 
     async def _async_get(self, session, url, headers):
-        """异步GET请求"""
+        """异步GET请求，设置短超时"""
         try:
-            async with session.get(url, headers=headers, timeout=10) as response:
+            async with session.get(url, headers=headers, timeout=5) as response:
                 response.raise_for_status()
                 return await response.text()
         except Exception as e:
@@ -95,7 +109,7 @@ class FundAnalyzer:
             return None
 
     async def get_real_time_fund_data(self, fund_code: str):
-        """获取单个基金的实时数据（净值、夏普比率、最大回撤），异步版本"""
+        """获取基金实时数据，限制数据范围"""
         cache_key = f'fund_{fund_code}'
         if self.cache_data and cache_key in self.cache:
             self._log(f"使用缓存数据 for 基金 {fund_code}")
@@ -107,16 +121,18 @@ class FundAnalyzer:
             try:
                 fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
                 fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
+                # 限制为最近 1 年数据
+                one_year_ago = datetime.now() - timedelta(days=365)
+                fund_data = fund_data[fund_data['净值日期'] >= one_year_ago]
                 fund_data.set_index('净值日期', inplace=True)
                 fund_data = fund_data.dropna()
 
-                if len(fund_data) < 252:
-                    raise ValueError("数据不足，无法计算可靠的夏普比率和回撤")
+                if len(fund_data) < 100:  # 至少 100 天数据
+                    raise ValueError("数据不足，无法计算指标")
 
                 returns = fund_data['单位净值'].pct_change().dropna()
-                # 异常值检测：使用Z分数过滤
                 z_scores = np.abs(stats.zscore(returns))
-                returns = returns[z_scores < 3]  # 去除超过3倍标准差的值
+                returns = returns[z_scores < 3]
 
                 annual_returns = returns.mean() * 252
                 annual_volatility = returns.std() * (252**0.5)
@@ -138,15 +154,15 @@ class FundAnalyzer:
                 return True
             except Exception as e:
                 self._log(f"获取基金 {fund_code} 数据失败 (尝试 {attempt+1}/3): {e}", 'warning')
-                await asyncio.sleep(2)
+                await asyncio.sleep(1)  # 缩短重试间隔
         self.fund_data[fund_code] = {'latest_nav': np.nan, 'sharpe_ratio': np.nan, 'max_drawdown': np.nan}
         return False
 
     async def _scrape_manager_data_from_web(self, fund_code: str) -> dict:
-        """异步网页抓取基金经理数据"""
+        """异步抓取基金经理数据"""
         self._log(f"尝试异步网页抓取基金 {fund_code} 的基金经理数据...")
         manager_url = f"http://fundf10.eastmoney.com/jjjl_{fund_code}.html"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124'}
         async with aiohttp.ClientSession() as session:
             html = await self._async_get(session, manager_url, headers)
             if not html:
@@ -198,15 +214,14 @@ class FundAnalyzer:
             }
 
     async def get_fund_manager_data(self, fund_code: str):
-        """获取基金经理数据（akshare优先，失败则异步抓取）"""
+        """获取基金经理数据"""
         self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
         try:
-            manager_info = ak.fund_manager_em()  # 更新为fund_manager_em
+            manager_info = ak.fund_manager_em()
             if not manager_info.empty:
-                # 过滤特定基金
                 manager_info = manager_info[manager_info['现任基金代码'].str.contains(fund_code, na=False)]
                 if not manager_info.empty:
-                    latest_manager = manager_info.sort_values(by='累计从业时间', ascending=False).iloc[0]  # 假设累计从业时间排序
+                    latest_manager = manager_info.sort_values(by='累计从业时间', ascending=False).iloc[0]
                     name = latest_manager.get('姓名', 'N/A')
                     tenure_days = latest_manager.get('累计从业时间', np.nan)
                     cumulative_return = latest_manager.get('现任基金最佳回报', '0%')
@@ -222,7 +237,6 @@ class FundAnalyzer:
         except Exception as e:
             self._log(f"使用akshare获取基金 {fund_code} 经理数据失败: {e}", 'warning')
 
-        # 异步抓取
         scraped_data = await self._scrape_manager_data_from_web(fund_code)
         if scraped_data:
             self.manager_data[fund_code] = scraped_data
@@ -245,7 +259,7 @@ class FundAnalyzer:
 
             price_change = last_week_data['close'].iloc[-1] / last_week_data['close'].iloc[0] - 1
             volume_change = last_week_data['volume'].mean() / last_week_data['volume'].iloc[:-1].mean() - 1
-            sentiment_score = price_change * 50 + volume_change * 50  # 新增：量化分数 (-100 to 100)
+            sentiment_score = price_change * 50 + volume_change * 50
             if sentiment_score > 10:
                 sentiment, trend = 'optimistic', 'bullish'
             elif sentiment_score < -10:
@@ -262,10 +276,10 @@ class FundAnalyzer:
             return False
 
     async def _scrape_holdings_data_from_web(self, fund_code: str) -> list:
-        """异步网页抓取持仓数据"""
+        """异步抓取持仓数据"""
         self._log(f"尝试异步网页抓取基金 {fund_code} 的持仓数据...")
         holdings_url = f"http://fundf10.eastmoney.com/ccmx_{fund_code}.html"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124'}
         async with aiohttp.ClientSession() as session:
             html = await self._async_get(session, holdings_url, headers)
             if not html:
@@ -296,11 +310,11 @@ class FundAnalyzer:
             return holdings
 
     async def get_fund_holdings_data(self, fund_code: str):
-        """获取基金持仓数据（akshare优先，失败则异步抓取）"""
+        """获取基金持仓数据"""
         self._log(f"正在获取基金 {fund_code} 的持仓数据...")
         current_year = str(datetime.now().year)
         try:
-            holdings_df = ak.fund_portfolio_hold_em(symbol=fund_code, date=current_year)  # 添加date参数
+            holdings_df = ak.fund_portfolio_hold_em(symbol=fund_code, date=current_year)
             if not holdings_df.empty:
                 self.holdings_data[fund_code] = holdings_df.to_dict('records')
                 self._log(f"基金 {fund_code} 持仓数据已通过akshare获取。")
@@ -318,18 +332,22 @@ class FundAnalyzer:
             return False
 
     async def get_fund_beta(self, fund_code: str):
-        """计算基金Beta系数（相对于上证指数）"""
+        """计算基金Beta系数，限制数据范围"""
         try:
             fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
             fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
+            one_year_ago = datetime.now() - timedelta(days=365)
+            fund_data = fund_data[fund_data['净值日期'] >= one_year_ago]
             fund_returns = fund_data.set_index('净值日期')['单位净值'].pct_change().dropna()
 
             index_data = ak.stock_zh_index_daily_em(symbol="sh000001")
             index_data['date'] = pd.to_datetime(index_data['date'])
+            index_data = index_data[index_data['date'] >= one_year_ago]
             index_returns = index_data.set_index('date')['close'].pct_change().dropna()
 
-            # 对齐日期
             combined = pd.concat([fund_returns, index_returns], axis=1, join='inner').dropna()
+            if len(combined) < 100:
+                raise ValueError("数据不足，无法计算Beta")
             cov = np.cov(combined.iloc[:,0], combined.iloc[:,1])[0][1]
             var = np.var(combined.iloc[:,1])
             beta = cov / var if var != 0 else np.nan
@@ -342,7 +360,7 @@ class FundAnalyzer:
             return False
 
     def make_decision(self, fund_code: str, personal_strategy: dict) -> str:
-        """根据基金数据、CSV 数据、持仓、Beta和个人策略做出投资决策"""
+        """投资决策"""
         self._log(f"开始做出 {fund_code} 的投资决策:")
         if fund_code not in self.fund_data or not self.market_data:
             return "数据获取不完整，无法给出明确建议。"
@@ -375,13 +393,12 @@ class FundAnalyzer:
             holdings_df = pd.DataFrame(holdings)
             top_10_holdings_sum = holdings_df['占净值比例'].iloc[:10].sum()
             holdings_report += f"前十持仓集中度为 {top_10_holdings_sum:.2f}%。"
-            if top_10_holdings_sum > 50:  # 调整阈值
+            if top_10_holdings_sum > 50:
                 holdings_report += "集中度较高，风险偏大。"
                 fund_risk_high = True
             else:
                 holdings_report += "集中度适中，风险可控。"
 
-            # 新增：尝试获取行业分配
             try:
                 industry_df = ak.fund_portfolio_industry_allocation_em(symbol=fund_code, date=str(datetime.now().year))
                 if not industry_df.empty:
@@ -394,7 +411,6 @@ class FundAnalyzer:
 
             self._log(f"持仓分析：{holdings_report}")
 
-        # 决策逻辑（丰富版）
         is_high_beta = pd.notna(beta) and beta > 1.5
         if invest_horizon == 'long-term':
             if market_trend == 'bearish' or market_score < -10:
@@ -419,39 +435,8 @@ class FundAnalyzer:
                 return f"保持谨慎：市场 {market_trend} 或 {fund_name} 不适合短期投资（Beta {beta:.2f}）。"
         return "重新审视策略：投资策略与市场状况不匹配。"
 
-    def generate_visual_report(self, fund_code: str, output_dir: str = 'visual_reports'):
-        """生成可视化报告：净值走势和持仓饼图"""
-        os.makedirs(output_dir, exist_ok=True)
-
-        # 净值走势图
-        try:
-            fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
-            fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
-            plt.figure(figsize=(10, 5))
-            plt.plot(fund_data['净值日期'], fund_data['单位净值'], label='单位净值')
-            plt.title(f"{fund_code} 净值走势")
-            plt.xlabel('日期')
-            plt.ylabel('单位净值')
-            plt.legend()
-            plt.savefig(f"{output_dir}/{fund_code}_nav.png")
-            plt.close()
-            self._log(f"生成 {fund_code} 净值走势图。")
-        except Exception as e:
-            self._log(f"生成净值图失败: {e}", 'warning')
-
-        # 持仓饼图
-        holdings = self.holdings_data.get(fund_code, [])
-        if holdings:
-            holdings_df = pd.DataFrame(holdings)
-            plt.figure(figsize=(8, 8))
-            plt.pie(holdings_df['占净值比例'][:10], labels=holdings_df['股票名称'][:10], autopct='%1.1f%%')
-            plt.title(f"{fund_code} 前十持仓分布")
-            plt.savefig(f"{output_dir}/{fund_code}_holdings_pie.png")
-            plt.close()
-            self._log(f"生成 {fund_code} 持仓饼图。")
-
     async def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = '代码', max_funds: int = 100):
-        """批量异步分析基金"""
+        """批量异步分析基金，分批处理"""
         self._log("正在从 CSV 导入基金代码列表...")
         try:
             funds_df = pd.read_csv(csv_url, encoding='gbk')
@@ -468,16 +453,20 @@ class FundAnalyzer:
 
         await self.get_market_sentiment()
 
-        tasks = []
-        for code in fund_codes:
-            tasks.append(self.get_real_time_fund_data(code))
-            tasks.append(self.get_fund_manager_data(code))
-            tasks.append(self.get_fund_holdings_data(code))
-            tasks.append(self.get_fund_beta(code))
-
-        await asyncio.gather(*tasks)
-
+        # 分批处理，每批 10 个基金
+        batch_size = 10
         results = []
+        for i in range(0, len(fund_codes), batch_size):
+            batch_codes = fund_codes[i:i + batch_size]
+            self._log(f"处理批次 {i//batch_size + 1}，基金代码：{batch_codes}")
+            tasks = []
+            for code in batch_codes:
+                tasks.append(self.get_real_time_fund_data(code))
+                tasks.append(self.get_fund_manager_data(code))
+                tasks.append(self.get_fund_holdings_data(code))
+                tasks.append(self.get_fund_beta(code))
+            await asyncio.gather(*tasks)
+
         for code in fund_codes:
             decision = self.make_decision(code, personal_strategy)
             fund_info = self.fund_info.get(code, {})
@@ -497,7 +486,6 @@ class FundAnalyzer:
                 'decision': decision,
                 'top_10_holdings': self.holdings_data.get(code, [])[:10]
             })
-            self.generate_visual_report(code)  # 生成可视化
 
         results_df = pd.DataFrame(results)
 
@@ -524,8 +512,6 @@ class FundAnalyzer:
                 print(holdings_df.to_string(index=False))
         print("-" * 25)
 
-        print("可视化报告已保存到 'visual_reports' 目录。")
-
         return results_df
 
 if __name__ == '__main__':
@@ -535,5 +521,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    # 运行异步分析
-    asyncio.run(analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=88))
+    asyncio.run(analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, code_column='代码', max_funds=18))
