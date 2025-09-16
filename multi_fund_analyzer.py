@@ -418,4 +418,4 @@ if __name__ == '__main__':
         'horizon': 'long-term',
         'risk_tolerance': 'medium'
     }
-    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, max_funds=10)
+    results_df = analyzer.analyze_multiple_funds(CSV_URL, my_personal_strategy, max_funds=220)
