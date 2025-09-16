@@ -367,6 +367,18 @@ class FundAnalyzer:
         self._log(f"开始做出 {fund_code} 的投资决策:")
         if fund_code not in self.fund_data or not self.market_data:
             return "数据获取不完整，无法给出明确建议。"
+        
+        # --- 错误修复：统一数据访问方式 ---
+        holdings_data_item = self.holdings_data.get(fund_code, {})
+        holdings = []
+        sectors = []
+        
+        if isinstance(holdings_data_item, dict):
+            holdings = holdings_data_item.get('holdings', [])
+            sectors = holdings_data_item.get('sectors', [])
+        elif isinstance(holdings_data_item, list):
+            holdings = holdings_data_item
+        # ----------------------------------
 
         market_trend = self.market_data.get('trend', 'unknown')
         fund_drawdown = self.fund_data[fund_code].get('max_drawdown', float('inf'))
@@ -397,8 +409,6 @@ class FundAnalyzer:
             self._log("未能获取基金经理数据，无法评估其表现。")
 
         # 持仓数据分析
-        holdings = self.holdings_data.get(fund_code, {}).get('holdings', [])
-        sectors = self.holdings_data.get(fund_code, {}).get('sectors', [])
         
         fund_risk_high = False
         holdings_report = ""
@@ -505,6 +515,15 @@ class FundAnalyzer:
             fund_data_ext = self.fund_data.get(code, {})
             holdings_data = self.holdings_data.get(code, {})
             
+            # 统一数据结构以供报告使用
+            holdings_list = []
+            sectors_list = []
+            if isinstance(holdings_data, dict):
+                holdings_list = holdings_data.get('holdings', [])
+                sectors_list = holdings_data.get('sectors', [])
+            elif isinstance(holdings_data, list):
+                holdings_list = holdings_data
+            
             results.append({
                 'fund_code': code,
                 'fund_name': fund_info.get('名称', '未知'),
@@ -522,8 +541,8 @@ class FundAnalyzer:
                 'tenure_years': self.manager_data.get(code, {}).get('tenure_years', np.nan),
                 'market_trend': self.market_data.get('trend', 'unknown'),
                 'decision': decision,
-                'top_10_holdings': holdings_data.get('holdings', [])[:10],
-                'sectors': holdings_data.get('sectors', [])
+                'top_10_holdings': holdings_list[:10],
+                'sectors': sectors_list
             })
             time.sleep(1)
 
