@@ -309,10 +309,10 @@ class FundAnalyzer:
         risk_tolerance = personal_strategy.get('risk_tolerance', 'medium')
         sharpe_ratio = self.fund_data[fund_code].get('sharpe_ratio', 0)
         
-        # 提取 CSV 数据
+        # 提取 CSV 数据 (已修改为4年)
         fund_info = self.fund_info.get(fund_code, {})
-        rose_5y = fund_info.get('rose(5y)', np.nan)
-        rank_r_5y = fund_info.get('rank_r(5y)', np.nan)
+        rose_4y = fund_info.get('rose(4y)', np.nan)
+        rank_r_4y = fund_info.get('rank_r(4y)', np.nan)
         fund_name = fund_info.get('名称', '未知')
 
         # 基金经理数据
@@ -321,7 +321,7 @@ class FundAnalyzer:
         tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
 
         if pd.notna(manager_return) and pd.notna(tenure_years):
-            if tenure_years > 5 or manager_return > 20:
+            if tenure_years > 4 or manager_return > 20:
                 manager_trust = True
             self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，增加信任度。")
         else:
@@ -355,14 +355,14 @@ class FundAnalyzer:
                 else:
                     return f"观望：市场熊市，{fund_name} 回撤 {fund_drawdown:.2f}，风险较高。建议选择更稳健的基金（如债券型基金）。"
             else:  # bullish or neutral
-                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_5y) and rose_5y > 50 or manager_trust)
-                if is_top_performer and pd.notna(rank_r_5y) and rank_r_5y < 0.05 and risk_tolerance != 'low':
+                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_4y) and rose_4y > 50 or manager_trust)
+                if is_top_performer and pd.notna(rank_r_4y) and rank_r_4y < 0.05 and risk_tolerance != 'low':
                     if holdings and fund_risk_high:
                          return f"谨慎加仓：市场 {market_trend}，{fund_name} 表现优异，但持仓集中度高，潜在风险大。建议谨慎加仓。"
-                    return (f"继续持有或加仓：市场 {market_trend}，{fund_name} 表现优异，5年回报 {rose_5y:.2f}% "
-                            f"（排名前 {rank_r_5y*100:.2f}%）。")
+                    return (f"继续持有或加仓：市场 {market_trend}，{fund_name} 表现优异，4年回报 {rose_4y:.2f}% "
+                            f"（排名前 {rank_r_4y*100:.2f}%）。")
                 else:
-                    return (f"评估其他基金：市场 {market_trend}，但 {fund_name} 表现平平（夏普 {sharpe_ratio:.2f}，5年排名 {rank_r_5y*100:.2f}%）。建议评估其他排名更高的基金。")
+                    return (f"评估其他基金：市场 {market_trend}，但 {fund_name} 表现平平（夏普 {sharpe_ratio:.2f}，4年排名 {rank_r_4y*100:.2f}%）。建议评估其他排名更高的基金。")
         elif invest_horizon == 'short-term':
             if sharpe_ratio > 1.5 and market_trend == 'bullish' and risk_tolerance != 'low':
                 if holdings and fund_risk_high:
@@ -375,6 +375,7 @@ class FundAnalyzer:
     def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = '代码', max_funds: int = None):
         """
         批量分析 CSV 文件中的基金代码，结合 CSV 数据、实时数据和经理数据。
+        (已修改为4年)
         """
         self._log("正在从 CSV 导入基金代码列表...")
         try:
@@ -382,6 +383,15 @@ class FundAnalyzer:
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
             
             funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
+
+            # 检查是否有4年数据列，如果没有，则使用5年数据列
+            if 'rose(4y)' not in funds_df.columns:
+                self._log("未找到 'rose(4y)' 列，将使用 'rose(5y)' 作为替代。")
+                funds_df['rose(4y)'] = funds_df.get('rose(5y)', np.nan)
+            if 'rank_r(4y)' not in funds_df.columns:
+                self._log("未找到 'rank_r(4y)' 列，将使用 'rank_r(5y)' 作为替代。")
+                funds_df['rank_r(4y)'] = funds_df.get('rank_r(5y)', np.nan)
+
             self.fund_info = funds_df.set_index(code_column).to_dict('index')
 
             fund_codes = funds_df[code_column].unique().tolist()
@@ -405,8 +415,8 @@ class FundAnalyzer:
             results.append({
                 'fund_code': code,
                 'fund_name': fund_info.get('名称', '未知'),
-                'rose_5y': fund_info.get('rose(5y)', np.nan),
-                'rank_r_5y': fund_info.get('rank_r(5y)', np.nan),
+                'rose_4y': fund_info.get('rose(4y)', np.nan),
+                'rank_r_4y': fund_info.get('rank_r(4y)', np.nan),
                 'latest_nav': self.fund_data.get(code, {}).get('latest_nav', np.nan),
                 'sharpe_ratio': self.fund_data.get(code, {}).get('sharpe_ratio', np.nan),
                 'max_drawdown': self.fund_data.get(code, {}).get('max_drawdown', np.nan),
@@ -425,15 +435,15 @@ class FundAnalyzer:
         print(f"分析日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"市场趋势: {self.market_data.get('trend', 'unknown')}")
         
-        top_funds = results_df[results_df['rank_r_5y'] < 0.01].sort_values('rank_r_5y')
+        top_funds = results_df[results_df['rank_r_4y'] < 0.01].sort_values('rank_r_4y')
         if not top_funds.empty:
-            print("\n--- 推荐基金（5年排名前 1%）---")
-            print(top_funds[['decision', 'fund_code', 'fund_name', 'rose_5y', 'rank_r_5y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years']].to_string(index=False))
+            print("\n--- 推荐基金（4年排名前 1%）---")
+            print(top_funds[['decision', 'fund_code', 'fund_name', 'rose_4y', 'rank_r_4y', 'sharpe_ratio', 'max_drawdown', 'manager_name', 'manager_return', 'tenure_years']].to_string(index=False))
         else:
-            print("\n没有基金满足 5 年排名前 1% 的条件。")
+            print("\n没有基金满足 4 年排名前 1% 的条件。")
         
         print("\n--- 所有基金分析结果 ---")
-        print(results_df[['decision', 'fund_code', 'fund_name', 'rose_5y', 'rank_r_5y', 'sharpe_ratio', 'max_drawdown', 'manager_name']].to_string(index=False))
+        print(results_df[['decision', 'fund_code', 'fund_name', 'rose_4y', 'rank_r_4y', 'sharpe_ratio', 'max_drawdown', 'manager_name']].to_string(index=False))
 
         print("-" * 25)
         
