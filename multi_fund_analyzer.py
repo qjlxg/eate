@@ -60,6 +60,37 @@ class FundDataFetcher:
         except Exception as e:
             self._log(f"获取无风险利率失败，使用默认值 0.018298: {e}")
             return 0.018298
+    
+    def get_market_sentiment(self):
+        """获取市场情绪（基于上证指数）。"""
+        if 'market' in self.cache:
+            self._log("使用缓存的市场情绪数据。")
+            return self.cache['market']
+        
+        self._log("正在获取市场情绪数据...")
+        try:
+            index_data = ak.stock_zh_index_daily_em(symbol="sh000001")
+            index_data['date'] = pd.to_datetime(index_data['date'])
+            last_week_data = index_data.iloc[-7:]
+            
+            price_change = last_week_data['close'].iloc[-1] / last_week_data['close'].iloc[0] - 1
+            volume_change = last_week_data['volume'].mean() / last_week_data['volume'].iloc[:-1].mean() - 1
+            
+            if price_change > 0.01 and volume_change > 0:
+                sentiment, trend = 'optimistic', 'bullish'
+            elif price_change < -0.01:
+                sentiment, trend = 'pessimistic', 'bearish'
+            else:
+                sentiment, trend = 'neutral', 'neutral'
+            
+            market_data = {'sentiment': sentiment, 'trend': trend}
+            self.cache['market'] = market_data
+            self._save_cache()
+            self._log(f"市场情绪数据已获取：{market_data}")
+            return market_data
+        except Exception as e:
+            self._log(f"获取市场数据失败: {e}")
+            return {'sentiment': 'unknown', 'trend': 'unknown'}
 
     def get_real_time_fund_data(self, fund_code: str) -> dict:
         """获取单个基金的实时数据和性能指标。"""
