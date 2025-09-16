@@ -102,10 +102,12 @@ class FundDataFetcher:
             soup = BeautifulSoup(response.text, 'html.parser')
             
             # 抓取基金规模
-            size_text = soup.find('div', class_='dataItem02').find('dd').get_text(strip=True)
-            size_value = re.search(r'规模：(\d+\.\d+)亿元', size_text)
-            if size_value:
-                info['size_billion'] = float(size_value.group(1))
+            size_text_elem = soup.find('div', class_='dataItem02')
+            if size_text_elem:
+                size_text = size_text_elem.find('dd').get_text(strip=True)
+                size_value = re.search(r'规模：(\d+\.\d+)亿元', size_text)
+                if size_value:
+                    info['size_billion'] = float(size_value.group(1))
 
             # 抓取基金评级（以晨星评级为例）
             rating_elements = soup.find_all('div', class_='rating-star')
@@ -115,8 +117,10 @@ class FundDataFetcher:
 
             # 抓取跟踪误差（仅限指数基金）
             try:
-                tracking_error_text = soup.find(string=re.compile("跟踪误差")).find_next('span').get_text()
-                info['tracking_error'] = float(tracking_error_text.replace('%', ''))
+                tracking_error_elem = soup.find(string=re.compile("跟踪误差")).find_next('span')
+                if tracking_error_elem:
+                    tracking_error_text = tracking_error_elem.get_text()
+                    info['tracking_error'] = float(tracking_error_text.replace('%', ''))
             except:
                 info['tracking_error'] = np.nan
         
@@ -133,28 +137,28 @@ class FundDataFetcher:
         self._log(f"正在获取基金 {fund_code} 的实时数据和性能指标...")
         for attempt in range(3):
             try:
-                fund_data = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
-                fund_data['净值日期'] = pd.to_datetime(fund_data['净值日期'])
-                fund_data.set_index('净值日期', inplace=True)
-                fund_data = fund_data.dropna()
+                fund_data_ak = ak.fund_open_fund_info_em(symbol=fund_code, indicator="单位净值走势")
+                fund_data_ak['净值日期'] = pd.to_datetime(fund_data_ak['净值日期'])
+                fund_data_ak.set_index('净值日期', inplace=True)
+                fund_data_ak = fund_data_ak.dropna()
 
-                if len(fund_data) < 252:
+                if len(fund_data_ak) < 252:
                     raise ValueError("数据不足，无法计算可靠的指标")
 
-                returns = fund_data['单位净值'].pct_change().dropna()
+                returns = fund_data_ak['单位净值'].pct_change().dropna()
                 annual_returns_calc = returns.mean() * 252
                 annual_volatility_calc = returns.std() * (252**0.5)
                 sharpe_ratio = (annual_returns_calc - self.risk_free_rate) / annual_volatility_calc if annual_volatility_calc != 0 else 0
                 
-                rolling_max = fund_data['单位净值'].cummax()
-                daily_drawdown = (fund_data['单位净值'] - rolling_max) / rolling_max
+                rolling_max = fund_data_ak['单位净值'].cummax()
+                daily_drawdown = (fund_data_ak['单位净值'] - rolling_max) / rolling_max
                 max_drawdown = daily_drawdown.min() * -1
                 
                 metrics = self._scrape_performance_metrics(fund_code)
                 info = self._scrape_fund_info(fund_code)
                 
                 data = {
-                    'latest_nav': float(fund_data['单位净值'].iloc[-1]),
+                    'latest_nav': float(fund_data_ak['单位净值'].iloc[-1]),
                     'sharpe_ratio': float(sharpe_ratio),
                     'max_drawdown': float(max_drawdown),
                     'annual_return': metrics.get('annual_return', np.nan),
@@ -317,52 +321,51 @@ class InvestmentStrategy:
         fund_type = fund_info.get('类型', '未知')
 
         # 1. 基金通用评分（适用于所有类型）
-        sharpe_ratio = fund_data.get('sharpe_ratio', 0)
-        annual_return = fund_data.get('annual_return', 0)
-        max_drawdown = fund_data.get('max_drawdown', 1)
-        rating = fund_data.get('rating', 0)
+        sharpe_ratio = fund_data.get('sharpe_ratio')
+        annual_return = fund_data.get('annual_return')
+        max_drawdown = fund_data.get('max_drawdown')
+        rating = fund_data.get('rating')
 
+        self._log(f"  - 基金通用指标: 夏普比率: {sharpe_ratio}, 年化收益: {annual_return}, 最大回撤: {max_drawdown}, 评级: {rating}")
+        
         # 收益与风险评分
-        if pd.notna(annual_return) and annual_return > 15: score += 20
-        elif pd.notna(annual_return) and annual_return > 10: score += 10
-        if pd.notna(sharpe_ratio) and sharpe_ratio > 1.5: score += 20
-        elif pd.notna(sharpe_ratio) and sharpe_ratio > 1.0: score += 10
-        if pd.notna(max_drawdown) and max_drawdown < 0.2: score += 15
+        if pd.notna(annual_return) and annual_return > 15: score += 20; self._log("    - 得分: 年化收益 > 15%")
+        elif pd.notna(annual_return) and annual_return > 10: score += 10; self._log("    - 得分: 年化收益 > 10%")
+        if pd.notna(sharpe_ratio) and sharpe_ratio > 1.5: score += 20; self._log("    - 得分: 夏普比率 > 1.5")
+        elif pd.notna(sharpe_ratio) and sharpe_ratio > 1.0: score += 10; self._log("    - 得分: 夏普比率 > 1.0")
+        if pd.notna(max_drawdown) and max_drawdown < 0.2: score += 15; self._log("    - 得分: 最大回撤 < 20%")
 
         # 评级评分
-        if pd.notna(rating) and rating >= 4: score += rating * 5
+        if pd.notna(rating) and rating >= 4: score += rating * 5; self._log(f"    - 得分: 评级为 {rating} 星")
         
         # 2. 针对特定基金类型的评分
-        if '股票' in fund_type or '混合' in fund_type or '指数' in fund_type:
-            fund_size = fund_data.get('size_billion', np.nan)
-            # 规模大于10亿
-            if pd.notna(fund_size) and fund_size > 10: score += 10
-            # 最大回撤小、波动率小、夏普比率大（已在通用评分中体现）
+        fund_size = fund_data.get('size_billion')
+        if '股票' in fund_type or '混合' in fund_type:
+            self._log(f"  - 股票/混合基金指标: 规模: {fund_size}亿")
+            if pd.notna(fund_size) and fund_size > 10: score += 10; self._log("    - 得分: 规模 > 10亿")
 
         if '债券' in fund_type:
-            # 基金经理三年内有变动
-            tenure_years = manager_data.get('tenure_years', np.nan)
+            tenure_years = manager_data.get('tenure_years')
+            self._log(f"  - 债券基金指标: 基金经理任职年限: {tenure_years}年, 评级: {rating}")
             if pd.notna(tenure_years) and tenure_years < 3:
-                score -= 20
-            # 暂无评级的基金
-            if pd.isna(rating): score -= 10
-            # 小公司的基金（暂无可靠数据，忽略此项）
+                score -= 20; self._log("    - 扣分: 基金经理任职 < 3年")
+            if pd.isna(rating): score -= 10; self._log("    - 扣分: 暂无评级")
 
         if '指数' in fund_type:
-            tracking_error = fund_data.get('tracking_error', np.nan)
-            # 收益误差越小越好
+            tracking_error = fund_data.get('tracking_error')
+            self._log(f"  - 指数基金指标: 规模: {fund_size}亿, 跟踪误差: {tracking_error}%")
             if pd.notna(tracking_error):
-                if tracking_error < 0.5: score += 20
-                elif tracking_error < 1.0: score += 10
-            # 规模大于1亿
-            if pd.notna(fund_size) and fund_size < 1: score -= 20
-            # 剔除小公司基金（同债券）
-
+                if tracking_error < 0.5: score += 20; self._log("    - 得分: 跟踪误差 < 0.5%")
+                elif tracking_error < 1.0: score += 10; self._log("    - 得分: 跟踪误差 < 1.0%")
+            if pd.notna(fund_size) and fund_size < 1: score -= 20; self._log("    - 扣分: 规模 < 1亿")
+        
         # 3. 基金经理评分
-        tenure_years = manager_data.get('tenure_years', 0)
-        manager_return = manager_data.get('cumulative_return', 0)
+        manager_name = manager_data.get('name', 'N/A')
+        tenure_years = manager_data.get('tenure_years')
+        manager_return = manager_data.get('cumulative_return')
+        self._log(f"  - 基金经理指标: 姓名: {manager_name}, 任职年限: {tenure_years}年, 任职回报: {manager_return}%")
         if pd.notna(tenure_years) and tenure_years > 3 and pd.notna(manager_return) and manager_return > 20:
-            score += 20
+            score += 20; self._log("    - 得分: 基金经理资深且回报高")
         
         # 4. 持仓评分（反向指标，风险越高扣分）
         holdings = holdings_data.get('holdings', [])
@@ -370,13 +373,16 @@ class InvestmentStrategy:
             holdings_df = pd.DataFrame(holdings)
             top_10_concentration = holdings_df['占净值比例'].iloc[:10].sum() if len(holdings_df) >= 10 else holdings_df['占净值比例'].sum()
             if top_10_concentration > 60:
-                score -= 15
+                score -= 15; self._log(f"  - 扣分: 前十持仓集中度 > 60% ({top_10_concentration:.2f}%)")
         
         # 5. 市场趋势调整
+        original_score = score
         if market_trend == 'bullish':
             score *= 1.1 # 牛市中看重进攻性，分数略上调
+            self._log(f"  - 市场趋势调整: 牛市，分数上调至 {score:.2f}")
         elif market_trend == 'bearish':
             score *= 0.9 # 熊市中看重防守性，分数略下调
+            self._log(f"  - 市场趋势调整: 熊市，分数下调至 {score:.2f}")
         
         return score
 
@@ -414,7 +420,10 @@ class FundAnalyzer:
             if 'rank_r(3y)' not in funds_df.columns:
                 self._log("未找到 'rank_r(3y)' 列，将使用 'rank_r(5y)' 作为替代。")
                 funds_df['rank_r(3y)'] = funds_df.get('rank_r(5y)', np.nan)
-
+            if '类型' not in funds_df.columns:
+                self._log("警告: 未找到 '类型' 列。将无法进行特定类型的评分。")
+                funds_df['类型'] = '未知'
+            
             funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
             fund_info_dict = funds_df.set_index(code_column).to_dict('index')
             fund_codes = funds_df[code_column].unique().tolist()
@@ -430,11 +439,13 @@ class FundAnalyzer:
 
         results = []
         for code in fund_codes:
+            fund_info = fund_info_dict.get(code, {})
+            self._log(f"\n--- 正在分析基金 {code} ({fund_info.get('名称', '未知')}) ---")
+            
             fund_data = self.data_fetcher.get_real_time_fund_data(code)
             manager_data = self.data_fetcher.get_fund_manager_data(code)
             holdings_data = self.data_fetcher.get_fund_holdings_data(code)
             
-            fund_info = fund_info_dict.get(code, {})
             score = strategy_engine.score_fund(fund_data, fund_info, manager_data, holdings_data)
             decision = strategy_engine.make_decision(score)
             
