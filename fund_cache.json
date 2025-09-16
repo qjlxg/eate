@@ -146,6 +146,206 @@
             "name": "黄兴亮",
             "tenure_years": 0.0136986301369863,
             "cumulative_return": 90.33
+        },
+        "005551": {
+            "name": "单柏霖",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 68.32
+        },
+        "005959": {
+            "name": "沈犁",
+            "tenure_years": 0.010958904109589041,
+            "cumulative_return": 81.94
+        },
+        "005963": {
+            "name": "张天闻",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 62.68
+        },
+        "006503": {
+            "name": "金梓才",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 93.49
+        },
+        "006523": {
+            "name": "唐家伟",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 56.85
+        },
+        "006888": {
+            "name": "周建胜",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 51.9
+        },
+        "007114": {
+            "name": "胡泽",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 130.39
+        },
+        "007356": {
+            "name": "马翔",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 53.0
+        },
+        "007509": {
+            "name": "胡中原",
+            "tenure_years": 0.01643835616438356,
+            "cumulative_return": 354.3
+        },
+        "007771": {
+            "name": "王秀",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 60.66
+        },
+        "007818": {
+            "name": "艾小军",
+            "tenure_years": 0.01643835616438356,
+            "cumulative_return": 140.32
+        },
+        "008021": {
+            "name": "张娅 郜哲 李孝华",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 84.71
+        },
+        "008087": {
+            "name": "李俊",
+            "tenure_years": 0.0136986301369863,
+            "cumulative_return": 91.55
+        },
+        "008327": {
+            "name": "姚楠燕",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 103.06
+        },
+        "008586": {
+            "name": "李俊",
+            "tenure_years": 0.0136986301369863,
+            "cumulative_return": 32.81
+        },
+        "008843": {
+            "name": "马毅",
+            "tenure_years": 0.7452054794520548,
+            "cumulative_return": 47.96
+        },
+        "008989": {
+            "name": "郭玮羚",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 121.95
+        },
+        "009009": {
+            "name": "翟森",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 103.29
+        },
+        "009063": {
+            "name": "金梓才 贾雅楠",
+            "tenure_years": 0.6438356164383562,
+            "cumulative_return": 42.28
+        },
+        "009239": {
+            "name": "何天翔 林丽娟",
+            "tenure_years": 0.7479452054794521,
+            "cumulative_return": 56.94
+        },
+        "009492": {
+            "name": "容志能",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 75.7
+        },
+        "009645": {
+            "name": "唐雷",
+            "tenure_years": 0.0136986301369863,
+            "cumulative_return": 98.94
+        },
+        "009708": {
+            "name": "马丽娜",
+            "tenure_years": 0.6356164383561644,
+            "cumulative_return": 39.55
+        },
+        "009856": {
+            "name": "张一然",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 45.67
+        },
+        "010034": {
+            "name": "陈鹏",
+            "tenure_years": 0.010958904109589041,
+            "cumulative_return": 50.8
+        },
+        "010052": {
+            "name": "尤国梁",
+            "tenure_years": 0.00821917808219178,
+            "cumulative_return": 31.27
+        },
+        "010238": {
+            "name": "张天麒",
+            "tenure_years": 0.00821917808219178,
+            "cumulative_return": 18.62
+        },
+        "010392": {
+            "name": "欧阳良琦",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 84.45
+        },
+        "010416": {
+            "name": "陈文凯",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 121.5
+        },
+        "010422": {
+            "name": "刘海啸",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 91.45
+        },
+        "010524": {
+            "name": "马君",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 86.28
+        },
+        "010531": {
+            "name": "王赟杰",
+            "tenure_years": 0.46301369863013697,
+            "cumulative_return": 44.89
+        },
+        "010647": {
+            "name": "李进",
+            "tenure_years": 0.9123287671232877,
+            "cumulative_return": 82.83
+        },
+        "011020": {
+            "name": "于洋",
+            "tenure_years": 0.010958904109589041,
+            "cumulative_return": 1.67
+        },
+        "011036": {
+            "name": "田光远",
+            "tenure_years": 0.010958904109589041,
+            "cumulative_return": 20.53
+        },
+        "011120": {
+            "name": "罗擎",
+            "tenure_years": 0.1726027397260274,
+            "cumulative_return": 75.27
+        },
+        "011145": {
+            "name": "桑翔宇",
+            "tenure_years": 0.3643835616438356,
+            "cumulative_return": 84.21
+        },
+        "011197": {
+            "name": "李德辉",
+            "tenure_years": 0.3013698630136986,
+            "cumulative_return": 46.25
+        },
+        "011223": {
+            "name": "李博",
+            "tenure_years": 0.0027397260273972603,
+            "cumulative_return": 68.96
+        },
+        "011270": {
+            "name": "张丽新",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 12.08
         }
     },
     "holdings": {
@@ -186,6 +386,166 @@
             "sectors": []
         },
         "002170": {
+            "holdings": [],
+            "sectors": []
+        },
+        "005551": {
+            "holdings": [],
+            "sectors": []
+        },
+        "005959": {
+            "holdings": [],
+            "sectors": []
+        },
+        "005963": {
+            "holdings": [],
+            "sectors": []
+        },
+        "006503": {
+            "holdings": [],
+            "sectors": []
+        },
+        "006523": {
+            "holdings": [],
+            "sectors": []
+        },
+        "006888": {
+            "holdings": [],
+            "sectors": []
+        },
+        "007114": {
+            "holdings": [],
+            "sectors": []
+        },
+        "007356": {
+            "holdings": [],
+            "sectors": []
+        },
+        "007509": {
+            "holdings": [],
+            "sectors": []
+        },
+        "007771": {
+            "holdings": [],
+            "sectors": []
+        },
+        "007818": {
+            "holdings": [],
+            "sectors": []
+        },
+        "008021": {
+            "holdings": [],
+            "sectors": []
+        },
+        "008087": {
+            "holdings": [],
+            "sectors": []
+        },
+        "008327": {
+            "holdings": [],
+            "sectors": []
+        },
+        "008586": {
+            "holdings": [],
+            "sectors": []
+        },
+        "008843": {
+            "holdings": [],
+            "sectors": []
+        },
+        "008989": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009009": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009063": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009239": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009492": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009645": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009708": {
+            "holdings": [],
+            "sectors": []
+        },
+        "009856": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010034": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010052": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010238": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010392": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010416": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010422": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010524": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010531": {
+            "holdings": [],
+            "sectors": []
+        },
+        "010647": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011020": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011036": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011120": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011145": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011197": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011223": {
+            "holdings": [],
+            "sectors": []
+        },
+        "011270": {
             "holdings": [],
             "sectors": []
         }
@@ -309,6 +669,246 @@
             "beta": NaN,
             "size_billion": NaN,
             "rating": NaN,
+            "tracking_error": NaN
+        },
+        "005551_汇安成长优选混合C": {
+            "latest_nav": 2.0843,
+            "sharpe_ratio": 0.43206087616482347,
+            "max_drawdown": 0.6385620145916687,
+            "tracking_error": NaN
+        },
+        "005959_财通新视野灵活配置混合C": {
+            "latest_nav": 3.1762,
+            "sharpe_ratio": 0.6817893499048481,
+            "max_drawdown": 0.3494298183865972,
+            "tracking_error": NaN
+        },
+        "005963_宝盈人工智能股票C": {
+            "latest_nav": 3.7236,
+            "sharpe_ratio": 0.7410248640337891,
+            "max_drawdown": 0.5742183184178543,
+            "tracking_error": NaN
+        },
+        "006503_财通集成电路产业股票C": {
+            "latest_nav": 3.2712,
+            "sharpe_ratio": 0.6539171707310464,
+            "max_drawdown": 0.5384679817397495,
+            "tracking_error": NaN
+        },
+        "006523_财通新兴蓝筹混合C": {
+            "latest_nav": 2.2831,
+            "sharpe_ratio": 0.5344364277259105,
+            "max_drawdown": 0.5561458584882878,
+            "tracking_error": NaN
+        },
+        "006888_诺德新生活混合C": {
+            "latest_nav": 1.9832,
+            "sharpe_ratio": 0.429297883507217,
+            "max_drawdown": 0.619247615047699,
+            "tracking_error": NaN
+        },
+        "007114_永赢高端制造混合C": {
+            "latest_nav": 1.7346,
+            "sharpe_ratio": 0.41799005714898585,
+            "max_drawdown": 0.6322101656196458,
+            "tracking_error": NaN
+        },
+        "007356_汇添富科技创新混合C": {
+            "latest_nav": 3.3339,
+            "sharpe_ratio": 0.8117803040771449,
+            "max_drawdown": 0.479310618695894,
+            "tracking_error": NaN
+        },
+        "007509_华商润丰灵活配置混合C": {
+            "latest_nav": 4.543,
+            "sharpe_ratio": 1.141455318537519,
+            "max_drawdown": 0.2731958762886599,
+            "tracking_error": NaN
+        },
+        "007771_同泰开泰混合C": {
+            "latest_nav": 1.0658,
+            "sharpe_ratio": 0.14193004872726026,
+            "max_drawdown": 0.7656612529002319,
+            "tracking_error": NaN
+        },
+        "007818_国泰中证全指通信设备ETF联接C": {
+            "latest_nav": 2.4032,
+            "sharpe_ratio": 0.5861723804999778,
+            "max_drawdown": 0.4436324883915658,
+            "tracking_error": NaN
+        },
+        "008021_华富中证人工智能产业ETF联接C": {
+            "latest_nav": 1.3909,
+            "sharpe_ratio": 0.2993292214692484,
+            "max_drawdown": 0.5315517241379311,
+            "tracking_error": NaN
+        },
+        "008087_华夏中证5G通信主题ETF联接C": {
+            "latest_nav": 1.9155,
+            "sharpe_ratio": 0.47674896845416603,
+            "max_drawdown": 0.5052269601100412,
+            "tracking_error": NaN
+        },
+        "008327_东财通信C": {
+            "latest_nav": 2.3061,
+            "sharpe_ratio": 0.5846854758915492,
+            "max_drawdown": 0.42382094324540365,
+            "tracking_error": NaN
+        },
+        "008586_华夏人工智能ETF联接C": {
+            "latest_nav": 1.3281,
+            "sharpe_ratio": 0.2759016138956455,
+            "max_drawdown": 0.4582350628930818,
+            "tracking_error": NaN
+        },
+        "008843_同泰远见混合C": {
+            "latest_nav": 0.837,
+            "sharpe_ratio": -0.004060719163783397,
+            "max_drawdown": 0.6706325932132384,
+            "tracking_error": NaN
+        },
+        "008989_大成科技创新混合C": {
+            "latest_nav": 2.6383,
+            "sharpe_ratio": 0.7399781553506164,
+            "max_drawdown": 0.48600401394317105,
+            "tracking_error": NaN
+        },
+        "009009_平安科技创新混合C": {
+            "latest_nav": 2.2185,
+            "sharpe_ratio": 0.5846197296849103,
+            "max_drawdown": 0.6130952380952381,
+            "tracking_error": NaN
+        },
+        "009063_财通智慧成长混合C": {
+            "latest_nav": 2.0402,
+            "sharpe_ratio": 0.5171890716181313,
+            "max_drawdown": 0.5978346560151364,
+            "tracking_error": NaN
+        },
+        "009239_融通人工智能指数(LOF)C": {
+            "latest_nav": 2.24,
+            "sharpe_ratio": 0.47489696212251226,
+            "max_drawdown": 0.47184543485694747,
+            "tracking_error": NaN
+        },
+        "009492_宝盈创新驱动股票C": {
+            "latest_nav": 1.7152,
+            "sharpe_ratio": 0.45441495194371456,
+            "max_drawdown": 0.5509838998211092,
+            "tracking_error": NaN
+        },
+        "009645_东方阿尔法优势产业混合C": {
+            "latest_nav": 1.9894,
+            "sharpe_ratio": 0.5091391866945448,
+            "max_drawdown": 0.671182887534454,
+            "tracking_error": NaN
+        },
+        "009708_工银新兴制造混合C": {
+            "latest_nav": 2.5377,
+            "sharpe_ratio": 0.8444363026444051,
+            "max_drawdown": 0.40536062954854746,
+            "tracking_error": NaN
+        },
+        "009856_中加新兴成长混合C": {
+            "latest_nav": 1.7735,
+            "sharpe_ratio": 0.4770665678104407,
+            "max_drawdown": 0.5762201794703437,
+            "tracking_error": NaN
+        },
+        "010034_安信成长精选混合C": {
+            "latest_nav": 1.508,
+            "sharpe_ratio": 0.3979749290383372,
+            "max_drawdown": 0.5340603890290551,
+            "tracking_error": NaN
+        },
+        "010052_长城久嘉创新成长混合C": {
+            "latest_nav": 1.8802,
+            "sharpe_ratio": 0.14427618275552984,
+            "max_drawdown": 0.6397278911564626,
+            "tracking_error": NaN
+        },
+        "010238_安信创新先锋混合发起C": {
+            "latest_nav": 1.0595,
+            "sharpe_ratio": 0.17171772578622232,
+            "max_drawdown": 0.7166469018677735,
+            "tracking_error": NaN
+        },
+        "010392_易方达战略新兴产业股票C": {
+            "latest_nav": 1.5158,
+            "sharpe_ratio": 0.40290680396037454,
+            "max_drawdown": 0.5362989323843417,
+            "tracking_error": NaN
+        },
+        "010416_华泰柏瑞质量精选混合C": {
+            "latest_nav": 1.0805,
+            "sharpe_ratio": 0.16924099552468685,
+            "max_drawdown": 0.6425084801853231,
+            "tracking_error": NaN
+        },
+        "010422_海富通消费优选混合C": {
+            "latest_nav": 1.3978,
+            "sharpe_ratio": 0.3890043523553596,
+            "max_drawdown": 0.4579556672350355,
+            "tracking_error": NaN
+        },
+        "010524_银华中证5G通信主题ETF联接C": {
+            "latest_nav": 1.4893,
+            "sharpe_ratio": 0.4410623822709671,
+            "max_drawdown": 0.43142972049064954,
+            "tracking_error": NaN
+        },
+        "010531_申万中证申万电子行业投资指数(LOF)C": {
+            "latest_nav": 1.4676,
+            "sharpe_ratio": 0.3667650413511124,
+            "max_drawdown": 0.4904322005938634,
+            "tracking_error": NaN
+        },
+        "010647_融通价值趋势混合C": {
+            "latest_nav": 1.2054,
+            "sharpe_ratio": 0.23315221892174862,
+            "max_drawdown": 0.5845804129569995,
+            "tracking_error": NaN
+        },
+        "011020_财通资管消费精选混合C": {
+            "latest_nav": 1.0167,
+            "sharpe_ratio": 0.09350030624067412,
+            "max_drawdown": 0.6546715626274989,
+            "tracking_error": NaN
+        },
+        "011036_嘉实中证稀土产业ETF联接C": {
+            "latest_nav": 1.2053,
+            "sharpe_ratio": 0.24368276847552223,
+            "max_drawdown": 0.5630596702652941,
+            "tracking_error": NaN
+        },
+        "011120_富国创新科技混合C": {
+            "latest_nav": 2.417,
+            "sharpe_ratio": 0.061198087995286865,
+            "max_drawdown": 0.6753841124550507,
+            "tracking_error": NaN
+        },
+        "011145_华安汇宏精选混合C": {
+            "latest_nav": 1.9045,
+            "sharpe_ratio": 0.5926708238090886,
+            "max_drawdown": 0.48767190170070795,
+            "tracking_error": NaN
+        },
+        "011197_摩根优势成长混合C": {
+            "latest_nav": 0.825,
+            "sharpe_ratio": -0.07057726868706667,
+            "max_drawdown": 0.6441318100273817,
+            "tracking_error": NaN
+        },
+        "011223_信澳星奕混合C": {
+            "latest_nav": 1.6293,
+            "sharpe_ratio": 0.47235180750089584,
+            "max_drawdown": 0.6072985427824137,
+            "tracking_error": NaN
+        },
+        "011270_中银证券优势制造股票C": {
+            "latest_nav": 1.3231,
+            "sharpe_ratio": 0.3284702036868155,
+            "max_drawdown": 0.5522946769484166,
             "tracking_error": NaN
         }
     }
