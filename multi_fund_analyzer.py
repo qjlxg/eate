@@ -343,10 +343,9 @@ class FundAnalyzer:
     def analyze_multiple_funds(self, csv_url: str, personal_strategy: dict, code_column: str = '代码', max_funds: int = None):
         """批量分析 CSV 文件中的基金。"""
         try:
-            # 1. 修改这里，以适应你的 CSV 文件列名
             funds_df = pd.read_csv(csv_url, encoding='gbk')
             
-            # 检查并重命名列
+            # 自动重命名列以匹配脚本
             if '基金代码' in funds_df.columns:
                 funds_df.rename(columns={'基金代码': '代码'}, inplace=True)
                 code_column = '代码'
@@ -354,9 +353,9 @@ class FundAnalyzer:
             if '基金名称' in funds_df.columns:
                 funds_df.rename(columns={'基金名称': '名称'}, inplace=True)
             
-            # 2. 从这里开始，代码和原来一样，但现在能找到正确的列名了
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
             
+            # 确保列名存在，以便兼容用户提供的CSV
             if 'rose(3y)' not in funds_df.columns:
                 self._log("未找到 'rose(3y)' 列，将使用 'rose(5y)' 作为替代。")
                 funds_df['rose(3y)'] = funds_df.get('rose(5y)', np.nan)
@@ -364,6 +363,7 @@ class FundAnalyzer:
                 self._log("未找到 'rank_r(3y)' 列，将使用 'rank_r(5y)' 作为替代。")
                 funds_df['rank_r(3y)'] = funds_df.get('rank_r(5y)', np.nan)
             
+            # 自动识别基金类型
             self._log("开始根据基金名称自动识别基金类型...")
             funds_df['类型'] = funds_df['名称'].apply(self._infer_fund_type)
             
