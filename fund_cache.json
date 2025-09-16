@@ -189,5 +189,127 @@
             "holdings": [],
             "sectors": []
         }
+    },
+    "fund_metrics": {
+        "001407_景顺长城稳健回报混合C": {
+            "latest_nav": 3.795,
+            "sharpe_ratio": 0.8152747697668907,
+            "max_drawdown": 0.2682819383259912,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "001724_申万菱信多策略灵活配置混合C": {
+            "latest_nav": 2.244,
+            "sharpe_ratio": 0.4606326562010629,
+            "max_drawdown": 0.3572755417956656,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "002052_诺安稳健回报混合C": {
+            "latest_nav": 1.82,
+            "sharpe_ratio": 0.19070245879363246,
+            "max_drawdown": 0.5360824742268041,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "002112_德邦鑫星价值灵活配置混合C": {
+            "latest_nav": 3.2257,
+            "sharpe_ratio": 0.5654253470708985,
+            "max_drawdown": 0.37050518420472095,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "002163_东方惠新灵活配置混合C": {
+            "latest_nav": 1.3051,
+            "sharpe_ratio": 0.17331262553159227,
+            "max_drawdown": 0.776266517453622,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "002170_东吴移动互联混合C": {
+            "latest_nav": 5.5703,
+            "sharpe_ratio": 0.7127378758054007,
+            "max_drawdown": 0.39573643410852716,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "002580_泰信鑫选灵活配置混合C": {
+            "latest_nav": 1.381,
+            "sharpe_ratio": 0.21288296561416456,
+            "max_drawdown": 0.6884862653419053,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "002771_安信新回报混合C": {
+            "latest_nav": 4.4721,
+            "sharpe_ratio": 0.7938451916108842,
+            "max_drawdown": 0.5270900609974883,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "005118_金信价值精选混合C": {
+            "latest_nav": 1.6521,
+            "sharpe_ratio": 0.3074531803071627,
+            "max_drawdown": 0.4983863080684596,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        },
+        "005312_万家经济新动能混合C": {
+            "latest_nav": 2.1273,
+            "sharpe_ratio": 0.4360004686592542,
+            "max_drawdown": 0.6605844942459116,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN,
+            "size_billion": NaN,
+            "rating": NaN,
+            "tracking_error": NaN
+        }
     }
 }
