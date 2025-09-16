@@ -38,15 +38,18 @@ class SeleniumFetcher:
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        # 模拟浏览器行为，设置User-Agent
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
         
         # 尝试从环境变量获取 ChromeDriver 路径
         try:
+            # 在 GitHub Actions 中，CHROMEDRIVER_PATH 由工作流文件设置
+            # 在本地，你可以手动指定路径
             chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', 'C:/Users/QJL/Desktop/web_code/chromedriver-win64/chromedriver.exe')
             self.driver = webdriver.Chrome(service=ChromeService(chrome_driver_path), options=chrome_options)
+            logger.info("Selenium驱动初始化成功。")
         except WebDriverException as e:
-            logger.error(f"无法初始化 ChromeDriver: {e}. 请确保路径正确并已安装浏览器驱动。")
+            logger.error(f"无法初始化 ChromeDriver: {e}.")
+            logger.error("请确保 ChromeDriver 已安装且路径正确。")
             self.driver = None
 
     def get_page_source(self, url: str) -> str:
@@ -58,7 +61,6 @@ class SeleniumFetcher:
         try:
             logger.info(f"使用 Selenium 访问: {url}")
             self.driver.get(url)
-            # 等待页面加载完成，这里可以根据实际情况调整等待条件
             WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.TAG_NAME, "body"))
             )
@@ -87,9 +89,12 @@ class FundDataFetcher:
         self.cache_data = cache_data
         self.cache_file = cache_file
         self.cache = self._load_cache()
+        
+        # 懒加载 SeleniumFetcher 实例
+        self._selenium_fetcher = None
         self.risk_free_rate = self._get_risk_free_rate()
-        self.selenium_fetcher = SeleniumFetcher()
-        self.akshare_rate_limit = 1  # akshare API 访问间隔，单位秒
+        
+        self.akshare_rate_limit = 1
         self.last_akshare_call = time.time()
 
     def _log(self, message: str):
@@ -115,10 +120,28 @@ class FundDataFetcher:
         """确保基金代码为6位字符串，不足则在前面补0。"""
         return code.zfill(6)
         
+    @property
+    def selenium_fetcher(self):
+        """
+        懒加载（Lazy Loading）SeleniumFetcher 实例。
+        在第一次调用时才创建实例。
+        """
+        if self._selenium_fetcher is None:
+            self._log("正在初始化 SeleniumFetcher...")
+            self._selenium_fetcher = SeleniumFetcher()
+        return self._selenium_fetcher
+        
     def _get_risk_free_rate(self) -> float:
-        """从特定网页获取无风险利率。"""
+        """
+        从特定网页获取无风险利率，优先使用 Selenium，失败则退回 requests。
+        """
         url = "https://sc.macromicro.me/series/1849/china-bond-10-year"
-        source = self.selenium_fetcher.get_page_source(url)
+        
+        # 尝试使用 Selenium 抓取
+        source = None
+        if self.selenium_fetcher.driver:
+            source = self.selenium_fetcher.get_page_source(url)
+        
         if source:
             soup = BeautifulSoup(source, 'lxml')
             stat_val_div = soup.find('div', class_='stat-val')
@@ -131,6 +154,24 @@ class FundDataFetcher:
                         return rate
                     except ValueError:
                         self._log("无法解析无风险利率数值。")
+        
+        self._log("Selenium 抓取无风险利率失败，尝试使用 requests...")
+        try:
+            r = requests.get(url, headers=self._web_headers, timeout=10)
+            r.raise_for_status()
+            r.encoding = 'utf-8'
+            soup = BeautifulSoup(r.text, 'lxml')
+            
+            stat_val_div = soup.find('div', class_='stat-val')
+            if stat_val_div:
+                val_span = stat_val_div.find('span', class_='val')
+                if val_span:
+                    rate = float(val_span.text.strip()) / 100.0
+                    self._log(f"requests 抓取无风险利率成功: {rate}")
+                    return rate
+        except Exception as e:
+            self._log(f"requests 抓取无风险利率也失败: {e}")
+        
         self._log("网页抓取无风险利率失败，使用默认值。")
         return 0.018298
 
@@ -165,6 +206,37 @@ class FundDataFetcher:
         except Exception as e:
             self._log(f"akshare 获取基金 {padded_code} 历史净值失败: {e}")
         return None
+
+    def _get_latest_nav_from_web(self, fund_code: str):
+        """
+        从天天基金网网页抓取最新的单位净值和日增长率。
+        """
+        padded_code = self._pad_fund_code(fund_code)
+        url = f"http://fundf10.eastmoney.com/jjjz_{padded_code}.html"
+        source = None
+        if self.selenium_fetcher.driver:
+            source = self.selenium_fetcher.get_page_source(url)
+
+        if source:
+            soup = BeautifulSoup(source, 'lxml')
+            p_tag = soup.find('p', class_='row row1')
+            if p_tag:
+                b_tag = p_tag.find('b', class_='red lar bold')
+                if b_tag:
+                    text_parts = b_tag.text.strip().split('(')
+                    if len(text_parts) == 2:
+                        try:
+                            nav = float(text_parts[0].strip())
+                            growth_rate_text = text_parts[1].strip().replace('%', '').replace(')', '')
+                            growth_rate = float(growth_rate_text)
+                            self._log(f"网页抓取最新净值成功: {nav}, 日增长率: {growth_rate}%")
+                            return {'nav': nav, 'daily_growth_rate': growth_rate / 100.0}
+                        except (ValueError, IndexError):
+                            self._log("解析最新净值数据失败。")
+
+        self._log("网页抓取最新净值失败: 未找到指定的HTML元素或数据格式不正确。")
+        return None
+
 
     def _get_fund_manager_data(self, fund_code: str, force_update: bool = False):
         """获取基金经理数据。"""
@@ -205,7 +277,10 @@ class FundDataFetcher:
     def _get_fund_manager_data_from_web(self, fund_code: str):
         """使用 Selenium 从网页抓取基金经理数据。"""
         url = f"http://fundf10.eastmoney.com/jbgk_{fund_code}.html"
-        source = self.selenium_fetcher.get_page_source(url)
+        source = None
+        if self.selenium_fetcher.driver:
+            source = self.selenium_fetcher.get_page_source(url)
+
         if source:
             soup = BeautifulSoup(source, 'lxml')
             manager_label = soup.find('label', string=re.compile(r'基金经理：'))
@@ -227,7 +302,10 @@ class FundDataFetcher:
             return self.cache[cache_key]
         
         url = f"http://fundf10.eastmoney.com/ccmx_{padded_code}.html"
-        source = self.selenium_fetcher.get_page_source(url)
+        source = None
+        if self.selenium_fetcher.driver:
+            source = self.selenium_fetcher.get_page_source(url)
+            
         if source:
             soup = BeautifulSoup(source, 'lxml')
             holdings_table = soup.find('div', id='cctable')
@@ -270,7 +348,10 @@ class FundDataFetcher:
             return self.cache[cache_key]
             
         url = f"http://fundf10.eastmoney.com/jbgk_{padded_code}.html"
-        source = self.selenium_fetcher.get_page_source(url)
+        source = None
+        if self.selenium_fetcher.driver:
+            source = self.selenium_fetcher.get_page_source(url)
+
         if source:
             soup = BeautifulSoup(source, 'lxml')
             info_data = {}
@@ -316,7 +397,6 @@ class FundDataFetcher:
             sh_index['日期'] = pd.to_datetime(sh_index['日期'])
             sh_index.set_index('日期', inplace=True)
             
-            # 计算指数近一年的涨跌幅
             one_year_ago = datetime.now() - timedelta(days=365)
             last_year_data = sh_index.loc[sh_index.index > one_year_ago.strftime('%Y-%m-%d')]
             
@@ -537,7 +617,6 @@ class FundAnalyzer:
             
             fund_data = self.data_fetcher.get_fund_data(fund_code)
             
-            # 检查数据是否完整
             if not fund_data.get('info'):
                 self._log(f"基金 {fund_code} 基本信息获取失败，跳过分析。")
                 continue
@@ -561,7 +640,7 @@ class FundAnalyzer:
                 'score': score
             })
             self._log(f"评分详情: {points_log}")
-            time.sleep(1) # 增加延迟，防止频繁访问
+            time.sleep(1)
 
         results_df = pd.DataFrame(results)
         
