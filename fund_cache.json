@@ -346,6 +346,92 @@
             "name": "张丽新",
             "tenure_years": 0.005479452054794521,
             "cumulative_return": 12.08
+        },
+        "000363": {
+            "name": "程洲",
+            "tenure_years": 0.030136986301369864,
+            "cumulative_return": 355.52
+        },
+        "000796": {
+            "name": "容志能 朱凯",
+            "tenure_years": 0.5506849315068493,
+            "cumulative_return": 14.09
+        },
+        "000850": {
+            "name": "韦钰",
+            "tenure_years": 0.0410958904109589,
+            "cumulative_return": 2.43
+        },
+        "001174": {
+            "name": "李帅",
+            "tenure_years": 0.00821917808219178,
+            "cumulative_return": 15.18
+        },
+        "001326": {
+            "name": "刘方正",
+            "tenure_years": 0.021917808219178082,
+            "cumulative_return": 79.86
+        },
+        "001388": {
+            "name": "甘传琦",
+            "tenure_years": 0.0136986301369863,
+            "cumulative_return": 81.04
+        },
+        "001426": {
+            "name": "解锐",
+            "tenure_years": 0.00821917808219178,
+            "cumulative_return": 19.56
+        },
+        "001467": {
+            "name": "李孝华",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 52.94
+        },
+        "001515": {
+            "name": "张晓泉",
+            "tenure_years": 0.010958904109589041,
+            "cumulative_return": 97.71
+        },
+        "001557": {
+            "name": "杨超",
+            "tenure_years": 0.01643835616438356,
+            "cumulative_return": 94.62
+        },
+        "001559": {
+            "name": "吕俏",
+            "tenure_years": 0.5534246575342465,
+            "cumulative_return": 44.62
+        },
+        "001593": {},
+        "001618": {
+            "name": "林心龙 洪明华",
+            "tenure_years": 0.16164383561643836,
+            "cumulative_return": 32.32
+        },
+        "001630": {
+            "name": "林心龙 洪明华",
+            "tenure_years": 0.16164383561643836,
+            "cumulative_return": 12.48
+        },
+        "001644": {
+            "name": "陆彬",
+            "tenure_years": 0.0136986301369863,
+            "cumulative_return": 104.93
+        },
+        "001665": {
+            "name": "林清源",
+            "tenure_years": 0.8273972602739726,
+            "cumulative_return": 60.51
+        },
+        "001676": {
+            "name": "高鹏飞",
+            "tenure_years": 0.005479452054794521,
+            "cumulative_return": 19.3
+        },
+        "001770": {
+            "name": "吴国清",
+            "tenure_years": 0.3835616438356164,
+            "cumulative_return": 23.01
         }
     },
     "holdings": {
@@ -546,6 +632,70 @@
             "sectors": []
         },
         "011270": {
+            "holdings": [],
+            "sectors": []
+        },
+        "000363": {
+            "holdings": [],
+            "sectors": []
+        },
+        "000796": {
+            "holdings": [],
+            "sectors": []
+        },
+        "000850": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001326": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001388": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001426": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001467": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001515": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001557": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001559": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001593": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001618": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001644": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001665": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001676": {
+            "holdings": [],
+            "sectors": []
+        },
+        "001770": {
             "holdings": [],
             "sectors": []
         }
@@ -909,6 +1059,114 @@
             "latest_nav": 1.3231,
             "sharpe_ratio": 0.3284702036868155,
             "max_drawdown": 0.5522946769484166,
+            "tracking_error": NaN
+        },
+        "000363_国泰聚信价值优势混合C": {
+            "latest_nav": 2.482,
+            "sharpe_ratio": 0.3857078030938251,
+            "max_drawdown": 0.5601280292638318,
+            "tracking_error": NaN
+        },
+        "000796_宝盈睿丰创新混合C": {
+            "latest_nav": 2.721,
+            "sharpe_ratio": 0.39702385593349565,
+            "max_drawdown": 0.574719800747198,
+            "tracking_error": NaN
+        },
+        "000850_汇丰晋信双核策略混合C": {
+            "latest_nav": 1.5941,
+            "sharpe_ratio": 0.23250906608371064,
+            "max_drawdown": 0.5314344076259646,
+            "tracking_error": NaN
+        },
+        "001174_中欧瑾和灵活配置混合C": {
+            "latest_nav": 1.7024,
+            "sharpe_ratio": 0.26303369462248416,
+            "max_drawdown": 0.4819975339087547,
+            "tracking_error": NaN
+        },
+        "001326_鹏华弘和混合C": {
+            "latest_nav": 1.5734,
+            "sharpe_ratio": 0.27641755127049805,
+            "max_drawdown": 0.35504642108415685,
+            "tracking_error": NaN
+        },
+        "001388_国联新经济混合C": {
+            "latest_nav": 2.515,
+            "sharpe_ratio": 0.46044285592232215,
+            "max_drawdown": 0.518849840255591,
+            "tracking_error": NaN
+        },
+        "001426_南方大数据300C": {
+            "latest_nav": 1.7452,
+            "sharpe_ratio": 0.28945038112361554,
+            "max_drawdown": 0.44508500500029413,
+            "tracking_error": NaN
+        },
+        "001467_华富永鑫灵活配置混合C": {
+            "latest_nav": 1.5916,
+            "sharpe_ratio": 0.2682393844095667,
+            "max_drawdown": 0.30317305128433025,
+            "tracking_error": NaN
+        },
+        "001515_平安新鑫先锋C": {
+            "latest_nav": 2.555,
+            "sharpe_ratio": 0.20167782418099298,
+            "max_drawdown": 0.5987780040733197,
+            "tracking_error": NaN
+        },
+        "001557_天弘中证500指数增强C": {
+            "latest_nav": 1.4628,
+            "sharpe_ratio": 0.20588743096160017,
+            "max_drawdown": 0.45656413159715664,
+            "tracking_error": NaN
+        },
+        "001559_天弘医疗健康混合C": {
+            "latest_nav": 1.8026,
+            "sharpe_ratio": 0.2896998233281885,
+            "max_drawdown": 0.5246767994409504,
+            "tracking_error": NaN
+        },
+        "001593_天弘创业板ETF联接C": {
+            "latest_nav": 1.2168,
+            "sharpe_ratio": 0.14977133337315135,
+            "max_drawdown": 0.5882453006719401,
+            "tracking_error": NaN
+        },
+        "001618_天弘中证电子ETF联接C": {
+            "latest_nav": 1.8474,
+            "sharpe_ratio": 0.2980329041692106,
+            "max_drawdown": 0.49279743908945406,
+            "tracking_error": NaN
+        },
+        "001630_天弘中证计算机ETF联接C": {
+            "latest_nav": 0.8508,
+            "sharpe_ratio": 0.046310892407220985,
+            "max_drawdown": 0.5653981156475153,
+            "tracking_error": NaN
+        },
+        "001644_汇丰晋信智造先锋股票C": {
+            "latest_nav": 2.5913,
+            "sharpe_ratio": 0.4243118310332463,
+            "max_drawdown": 0.6798403648802737,
+            "tracking_error": NaN
+        },
+        "001665_平安鑫安混合C": {
+            "latest_nav": 1.7255,
+            "sharpe_ratio": 0.3487639519234088,
+            "max_drawdown": 0.24031498277437946,
+            "tracking_error": NaN
+        },
+        "001676_江信同福C": {
+            "latest_nav": 1.7221,
+            "sharpe_ratio": 0.2875271247630491,
+            "max_drawdown": 0.46780903328050716,
+            "tracking_error": NaN
+        },
+        "001770_前海开源嘉鑫混合C": {
+            "latest_nav": 2.24,
+            "sharpe_ratio": 0.5836088001537648,
+            "max_drawdown": 0.30127901468498347,
             "tracking_error": NaN
         }
     }
