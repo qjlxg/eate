@@ -1064,6 +1064,33 @@
             "latest_nav": 3.0986,
             "sharpe_ratio": 0.9197878403769644,
             "max_drawdown": 0.16526712912255084
+        },
+        "008843": {
+            "latest_nav": 0.837,
+            "sharpe_ratio": -0.004060719163783397,
+            "max_drawdown": 0.6706325932132384,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN
+        },
+        "010052": {
+            "latest_nav": 1.8802,
+            "sharpe_ratio": 0.14427618275552984,
+            "max_drawdown": 0.6397278911564626,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN
+        },
+        "011223": {
+            "latest_nav": 1.6293,
+            "sharpe_ratio": 0.47235180750089584,
+            "max_drawdown": 0.6072985427824137,
+            "annual_return": NaN,
+            "volatility": NaN,
+            "alpha": NaN,
+            "beta": NaN
         }
     }
 }
