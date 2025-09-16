@@ -412,7 +412,7 @@ if __name__ == '__main__':
     # pip install akshare pandas numpy requests beautifulsoup4
     
     # 请将 CSV 文件 URL 替换为您实际的基金列表文件
-    CSV_URL = "https://raw.githubusercontent.com/qjlxg/rep/main/recommended_cn_funds.csv"
+    CSV_URL = "https://raw.githubusercontent.com/qjlxg/own/main/recommended_cn_funds.csv"
     analyzer = FundAnalyzer(cache_data=True)
     my_personal_strategy = {
         'horizon': 'long-term',
