@@ -655,7 +655,7 @@ if __name__ == '__main__':
         # 修正：直接指定 gb18030 编码，并修正列名
         df_funds = pd.read_csv(funds_list_url, encoding='gb18030')
         # 修正：CSV文件中第一列的列名是 'code'，而不是 'fund_code'
-        fund_codes_to_analyze = df_funds['code'].unique().tolist()
+        fund_codes_to_analyze = [str(code) for code in df_funds['code'].unique().tolist()] # 关键修正
         logger.info(f"导入成功，共 {len(fund_codes_to_analyze)} 个基金代码")
     except Exception as e:
         logger.error(f"导入基金列表失败: {e}")
