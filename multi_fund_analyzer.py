@@ -53,50 +53,68 @@ class FundDataFetcher:
         if self.cache_data:
             with open(self.cache_file, 'w', encoding='utf-8') as f:
                 json.dump(self.cache, f, ensure_ascii=False, indent=4)
+    
+    def _pad_fund_code(self, code: str) -> str:
+        """确保基金代码为6位字符串，不足则在前面补0。"""
+        return code.zfill(6)
         
     def _get_risk_free_rate(self) -> float:
-        """获取无风险利率，通常使用中国10年期国债收益率。"""
+        """从特定网页获取无风险利率。"""
+        url = "https://sc.macromicro.me/series/1849/china-bond-10-year"
         try:
-            rate_df = ak.bond_zh_us_rate()
-            # 找到最新的中国10年期国债收益率
-            rate = rate_df[rate_df['项目'] == '中国10年期国债收益率']['收盘'].iloc[-1]
-            self._log(f"akshare 获取无风险利率成功: {rate}")
-            return rate / 100.0  # 转换为小数
+            self._log(f"正在从网页 {url} 获取无风险利率...")
+            r = requests.get(url, headers=self._web_headers, timeout=10)
+            r.raise_for_status()
+            r.encoding = 'utf-8'
+            soup = BeautifulSoup(r.text, 'lxml')
+            
+            # 定位到包含利率数值的元素
+            stat_val_div = soup.find('div', class_='stat-val')
+            if stat_val_div:
+                val_span = stat_val_div.find('span', class_='val')
+                if val_span:
+                    rate = float(val_span.text.strip()) / 100.0  # 转换为小数
+                    self._log(f"网页抓取无风险利率成功: {rate}")
+                    return rate
+            
+            self._log("网页抓取无风险利率失败: 未找到指定的HTML元素")
+            return 0.018298  # 网页抓取失败时使用默认值
         except Exception as e:
-            self._log(f"akshare 获取无风险利率失败: {e}")
-            self._log("尝试使用一个固定的无风险利率 3.0%")
-            return 0.03
+            self._log(f"网页抓取无风险利率失败: {e}")
+            return 0.018298  # 网页抓取失败时使用默认值
 
     def _get_fund_historical_nav(self, fund_code: str, force_update: bool = False):
         """从 akshare 获取基金历史净值数据。"""
-        cache_key = f"{fund_code}_historical_nav"
+        padded_code = self._pad_fund_code(fund_code)
+        cache_key = f"{padded_code}_historical_nav"
         if not force_update and cache_key in self.cache:
-            self._log(f"使用缓存的基金 {fund_code} 历史净值数据。")
+            self._log(f"使用缓存的基金 {padded_code} 历史净值数据。")
             return pd.DataFrame(self.cache[cache_key])
         
         try:
-            self._log(f"正在获取基金 {fund_code} 历史净值数据...")
+            self._log(f"正在获取基金 {padded_code} 历史净值数据...")
             # 修正: akshare API 参数已更改为 symbol
-            df = ak.fund_etf_hist_em(symbol=fund_code, period="day")
+            df = ak.fund_etf_hist_em(symbol=padded_code, period="day")
             if df is not None and not df.empty and '单位净值' in df.columns:
                 df['净值日期'] = pd.to_datetime(df['净值日期'])
                 df.set_index('净值日期', inplace=True)
-                self._log(f"akshare 获取基金 {fund_code} 历史净值成功。")
+                self._log(f"akshare 获取基金 {padded_code} 历史净值成功。")
                 self.cache[cache_key] = df.to_dict(orient='records')
                 self._save_cache()
                 return df
             else:
-                self._log(f"akshare 获取基金 {fund_code} 历史净值失败: 数据为空或列名不正确")
+                self._log(f"akshare 获取基金 {padded_code} 历史净值失败: 数据为空或列名不正确")
         except Exception as e:
-            self._log(f"akshare 获取基金 {fund_code} 历史净值失败: {e}")
+            self._log(f"akshare 获取基金 {padded_code} 历史净值失败: {e}")
         return None
 
     def _get_latest_nav_from_web(self, fund_code: str):
         """
         新增方法：从天天基金网网页抓取最新的单位净值和日增长率。
         """
+        padded_code = self._pad_fund_code(fund_code)
         try:
-            url = f"http://fundf10.eastmoney.com/jjjz_{fund_code}.html"
+            url = f"http://fundf10.eastmoney.com/jjjz_{padded_code}.html"
             self._log(f"尝试网页抓取最新净值：{url}")
             r = requests.get(url, headers=self._web_headers, timeout=10)
             r.raise_for_status()
@@ -128,15 +146,16 @@ class FundDataFetcher:
 
     def _get_fund_manager_data(self, fund_code: str, force_update: bool = False):
         """获取基金经理数据。"""
-        cache_key = f"{fund_code}_manager"
+        padded_code = self._pad_fund_code(fund_code)
+        cache_key = f"{padded_code}_manager"
         if not force_update and cache_key in self.cache:
-            self._log(f"使用缓存的基金 {fund_code} 经理数据。")
+            self._log(f"使用缓存的基金 {padded_code} 经理数据。")
             return self.cache[cache_key]
 
         try:
-            self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
+            self._log(f"正在获取基金 {padded_code} 的基金经理数据...")
             # 修正: akshare API 参数已更改为 symbol
-            manager_df = ak.fund_manager_em(symbol=fund_code)
+            manager_df = ak.fund_manager_em(symbol=padded_code)
             if manager_df is not None and not manager_df.empty:
                 # 获取最新的基金经理
                 latest_manager = manager_df.iloc[0]
@@ -151,7 +170,7 @@ class FundDataFetcher:
                 # 获取任职回报
                 return_rate = latest_manager['任职回报']
                 
-                self._log(f"akshare 获取基金 {fund_code} 经理数据成功。")
+                self._log(f"akshare 获取基金 {padded_code} 经理数据成功。")
                 data = {
                     'manager_name': manager_name,
                     'years_in_service': years_in_service,
@@ -163,18 +182,19 @@ class FundDataFetcher:
             else:
                 self._log("akshare 获取基金经理数据失败，尝试网页抓取。")
                 # 如果 akshare 失败，则进行网页抓取
-                return self._get_fund_manager_data_from_web(fund_code)
+                return self._get_fund_manager_data_from_web(padded_code)
                 
         except Exception as e:
-            self._log(f"akshare 获取基金 {fund_code} 经理数据失败，尝试网页抓取: {e}")
-            return self._get_fund_manager_data_from_web(fund_code)
+            self._log(f"akshare 获取基金 {padded_code} 经理数据失败，尝试网页抓取: {e}")
+            return self._get_fund_manager_data_from_web(padded_code)
 
     def _get_fund_manager_data_from_web(self, fund_code: str):
         """
         新增方法：从天天基金网网页抓取基金经理数据。
         """
+        padded_code = self._pad_fund_code(fund_code)
         try:
-            url = f"http://fundf10.eastmoney.com/jbgk_{fund_code}.html"
+            url = f"http://fundf10.eastmoney.com/jbgk_{padded_code}.html"
             self._log(f"尝试网页抓取基金经理数据：{url}")
             r = requests.get(url, headers=self._web_headers, timeout=10)
             r.raise_for_status()
@@ -205,16 +225,17 @@ class FundDataFetcher:
         """
         获取基金持仓数据，包括前十大重仓股和行业配置。
         """
-        cache_key = f"{fund_code}_holdings"
+        padded_code = self._pad_fund_code(fund_code)
+        cache_key = f"{padded_code}_holdings"
         if not force_update and cache_key in self.cache:
-            self._log(f"使用缓存的基金 {fund_code} 持仓数据。")
+            self._log(f"使用缓存的基金 {padded_code} 持仓数据。")
             return self.cache[cache_key]
         
         try:
             # --- 修改部分，纠正 URL，使用正确的基金持仓页面 ---
             # 之前的 URL 是 jj_code.html，现在修改为 ccmx_jj_code.html
-            url = f"http://fundf10.eastmoney.com/ccmx_{fund_code}.html"
-            self._log(f"正在获取基金 {fund_code} 持仓数据: {url}")
+            url = f"http://fundf10.eastmoney.com/ccmx_{padded_code}.html"
+            self._log(f"正在获取基金 {padded_code} 持仓数据: {url}")
             r = requests.get(url, headers=self._web_headers, timeout=10)
             r.raise_for_status()
             r.encoding = 'utf-8'
@@ -236,30 +257,31 @@ class FundDataFetcher:
                             holding_ratio = float(cols[4].text.replace('%', '')) / 100
                             holdings_list.append({'code': stock_code, 'name': stock_name, 'ratio': holding_ratio})
                     
-                    self._log(f"获取基金 {fund_code} 持仓数据成功。")
+                    self._log(f"获取基金 {padded_code} 持仓数据成功。")
                     self.cache[cache_key] = {'holdings': holdings_list}
                     self._save_cache()
                     return {'holdings': holdings_list}
             
-            self._log(f"获取基金 {fund_code} 持仓数据失败: 未找到持仓表格。")
+            self._log(f"获取基金 {padded_code} 持仓数据失败: 未找到持仓表格。")
             return None
             # --- 修改结束 ---
             
         except Exception as e:
-            self._log(f"获取基金 {fund_code} 持仓数据失败: {e}")
+            self._log(f"获取基金 {padded_code} 持仓数据失败: {e}")
             return None
     
     def _get_fund_info(self, fund_code: str, force_update: bool = False):
         """获取基金规模、成立日期和类型。"""
-        cache_key = f"{fund_code}_info"
+        padded_code = self._pad_fund_code(fund_code)
+        cache_key = f"{padded_code}_info"
         if not force_update and cache_key in self.cache:
-            self._log(f"使用缓存的基金 {fund_code} 信息。")
+            self._log(f"使用缓存的基金 {padded_code} 信息。")
             return self.cache[cache_key]
             
         try:
-            self._log(f"正在获取基金 {fund_code} 基本信息...")
+            self._log(f"正在获取基金 {padded_code} 基本信息...")
             # 东方财富基金档案页面
-            url = f"http://fundf10.eastmoney.com/jbgk_{fund_code}.html"
+            url = f"http://fundf10.eastmoney.com/jbgk_{padded_code}.html"
             r = requests.get(url, headers=self._web_headers, timeout=10)
             r.raise_for_status()
             r.encoding = 'utf-8'
@@ -291,13 +313,13 @@ class FundDataFetcher:
                 'fund_type': fund_type
             }
             
-            self._log(f"获取基金 {fund_code} 信息成功。")
+            self._log(f"获取基金 {padded_code} 信息成功。")
             self.cache[cache_key] = info_data
             self._save_cache()
             return info_data
             
         except Exception as e:
-            self._log(f"获取基金 {fund_code} 信息失败: {e}")
+            self._log(f"获取基金 {padded_code} 信息失败: {e}")
             return None
 
     def _get_market_sentiment(self) -> dict:
