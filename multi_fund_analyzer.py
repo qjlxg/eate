@@ -1,14 +1,14 @@
-   import pandas as pd
-   import akshare as ak
-   from datetime import datetime
-   import numpy as np
-   import time
-   import requests
-   from bs4 import BeautifulSoup
-   import re
-   import json
-   import os
-   import logging
+import pandas as pd
+import akshare as ak
+from datetime import datetime
+import numpy as np
+import time
+import requests
+from bs4 import BeautifulSoup
+import re
+import json
+import os
+import logging
 
    # 配置日志记录
    logging.basicConfig(
