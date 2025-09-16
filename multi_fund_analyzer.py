@@ -1,23 +1,14 @@
 import pandas as pd
 import akshare as ak
-from datetime import datetime, timedelta
+from datetime import datetime
 import numpy as np
+import time
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
 import os
-import logging
-import asyncio
-import aiohttp
-from scipy import stats
-
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler('fund_analyzer.log'), logging.StreamHandler()]
-)
+from collections import defaultdict
 
 class FundAnalyzer:
     """
@@ -39,26 +30,18 @@ class FundAnalyzer:
     def _log(self, message: str):
         """将日志信息添加到报告列表中"""
         print(message)
-        logging.info(message)
         self.analysis_report.append(message)
 
     def _get_risk_free_rate(self) -> float:
         """从东方财富获取最新 10 年期国债收益率作为无风险利率"""
         try:
-            url = "https://quote.eastmoney.com/stock/171.CN10Y.html"
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.text, 'html.parser')
-            # 提取最新价
-            latest_price_div = soup.find('div', class_='zxj')
-            if latest_price_div:
-                latest_price = latest_price_div.text.strip()
-                risk_free_rate = float(latest_price) / 100
-                self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
-                return risk_free_rate
-            else:
-                raise ValueError("未找到最新价")
+            # 修复 akshare 数据结构变化导致的问题
+            bond_data = ak.bond_zh_us_rate()
+            # 找到中国10年期国债的数据行，并获取最新值
+            # 注意：akshare接口返回的列名经常变化，这里使用最新发现的列名'value'
+            risk_free_rate = bond_data[bond_data['item_name'] == '中国10年期国债']['value'].iloc[-1] / 100
+            self._log(f"获取最新无风险利率：{risk_free_rate:.4f}")
+            return risk_free_rate
         except Exception as e:
             self._log(f"获取无风险利率失败，使用默认值 0.018298: {e}")
             return 0.018298
@@ -338,7 +321,7 @@ class FundAnalyzer:
         tenure_years = self.manager_data.get(fund_code, {}).get('tenure_years', np.nan)
 
         if pd.notna(manager_return) and pd.notna(tenure_years):
-            if tenure_years > 5 or manager_return > 20:
+            if tenure_years > 3 or manager_return > 20:
                 manager_trust = True
             self._log(f"基金经理 {self.manager_data[fund_code]['name']} 任职 {tenure_years:.2f} 年，累计回报 {manager_return:.2f}%，增加信任度。")
         else:
@@ -372,7 +355,7 @@ class FundAnalyzer:
                 else:
                     return f"观望：市场熊市，{fund_name} 回撤 {fund_drawdown:.2f}，风险较高。建议选择更稳健的基金（如债券型基金）。"
             else:  # bullish or neutral
-                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_3y) and rose_3y > 30 or manager_trust)
+                is_top_performer = (sharpe_ratio > 1.0 or pd.notna(rose_3y) and rose_3y > 50 or manager_trust)
                 if is_top_performer and pd.notna(rank_r_3y) and rank_r_3y < 0.05 and risk_tolerance != 'low':
                     if holdings and fund_risk_high:
                          return f"谨慎加仓：市场 {market_trend}，{fund_name} 表现优异，但持仓集中度高，潜在风险大。建议谨慎加仓。"
@@ -397,6 +380,14 @@ class FundAnalyzer:
         try:
             funds_df = pd.read_csv(csv_url, encoding='gbk')
             self._log(f"导入成功，共 {len(funds_df)} 个基金代码")
+
+            # 检查是否有3年数据列，如果没有，则使用5年数据列
+            if 'rose(3y)' not in funds_df.columns:
+                self._log("未找到 'rose(3y)' 列，将使用 'rose(5y)' 作为替代。")
+                funds_df['rose(3y)'] = funds_df.get('rose(5y)', np.nan)
+            if 'rank_r(3y)' not in funds_df.columns:
+                self._log("未找到 'rank_r(3y)' 列，将使用 'rank_r(5y)' 作为替代。")
+                funds_df['rank_r(3y)'] = funds_df.get('rank_r(5y)', np.nan)
             
             funds_df[code_column] = funds_df[code_column].astype(str).str.zfill(6)
             self.fund_info = funds_df.set_index(code_column).to_dict('index')
