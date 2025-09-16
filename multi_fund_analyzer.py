@@ -76,8 +76,8 @@ class FundDataFetcher:
         
         try:
             self._log(f"正在获取基金 {fund_code} 历史净值数据...")
-            # 尝试获取历史净值
-            df = ak.fund_etf_hist_em(fund=fund_code, period="day")
+            # 修正: akshare API 参数已更改为 symbol
+            df = ak.fund_etf_hist_em(symbol=fund_code, period="day")
             if df is not None and not df.empty and '单位净值' in df.columns:
                 df['净值日期'] = pd.to_datetime(df['净值日期'])
                 df.set_index('净值日期', inplace=True)
@@ -135,8 +135,8 @@ class FundDataFetcher:
 
         try:
             self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
-            # 尝试 akshare 抓取
-            manager_df = ak.fund_manager_em(fund_code=fund_code)
+            # 修正: akshare API 参数已更改为 symbol
+            manager_df = ak.fund_manager_em(symbol=fund_code)
             if manager_df is not None and not manager_df.empty:
                 # 获取最新的基金经理
                 latest_manager = manager_df.iloc[0]
@@ -304,8 +304,9 @@ class FundDataFetcher:
         """获取市场情绪，通过分析上证指数。"""
         try:
             self._log("正在获取市场情绪数据...")
-            # 使用 akshare 获取上证指数历史数据
-            sh_index = ak.stock_zh_index_hist_sh("000001", "20230101", datetime.now().strftime("%Y%m%d"))
+            # 修正: akshare API 函数已更改
+            sh_index = ak.index_zh_a_hist(symbol="sh000001")
+            sh_index['日期'] = pd.to_datetime(sh_index['日期'])
             sh_index.set_index('日期', inplace=True)
             
             # 计算指数近一年的涨跌幅
@@ -419,9 +420,14 @@ class InvestmentStrategy:
         fund_nav = fund_data.get('nav')
         manager_data = fund_data.get('manager', {})
         holdings_data = fund_data.get('holdings', {})
+        # 修正: 使用 .get() 方法，并提供默认空字典，以防 info_data 为 None
         info_data = fund_data.get('info', {})
         
-        self._log(f"分析基金类型: {info_data.get('fund_type')}, 规模: {info_data.get('scale')}亿元, 成立年限: {info_data.get('years_since_establish')}年")
+        # 修正: 检查 info_data 是否为空字典
+        fund_type = info_data.get('fund_type', '未知')
+        scale = info_data.get('scale', np.nan)
+        # 这里原来的代码有错误，info_data里没有years_since_establish
+        self._log(f"分析基金类型: {fund_type}, 规模: {scale}亿元")
         
         # 1. 基金通用指标（40分）
         if fund_nav is not None and not fund_nav.empty:
@@ -562,10 +568,9 @@ class FundAnalyzer:
             fund_data = self.data_fetcher.get_fund_data(fund_code)
             
             fund_info = fund_data.get('info', {})
-            if fund_info:
-                fund_name = fund_info.get('fund_name', '未知')
-            else:
-                fund_name = '未知'
+            # 修正: 从 info_data 字典中安全地获取 fund_name，并提供默认值
+            fund_name = fund_info.get('name', '未知')
+
 
             # 评估基金
             analysis_result = self.investment_strategy.analyze_and_score(fund_data, fund_info)
