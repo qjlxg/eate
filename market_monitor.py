@@ -4,11 +4,6 @@ import re
 import os
 import logging
 from datetime import datetime
-import requests
-from bs4 import BeautifulSoup
-import io
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 import time
 import random
 # 新增: 导入Selenium相关库
