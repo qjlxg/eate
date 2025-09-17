@@ -288,11 +288,20 @@ class FundDataFetcher:
             # 尝试从“现任基金经理简介”部分提取
             jl_intro_div = soup.find('div', class_='jl_intro')
             if jl_intro_div:
+                # 寻找 strong 标签，并检查其下一个兄弟节点
                 name_tag = jl_intro_div.find('p').find('strong')
                 if name_tag:
-                    manager_name = name_tag.get_text().strip()
-                    self._log(f"网页抓取基金经理姓名成功: {manager_name}")
-                    return {'manager_name': manager_name, 'years_in_service': None, 'return_rate': None}
+                    # 尝试从 strong 标签后的 a 标签中获取姓名
+                    manager_name_elem = name_tag.find_next_sibling('a')
+                    if manager_name_elem:
+                        manager_name = manager_name_elem.get_text().strip()
+                    else:
+                        # 如果没有 a 标签，则获取 strong 标签文本并去除“姓名：”前缀
+                        manager_name = name_tag.get_text().replace('姓名：', '').strip()
+
+                    if manager_name:
+                        self._log(f"网页抓取基金经理姓名成功: {manager_name}")
+                        return {'manager_name': manager_name, 'years_in_service': None, 'return_rate': None}
         
         self._log("网页抓取基金经理数据失败。")
         return None
@@ -401,11 +410,13 @@ class FundDataFetcher:
             if fund_type_label:
                 info_data['fund_type'] = fund_type_label.find('span').text.strip()
                 
-            fund_name_h1 = soup.find('div', class_='fundDetail-tit').find('h1')
-            if fund_name_h1:
-                fund_name_tag = fund_name_h1.find_all('a')[0] # 修复: 原代码索引错误
-                if fund_name_tag:
-                    info_data['name'] = fund_name_tag.text.strip()
+            fund_name_div = soup.find('div', class_='fundDetail-tit')
+            if fund_name_div:
+                fund_name_h1 = fund_name_div.find('h1')
+                if fund_name_h1:
+                    fund_name_tag = fund_name_h1.find('a')
+                    if fund_name_tag:
+                        info_data['name'] = fund_name_tag.text.strip()
                 
             if info_data:
                 self._log(f"获取基金 {padded_code} 信息成功。")
