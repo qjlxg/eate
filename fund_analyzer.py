@@ -215,7 +215,15 @@ class FundDataFetcher:
         url = f"http://fundf10.eastmoney.com/jjjz_{padded_code}.html"
         source = None
         if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
+            self.selenium_fetcher.driver.get(url)
+            try:
+                WebDriverWait(self.selenium_fetcher.driver, 15).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "row row1"))  # 等待净值p加载
+                )
+                source = self.selenium_fetcher.driver.page_source
+            except TimeoutException:
+                logger.error(f"加载 {url} 超时")
+                return None
 
         if source:
             soup = BeautifulSoup(source, 'lxml')
@@ -279,18 +287,30 @@ class FundDataFetcher:
         url = f"http://fundf10.eastmoney.com/jbgk_{fund_code}.html"
         source = None
         if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
+            self.selenium_fetcher.driver.get(url)
+            try:
+                WebDriverWait(self.selenium_fetcher.driver, 15).until(  # 增加等待时间
+                    EC.presence_of_element_located((By.CLASS_NAME, "bs_gl"))  # 等待关键div加载
+                )
+                source = self.selenium_fetcher.driver.page_source
+            except TimeoutException:
+                logger.error(f"加载 {url} 超时")
+                return None
 
         if source:
             soup = BeautifulSoup(source, 'lxml')
-            manager_label = soup.find('label', string=re.compile(r'基金经理：'))
-            if manager_label:
-                manager_link = manager_label.find('a')
-                if manager_link:
-                    manager_name = manager_link.text.strip()
-                    self._log(f"网页抓取基金经理姓名成功: {manager_name}")
-                    return {'manager_name': manager_name, 'years_in_service': None, 'return_rate': None}
-        self._log("网页抓取基金经理数据失败。")
+            # 放宽查找：找所有label，匹配包含'基金经理'的
+            labels = soup.find_all('label')
+            for label in labels:
+                if '基金经理' in label.text.strip():  # 模糊匹配，避免冒号/空格问题
+                    manager_link = label.find('a')
+                    if manager_link:
+                        manager_name = manager_link.text.strip()
+                        logger.info(f"网页抓取基金经理姓名成功: {manager_name}")
+                        # TODO: 抓取年限/回报？需从经理页面进一步抓取
+                        return {'manager_name': manager_name, 'years_in_service': None, 'return_rate': None}
+            logger.warning("未找到基金经理标签")
+        logger.error("网页抓取基金经理数据失败。")
         return None
 
     def _get_fund_holdings_data(self, fund_code: str, force_update: bool = False):
@@ -308,100 +328,40 @@ class FundDataFetcher:
             
         if source:
             soup = BeautifulSoup(source, 'lxml')
-            holdings_table = soup.find('div', id='cctable')
-            if holdings_table:
-                table = holdings_table.find('table')
-                if table:
-                    holdings_list = []
-                    rows = table.find_all('tr')[1:]
-                    for row in rows:
-                        cols = row.find_all('td')
-                        if len(cols) >= 5:
-                            stock_code_elem = cols[1].find('a')
-                            stock_name_elem = cols[2].find('a')
-                            holding_ratio_text = cols[4].text
-                            
-                            if stock_code_elem and stock_name_elem and '%' in holding_ratio_text:
-                                try:
-                                    stock_code = stock_code_elem.text.strip()
-                                    stock_name = stock_name_elem.text.strip()
-                                    holding_ratio = float(holding_ratio_text.replace('%', '')) / 100
-                                    holdings_list.append({'code': stock_code, 'name': stock_name, 'ratio': holding_ratio})
-                                except (ValueError, AttributeError) as e:
-                                    self._log(f"解析持仓数据失败: {e}")
-                                    continue
-                    
-                    if holdings_list:
-                        self._log(f"获取基金 {padded_code} 持仓数据成功。")
-                        self.cache[cache_key] = {'holdings': holdings_list}
-                        self._save_cache()
-                        return {'holdings': holdings_list}
-        self._log(f"获取基金 {padded_code} 持仓数据失败。")
-        return None
-
-    def _get_fund_info(self, fund_code: str, force_update: bool = False):
-        """使用 Selenium 获取基金规模、成立日期和类型。"""
-        padded_code = self._pad_fund_code(fund_code)
-        cache_key = f"{padded_code}_info"
-        if not force_update and cache_key in self.cache:
-            self._log(f"使用缓存的基金 {padded_code} 信息。")
-            return self.cache[cache_key]
-            
-        url = f"http://fundf10.eastmoney.com/jbgk_{padded_code}.html"
-        source = None
-        if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
-
-        if source:
-            soup = BeautifulSoup(source, 'lxml')
-            info_data = {}
-            
-            size_label = soup.find('label', string=re.compile(r'资产规模：'))
-            if size_label:
-                size_text = size_label.find_parent('p').text
-                size_match = re.search(r'(\d+\.?\d*)亿元', size_text)
-                if size_match:
-                    info_data['scale'] = float(size_match.group(1))
-
-            establish_label = soup.find('label', string=re.compile(r'成立日期：'))
-            if establish_label:
-                date_text = establish_label.find('span').text.strip()
-                try:
-                    info_data['establish_date'] = datetime.strptime(date_text, '%Y-%m-%d').strftime('%Y-%m-%d')
-                except ValueError:
-                    info_data['establish_date'] = None
-            
-            fund_type_label = soup.find('label', string=re.compile(r'类型：'))
-            if fund_type_label:
-                info_data['fund_type'] = fund_type_label.find('span').text.strip()
-                
-            fund_name_h1 = soup.find('div', class_='fundDetail-tit').find('h1')
-            if fund_name_h1:
-                info_data['name'] = fund_name_h1.find_all('a')[1].text.strip()
-                
-            if info_data:
-                self._log(f"获取基金 {padded_code} 信息成功。")
-                self.cache[cache_key] = info_data
+            holdings = []
+            table = soup.find('table', id='cctable')  # 假设持仓表ID为cctable，根据实际页面调整
+            if table:
+                rows = table.find_all('tr')
+                for row in rows[1:]:  # 跳过表头
+                    cols = row.find_all('td')
+                    if len(cols) > 3:
+                        holding = {
+                            'name': cols[1].text.strip(),
+                            'ratio': float(cols[3].text.strip().replace('%', '')) / 100.0 if cols[3].text.strip() else 0.0
+                        }
+                        holdings.append(holding)
+            if holdings:
+                data = {'holdings': holdings}
+                self.cache[cache_key] = data
                 self._save_cache()
-                return info_data
-        
-        self._log(f"获取基金 {padded_code} 信息失败。")
+                self._log(f"网页抓取基金 {padded_code} 持仓数据成功。")
+                return data
+        self._log("网页抓取基金持仓数据失败。")
         return None
 
     def _get_market_sentiment(self) -> dict:
-        """获取市场情绪，通过分析上证指数。"""
+        """
+        获取市场情绪数据，使用上证指数作为基准。
+        """
         try:
             self._log("正在获取市场情绪数据...")
-            self._wait_for_akshare_call()
-            sh_index = ak.index_zh_a_hist(symbol="sh000001")
-            sh_index['日期'] = pd.to_datetime(sh_index['日期'])
-            sh_index.set_index('日期', inplace=True)
+            df = ak.stock_zh_a_hist(symbol="000001", period="daily", start_date=(datetime.now() - timedelta(days=365)).strftime('%Y%m%d'), end_date=datetime.now().strftime('%Y%m%d'))
+            if df.empty:
+                self._log("未能获取上证指数数据，使用默认值。")
+                return {'sentiment': 'unknown', 'trend': 'unknown'}
             
-            one_year_ago = datetime.now() - timedelta(days=365)
-            last_year_data = sh_index.loc[sh_index.index > one_year_ago.strftime('%Y-%m-%d')]
-            
-            if len(last_year_data) < 2:
-                self._log("上证指数数据不足，无法判断市场情绪。")
+            last_year_data = df.tail(252)  # 假设一年252个交易日
+            if last_year_data.empty:
                 return {'sentiment': 'unknown', 'trend': 'unknown'}
             
             start_price = last_year_data['开盘'].iloc[0]
