@@ -50,7 +50,8 @@ class MarketMonitor:
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             }
-            response = requests.get(url, headers=headers)
+            # 设置10秒超时
+            response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
 
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -61,10 +62,8 @@ class MarketMonitor:
                 self.fund_data[fund_code] = None
                 return
 
-            # 使用io.StringIO包装字符串以消除UserWarning
             df = pd.read_html(io.StringIO(str(table)))[0]
             df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
-            # 指定日期格式以消除UserWarning
             df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
             df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
             df.set_index('净值日期', inplace=True)
