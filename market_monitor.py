@@ -4,7 +4,7 @@ import akshare as ak
 import re
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # 配置日志
 logging.basicConfig(
@@ -34,9 +34,20 @@ class MarketMonitor:
             content = f.read()
         
         # 提取推荐基金表格
+        # 匹配 "| 基金代码 | ... | 分数 |"
         pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\.?\d*) *\|'
         matches = re.findall(pattern, content)
-        self.fund_codes = [code for code, score in matches if float(score) >= 4.0]
+        
+        # 提取符合条件的基金代码并进行去重
+        # Modification: Added set() to deduplicate fund codes after extraction.
+        # 修正：增加了 set()，用于在提取后对基金代码进行去重。
+        unique_fund_codes = set()
+        for code, score in matches:
+            if float(score) >= 4.0:
+                unique_fund_codes.add(code)
+
+        self.fund_codes = sorted(list(unique_fund_codes))
+        
         logger.info("提取到 %d 个推荐基金: %s", len(self.fund_codes), self.fund_codes)
         
     def _get_market_data(self):
@@ -100,7 +111,7 @@ class MarketMonitor:
                 f.write(f"## 市场情绪\n- 情绪: {self.market_data['sentiment']}\n- 分数: {self.market_data['score']}\n\n")
                 
                 f.write("## 推荐基金技术指标\n")
-                f.write("| 基金代码 | 最新净值 | RSI | 净值/MA50 | 投资建议 |\n")
+                f.write("| 基金代码 | 最新净值 | RSI | 净值/MA50 | 投资建议 | \n")
                 f.write("|----------|----------|-----|-----------|----------|\n")
                 
                 for fund_code in self.fund_codes:
