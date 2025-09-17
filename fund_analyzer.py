@@ -39,8 +39,8 @@ class SeleniumFetcher:
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
         
         try:
-            chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')  # GitHub Actions路径
-            self.driver = webdriver.Chrome(service=ChromeService(chrome_driver_path), options=chrome_options)  # 修复：使用chrome_driver_path
+            chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')
+            self.driver = webdriver.Chrome(service=ChromeService(chrome_driver_path), options=chrome_options)
             logger.info("Selenium驱动初始化成功。")
         except WebDriverException as e:
             logger.error(f"无法初始化 ChromeDriver: {e}.")
@@ -68,7 +68,7 @@ class SeleniumFetcher:
 
     def __del__(self):
         """确保浏览器实例在对象销毁时被正确关闭。"""
-        if hasattr(self, 'driver') and self.driver:  # 修复：检查driver是否存在
+        if hasattr(self, 'driver') and self.driver:
             self.driver.quit()
             logger.info("Selenium驱动已关闭。")
 
@@ -81,9 +81,10 @@ class FundDataFetcher:
     def __init__(self, cache_data: bool = True, cache_file: str = 'fund_cache.json'):
         self.cache_data = cache_data
         self.cache_file = cache_file
-        if os.path.exists(self.cache_file):
-            os.remove(self.cache_file)  # 清空缓存以避免旧数据干扰
-            logger.info("已清空缓存文件。")
+        # --- 修复点：删除缓存文件以确保缓存功能正常工作，这里将注释掉以保留缓存 ---
+        # if os.path.exists(self.cache_file):
+        #     os.remove(self.cache_file)
+        #     logger.info("已清空缓存文件。")
         self.cache = self._load_cache()
         self._selenium_fetcher = None
         self.risk_free_rate = self._get_risk_free_rate()
@@ -545,8 +546,9 @@ class InvestmentStrategy:
             rose_3y_val = fund_nav['累计净值'].iloc[-1] / fund_nav['累计净值'].iloc[0] - 1 if len(fund_nav) > 252*3 else np.nan
             points_log['rose_3y_score'] = 10 if rose_3y_val > 0.5 else 0
             
-            rank_r_3y_val = np.nan
-            points_log['rank_r_3y_score'] = 10 if np.random.rand() < 0.2 else 0
+            # --- 修复点：移除了随机评分，因为此指标需要同类排名数据，目前无法计算 ---
+            # points_log['rank_r_3y_score'] = 10 if np.random.rand() < 0.2 else 0
+            points_log['rank_r_3y_score'] = 0
             
             sharpe_ratio_val = self._calculate_sharpe_ratio(returns, fund_data.get('risk_free_rate'))
             points_log['sharpe_ratio_score'] = 10 if sharpe_ratio_val > 0.5 else 0
@@ -557,7 +559,7 @@ class InvestmentStrategy:
             self._log(f"通用指标: 夏普比率: {sharpe_ratio_val:.4f}, 最大回撤: {max_drawdown_val:.4f}, 3年涨幅: {rose_3y_val:.2%}")
             
             points_log.update({
-                'rose_3y_value': rose_3y_val, 'rank_r_3y_value': rank_r_3y_val,
+                'rose_3y_value': rose_3y_val, 'rank_r_3y_value': np.nan,
                 'sharpe_ratio_value': sharpe_ratio_val, 'max_drawdown_value': max_drawdown_val
             })
         else:
@@ -658,8 +660,9 @@ class FundAnalyzer:
         
         self._log("--- 批量基金分析启动 ---")
         
-        fund_codes = fund_codes[:1]  # 调试模式：分析单个基金
-        self._log(f"调试模式：分析基金 {fund_codes}")
+        # --- 修复点：将调试代码注释掉，以分析所有基金 ---
+        # fund_codes = fund_codes[:1]
+        self._log(f"分析基金：{fund_codes}")
         
         for fund_code in fund_codes:
             self._log(f"\n--- 正在分析基金 {fund_code} ---")
@@ -726,7 +729,7 @@ if __name__ == '__main__':
         fund_codes_to_analyze = ['000363']
     
     if fund_codes_to_analyze:
-        logger.info(f"分析基金：{fund_codes_to_analyze[:1]}...")
+        logger.info(f"分析基金：{fund_codes_to_analyze}...")
         data_fetcher = FundDataFetcher()
         market_data = data_fetcher._get_market_sentiment()
         investment_strategy = InvestmentStrategy(market_data, logger)
