@@ -6,6 +6,7 @@ on:
   push:
     paths:
       - 'analysis_report.md'  # 当analysis_report.md更新时触发
+      - 'market_monitor.py'
   workflow_dispatch:  # 支持手动触发
 
 jobs:
