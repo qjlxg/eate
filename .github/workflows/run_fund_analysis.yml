@@ -26,8 +26,8 @@ jobs:
     # 设置环境变量，包括时区和 ChromeDriver 路径
     env:
       TZ: Asia/Shanghai
-      # 指定 ChromeDriver 的位置。对于 Ubuntu 环境，默认路径即可
-      CHROMEDRIVER_PATH: /usr/lib/chromium-browser/chromedriver
+      CHROME_BINARY_PATH: /usr/bin/chromium-browser
+      CHROMEDRIVER_PATH: /usr/bin/chromedriver
 
     steps:
       - name: Checkout repository
@@ -50,6 +50,13 @@ jobs:
           # 检查 Chromium 和 ChromeDriver 版本
           chromium-browser --version
           chromedriver --version
+
+      - name: Verify Chromium and ChromeDriver paths
+        run: |
+          ls -l /usr/bin/chromium-browser
+          ls -l /usr/bin/chromedriver
+          echo "CHROME_BINARY_PATH: $CHROME_BINARY_PATH"
+          echo "CHROMEDRIVER_PATH: $CHROMEDRIVER_PATH"
 
       - name: Run Python script
         run: |
