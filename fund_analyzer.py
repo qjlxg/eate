@@ -71,7 +71,7 @@ class FundAnalyzer:
     """
     一个用于自动化分析中国公募基金的类。
     """
-    def __init__(self, risk_free_rate=1.8721, cache_file='fund_cache.json', cache_data=True):
+    def __init__(self, risk_free_rate=0.01858, cache_file='fund_cache.json', cache_data=True):
         self.fund_data = {}
         self.manager_data = {}
         self.holdings_data = {}
@@ -545,7 +545,7 @@ if __name__ == '__main__':
         fund_info_dict = {}
     
     if fund_codes_to_analyze:
-        test_fund_codes = fund_codes_to_analyze[:2000] # 减少测试基金数量，避免频繁网络请求
+        test_fund_codes = fund_codes_to_analyze[:20] # 减少测试基金数量，避免频繁网络请求
         logger.info(f"分析前 {len(test_fund_codes)} 个基金：{test_fund_codes}...")
         analyzer = FundAnalyzer()
         analyzer.run_analysis(test_fund_codes, fund_info_dict)
