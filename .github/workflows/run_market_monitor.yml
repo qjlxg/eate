@@ -29,11 +29,10 @@ jobs:
           pip install --upgrade pandas numpy requests beautifulsoup4 lxml
           pip install selenium
           python -c "import pandas; import numpy; import requests; from bs4 import BeautifulSoup; import lxml; import pkg_resources; print(f'Dependencies installed successfully. BeautifulSoup4 version: {pkg_resources.get_distribution(\"beautifulsoup4\").version}')"
-        env:
-          pythonLocation: /opt/hostedtoolcache/Python/3.10.18/x64
 
       - name: Verify files exist
         run: |
+          set -e
           if [ ! -f analysis_report.md ]; then
             echo "Error: analysis_report.md not found!"
             exit 1
@@ -46,7 +45,7 @@ jobs:
 
       - name: Verify market_monitor.py does not use akshare
         run: |
-          if grep -i "akshare\|fund_open_fund_info_em" market_monitor.py; then
+          if grep -q -i "akshare" market_monitor.py || grep -q "fund_open_fund_info_em" market_monitor.py; then
             echo "Error: market_monitor.py contains akshare or fund_open_fund_info_em references!"
             exit 1
           fi
