@@ -7,6 +7,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import io
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # 配置日志
 logging.basicConfig(
@@ -22,8 +24,6 @@ class MarketMonitor:
         self.output_file = output_file
         self.fund_codes = []
         self.fund_data = {}
-        self.market_data = {}
-        self.technical_indicators = {}
 
     def _parse_report(self):
         """从 analysis_report.md 提取推荐基金代码"""
@@ -54,53 +54,71 @@ class MarketMonitor:
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             }
-            # 设置10秒超时
-            response = requests.get(url, headers=headers, timeout=10)
+            # 设置请求重试
+            session = requests.Session()
+            retries = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+            session.mount('http://', HTTPAdapter(max_retries=retries))
+            
+            response = session.get(url, headers=headers, timeout=10)
             response.raise_for_status()
             response.encoding = 'utf-8'  # 确保正确解码中文
 
-            soup = BeautifulSoup(response.text, 'html.parser')
+            soup = BeautifulSoup(response.text, 'lxml')
             table = soup.find('table', class_='mt1 clear')
             
             if not table:
-                logger.warning("未找到基金 %s 的历史净值表格，可能网页结构已变更", fund_code)
+                logger.warning("未找到基金 %s 的历史净值表格，可能网页结构已变更或基金代码无效", fund_code)
                 self.fund_data[fund_code] = None
                 return
 
             try:
                 df = pd.read_html(io.StringIO(str(table)), flavor='lxml')[0]
-                df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
+                expected_columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
+                if len(df.columns) != len(expected_columns):
+                    logger.warning("基金 %s 表格列数不符合预期，实际: %d，预期: %d", fund_code, len(df.columns), len(expected_columns))
+                    self.fund_data[fund_code] = None
+                    return
+                
+                df.columns = expected_columns
                 df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
                 df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
                 df.set_index('净值日期', inplace=True)
                 df.sort_index(inplace=True)
+                
+                # 检查数据完整性
+                if df['最新单位净值'].isna().all():
+                    logger.warning("基金 %s 净值数据全部无效", fund_code)
+                    self.fund_data[fund_code] = None
+                    return
+
+                if len(df) < 50:
+                    logger.warning("基金 %s 历史净值数据不足50天，无法计算指标 (实际: %d)", fund_code, len(df))
+                    self.fund_data[fund_code] = None
+                    return
+
+                # 计算RSI
+                delta = df['最新单位净值'].diff()
+                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                rs = gain / loss
+                rsi = 100 - (100 / (1 + rs))
+
+                # 计算MA50
+                ma50 = df['最新单位净值'].rolling(window=50).mean()
+                ma_ratio = df['最新单位净值'].iloc[-1] / ma50.iloc[-1]
+
+                self.fund_data[fund_code] = {
+                    'latest_net_value': df['最新单位净值'].iloc[-1],
+                    'rsi': rsi.iloc[-1],
+                    'ma_ratio': ma_ratio
+                }
+                logger.info("成功获取并计算基金 %s 的技术指标: 净值=%.4f, RSI=%.2f, MA50比率=%.2f", 
+                           fund_code, df['最新单位净值'].iloc[-1], rsi.iloc[-1], ma_ratio)
+
             except Exception as e:
                 logger.error("解析基金 %s 的表格数据失败: %s", fund_code, str(e))
                 self.fund_data[fund_code] = None
                 return
-
-            if len(df) < 50:
-                logger.warning("基金 %s 历史净值数据不足50天，无法计算指标", fund_code)
-                self.fund_data[fund_code] = None
-                return
-
-            # 计算RSI
-            delta = df['最新单位净值'].diff()
-            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-            rs = gain / loss
-            rsi = 100 - (100 / (1 + rs))
-
-            # 计算MA50
-            ma50 = df['最新单位净值'].rolling(window=50).mean()
-            ma_ratio = df['最新单位净值'].iloc[-1] / ma50.iloc[-1]
-
-            self.fund_data[fund_code] = {
-                'latest_net_value': df['最新单位净值'].iloc[-1],
-                'rsi': rsi.iloc[-1],
-                'ma_ratio': ma_ratio
-            }
-            logger.info("成功获取并计算基金 %s 的技术指标", fund_code)
 
         except requests.exceptions.RequestException as e:
             logger.error("获取基金 %s 数据失败 (网络错误): %s", fund_code, str(e))
