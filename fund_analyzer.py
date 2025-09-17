@@ -39,9 +39,12 @@ class SeleniumFetcher:
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+        # 指定 Chromium 二进制路径和 ChromeDriver 路径
+        chrome_options.binary_location = os.getenv('CHROME_BINARY_PATH', '/usr/bin/chromium-browser')
+        service = ChromeService(executable_path=os.getenv('CHROMEDRIVER_PATH', '/usr/bin/chromedriver'))
         try:
             # 尝试使用环境变量中的 ChromeDriver
-            self.driver = webdriver.Chrome(options=chrome_options)
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
         except WebDriverException as e:
             logger.error(f"Selenium WebDriver 初始化失败: {e}")
             self.driver = None
@@ -233,8 +236,8 @@ class FundAnalyzer:
 
         self._log(f"正在获取基金 {fund_code} 的基金经理数据...")
         try:
-            # 修复：akshare接口已变更为fund_manager_info_em
-            manager_info = ak.fund_manager_info_em(fund_code=fund_code)
+            # 修复：akshare接口已变更为fund_manager_em
+            manager_info = ak.fund_manager_em(symbol=fund_code)
             if not manager_info.empty:
                 latest_manager = manager_info.sort_values(by='上任日期', ascending=False).iloc[0]
                 name = latest_manager.get('姓名', 'N/A')
