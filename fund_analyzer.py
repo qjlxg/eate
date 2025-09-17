@@ -530,8 +530,11 @@ if __name__ == '__main__':
     try:
         logger.info("正在从 CSV 导入基金代码列表...")
         df_funds = pd.read_csv(funds_list_url, encoding='gb18030')
-        fund_codes_to_analyze = [str(code).zfill(6) for code in df_funds['code'].unique().tolist()]
-        fund_info_dict = dict(zip(fund_codes_to_analyze, df_funds['fund_name'].tolist()))
+        
+        # 修正列名引用
+        fund_codes_to_analyze = [str(code).zfill(6) for code in df_funds['代码'].unique().tolist()]
+        fund_info_dict = dict(zip(fund_codes_to_analyze, df_funds['名称'].tolist()))
+        
         logger.info(f"导入成功，共 {len(fund_codes_to_analyze)} 个基金代码")
     except Exception as e:
         logger.error(f"导入基金列表失败: {e}")
