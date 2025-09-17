@@ -7,6 +7,7 @@ on:
     paths:
       - 'analysis_report.md'  # 当analysis_report.md更新时触发
       - 'market_monitor.py'
+      - '.github/workflows/run_market_monitor.yml' # 当工作流文件本身更新时触发
   workflow_dispatch:  # 支持手动触发
 
 jobs:
@@ -20,23 +21,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # 与fund_analyzer.py一致
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo apt-get clean
-          echo "Apt update completed successfully"
-        env:
-          DEBIAN_FRONTEND: noninteractive
-        continue-on-error: true
+          python-version: '3.10'
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade pandas numpy akshare
-          python -c "import akshare as ak; print('AKShare version:', ak.__version__)"
+          pip install --upgrade pandas numpy requests beautifulsoup4
+          python -c "import pandas; import numpy; import requests; from bs4 import BeautifulSoup; print('Dependencies installed successfully.')"
         env:
           pythonLocation: /opt/hostedtoolcache/Python/3.10.18/x64
 
@@ -51,10 +42,6 @@ jobs:
             exit 1
           fi
           echo "Required files found: analysis_report.md, market_monitor.py"
-
-      - name: Test AKShare interface
-        run: |
-          python -c "import akshare as ak; df = ak.fund_open_fund_info_em(symbol='007509', indicator='累计净值走势'); print(df.head())" || echo "AKShare test failed, check parameters"
 
       - name: Run Market Monitor script
         run: |
@@ -87,6 +74,6 @@ jobs:
               echo "No errors found in log. Success!"
             fi
           else
-            echo "market_monitor.log not found. Unable to check for errors."
+            echo "market_monitor.log not found. Workflow may have failed at an earlier step."
             exit 1
           fi
