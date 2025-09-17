@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-
 import re
 import os
 import logging
@@ -58,6 +57,7 @@ class MarketMonitor:
             
             if not table:
                 logger.warning("未找到基金 %s 的历史净值表格", fund_code)
+                self.fund_data[fund_code] = None
                 return
 
             df = pd.read_html(str(table))[0]
