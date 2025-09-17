@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 import io
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import time
+import random
 
 # 配置日志
 logging.basicConfig(
@@ -59,7 +61,9 @@ class MarketMonitor:
             retries = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
             session.mount('http://', HTTPAdapter(max_retries=retries))
             
-            response = session.get(url, headers=headers, timeout=15)  # 增加超时时间
+            # 添加随机延迟
+            time.sleep(random.uniform(1, 3))
+            response = session.get(url, headers=headers, timeout=15)
             response.raise_for_status()
             response.encoding = 'utf-8'  # 确保正确解码中文
 
