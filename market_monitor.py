@@ -6,12 +6,14 @@ import logging
 from datetime import datetime
 import time
 import random
-# 新增: 导入Selenium相关库
+# 导入Selenium相关库
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
+# 新增: 使用webdriver-manager自动管理ChromeDriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 
 # 配置日志
 logging.basicConfig(
@@ -27,7 +29,7 @@ class MarketMonitor:
         self.output_file = output_file
         self.fund_codes = []
         self.fund_data = {}
-        # 新增: 初始化Selenium驱动
+        # 初始化Selenium驱动
         self.driver = None
 
     def _parse_report(self):
@@ -51,62 +53,91 @@ class MarketMonitor:
             logger.error("解析报告文件失败: %s", e)
             raise
 
-    def _get_fund_data_from_jijin(self, fund_code):
+    def _get_fund_data_from_dayfund(self, fund_code):
         """
-        使用 Selenium 从基金速查网抓取基金历史净值数据
+        使用 Selenium 从 dayfund.cn 抓取基金历史净值数据
         """
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
-        # 使用 Selenium 抓取，代替原有的 requests + BeautifulSoup
         try:
             # 配置 Chrome 选项，支持无头模式（在无GUI环境下运行）
             options = webdriver.ChromeOptions()
             options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             options.add_argument('--disable-dev-shm-usage')
+            options.add_argument('--disable-gpu')
+            options.add_argument('--window-size=1920,1080')
             
-            self.driver = webdriver.Chrome(options=options)
+            # 使用webdriver-manager自动安装和管理ChromeDriver
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=options)
             
-            # 使用基金速查网的URL
-            url = f"http://www.jijinsucha.com/fundvalue/{fund_code}.html"
+            # 使用dayfund.cn的URL
+            url = f"https://www.dayfund.cn/fundvalue/{fund_code}.html"
             self.driver.get(url)
+            logger.info("访问URL: %s", url)
 
             # 显式等待，确保净值表格加载完成，防止因网络延迟导致抓取失败
-            wait = WebDriverWait(self.driver, 10)
-            table_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'table.mt1')))
+            wait = WebDriverWait(self.driver, 20)
+            # 使用更通用的选择器：等待页面上的第一个<table>元素（历史净值表）
+            table_element = wait.until(EC.presence_of_element_located((By.TAG_NAME, 'table')))
+            logger.info("表格元素加载完成")
             
             # 使用 pandas 直接读取网页源代码中的表格
             df_list = pd.read_html(self.driver.page_source, flavor='html5lib')
             
-            # 找到正确的表格，它通常是页面上的第一个表格或结构最完整的表格
+            # 假设第一个表格是历史净值表（根据文档结构）
+            if not df_list:
+                raise ValueError("未找到任何表格")
             df = df_list[0]
+            logger.info("原始表格形状: %s", df.shape)
             
-            # 根据基金速查网的表格结构重新命名列
-            df.columns = ['date', 'fund_code', 'fund_name', 'net_value', 'accumulated_net_value', 'prev_net_value', 'prev_accumulated_net_value', 'daily_growth_value', 'daily_growth_rate']
+            # 根据dayfund.cn的表格结构重新命名列（匹配文档）
+            if len(df.columns) >= 9:
+                df.columns = ['date', 'fund_code', 'fund_name', 'net_value', 'accumulated_net_value', 
+                              'prev_net_value', 'prev_accumulated_net_value', 'daily_growth_value', 'daily_growth_rate']
+            else:
+                logger.warning("表格列数不匹配，尝试使用默认列")
+                df.columns = [f'col_{i}' for i in range(len(df.columns))]
+                # 假设第一列是日期，第四列是净值（根据文档）
+                df = df.iloc[:, [0, 3]]  # 调整为 date 和 net_value
+                df.columns = ['date', 'net_value']
             
-            df['date'] = pd.to_datetime(df['date'])
-            df['net_value'] = pd.to_numeric(df['net_value'])
+            # 数据清洗
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            df['net_value'] = pd.to_numeric(df['net_value'], errors='coerce')
+            df = df.dropna(subset=['date', 'net_value'])  # 移除无效行
             
-            # 只需要日期和净值列
+            # 移除重复行并按日期排序
+            df = df.drop_duplicates(subset=['date']).sort_values(by='date', ascending=True)
+            
+            if df.empty:
+                raise ValueError("清洗后数据为空")
+            
+            logger.info("成功解析 %d 行净值数据，最新日期: %s，最新净值: %.4f", len(df), df['date'].iloc[-1], df['net_value'].iloc[-1])
             return df[['date', 'net_value']]
 
         except Exception as e:
-            logger.warning("未能找到基金 %s 的历史净值表格，可能网页结构已变更或基金代码无效", fund_code)
-            logger.error(f"Selenium 抓取失败: {e}")
+            logger.error("Selenium 抓取基金 %s 失败: %s", fund_code, str(e))
+            # 调试: 保存页面源代码前1000字符到日志
+            if self.driver:
+                page_snippet = self.driver.page_source[:1000]
+                logger.debug("页面源代码片段: %s", page_snippet)
             return None
         finally:
             if self.driver:
-                self.driver.quit() # 确保在任何情况下都关闭浏览器实例
+                self.driver.quit()
+                self.driver = None  # 重置driver
 
     def get_fund_data(self):
         """获取所有基金的数据"""
+        logger.info("开始获取 %d 个基金的数据...", len(self.fund_codes))
         for fund_code in self.fund_codes:
-            # 调用新修改的抓取方法
-            df = self._get_fund_data_from_jijin(fund_code)
+            df = self._get_fund_data_from_dayfund(fund_code)
             
             if df is not None and not df.empty:
                 df = df.sort_values(by='date', ascending=True)
-                # 计算 RSI
+                # 计算 RSI (14日)
                 delta = df['net_value'].diff()
                 gain = delta.where(delta > 0, 0)
                 loss = -delta.where(delta < 0, 0)
@@ -123,8 +154,9 @@ class MarketMonitor:
                 # 获取最新数据
                 latest_data = df.iloc[-1]
                 latest_net_value = latest_data['net_value']
-                latest_rsi = rsi.iloc[-1]
-                latest_ma50_ratio = latest_net_value / ma50.iloc[-1] if not pd.isna(ma50.iloc[-1]) and ma50.iloc[-1] != 0 else float('nan')
+                latest_rsi = rsi.iloc[-1] if not pd.isna(rsi.iloc[-1]) else float('nan')
+                latest_ma50 = ma50.iloc[-1]
+                latest_ma50_ratio = latest_net_value / latest_ma50 if not pd.isna(latest_ma50) and latest_ma50 != 0 else float('nan')
 
                 self.fund_data[fund_code] = {
                     'latest_net_value': latest_net_value,
@@ -136,6 +168,9 @@ class MarketMonitor:
             else:
                 self.fund_data[fund_code] = None
                 logger.warning("基金 %s 数据获取失败，跳过计算", fund_code)
+            
+            # 添加随机延迟，避免频繁请求被限流
+            time.sleep(random.uniform(1, 3))
 
     def generate_report(self):
         """生成市场情绪与技术指标监控报告"""
@@ -153,11 +188,11 @@ class MarketMonitor:
                     rsi = data['rsi']
                     ma_ratio = data['ma_ratio']
                     advice = (
-                        "等待回调" if rsi > 70 or ma_ratio > 1.2 else
-                        "可分批买入" if 30 <= rsi <= 70 and 0.8 <= ma_ratio <= 1.2 else
-                        "可加仓" if rsi < 30 else "观察"
+                        "等待回调" if not pd.isna(rsi) and rsi > 70 or not pd.isna(ma_ratio) and ma_ratio > 1.2 else
+                        "可分批买入" if (pd.isna(rsi) or 30 <= rsi <= 70) and (pd.isna(ma_ratio) or 0.8 <= ma_ratio <= 1.2) else
+                        "可加仓" if not pd.isna(rsi) and rsi < 30 else "观察"
                     )
-                    f.write(f"| {fund_code} | {data['latest_net_value']:.4f} | {rsi:.2f} | {ma_ratio:.2f} | {advice} |\n")
+                    f.write(f"| {fund_code} | {data['latest_net_value']:.4f} | {rsi:.2f if not pd.isna(rsi) else 'N/A'} | {ma_ratio:.2f if not pd.isna(ma_ratio) else 'N/A'} | {advice} |\n")
                 else:
                     f.write(f"| {fund_code} | 数据获取失败 | - | - | 观察 |\n")
         
