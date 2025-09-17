@@ -133,44 +133,30 @@ class FundDataFetcher:
         
     def _get_risk_free_rate(self) -> float:
         """
-        从特定网页获取无风险利率，优先使用 Selenium，失败则退回 requests。
+        从英为财情网页获取无风险利率。
         """
-        url = "https://sc.macromicro.me/series/1849/china-bond-10-year"
+        url = "https://cn.investing.com/rates-bonds/china-10-year-bond-yield"
         
         # 尝试使用 Selenium 抓取
         source = None
         if self.selenium_fetcher.driver:
             source = self.selenium_fetcher.get_page_source(url)
-        
+
         if source:
             soup = BeautifulSoup(source, 'lxml')
-            stat_val_div = soup.find('div', class_='stat-val')
-            if stat_val_div:
-                val_span = stat_val_div.find('span', class_='val')
-                if val_span:
-                    try:
-                        rate = float(val_span.text.strip()) / 100.0
-                        self._log(f"网页抓取无风险利率成功: {rate}")
-                        return rate
-                    except ValueError:
-                        self._log("无法解析无风险利率数值。")
-        
-        self._log("Selenium 抓取无风险利率失败，尝试使用 requests...")
-        try:
-            r = requests.get(url, headers=self._web_headers, timeout=10)
-            r.raise_for_status()
-            r.encoding = 'utf-8'
-            soup = BeautifulSoup(r.text, 'lxml')
             
-            stat_val_div = soup.find('div', class_='stat-val')
-            if stat_val_div:
-                val_span = stat_val_div.find('span', class_='val')
-                if val_span:
-                    rate = float(val_span.text.strip()) / 100.0
-                    self._log(f"requests 抓取无风险利率成功: {rate}")
+            # 使用 CSS 选择器查找包含收益率的元素
+            # 收益率位于一个带有 "data-test='instrument-header-last-price'" 属性的 div 中
+            rate_element = soup.find('div', {'data-test': 'instrument-header-last-price'})
+            
+            if rate_element:
+                try:
+                    rate_text = rate_element.text.strip().replace('%', '')
+                    rate = float(rate_text) / 100.0
+                    self._log(f"网页抓取无风险利率成功: {rate}")
                     return rate
-        except Exception as e:
-            self._log(f"requests 抓取无风险利率也失败: {e}")
+                except ValueError:
+                    self._log(f"无法解析无风险利率数值: {rate_text}")
         
         self._log("网页抓取无风险利率失败，使用默认值。")
         return 0.018298
