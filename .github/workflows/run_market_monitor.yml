@@ -2,13 +2,13 @@ name: Run Market Monitor
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天UTC时间0点（北京时间8点）运行
+    - cron: '0 2 * * *'  # 每天UTC时间2点（北京时间10点）运行
   push:
     paths:
-      - 'analysis_report.md'  # 当analysis_report.md更新时触发
+      - 'analysis_report.md'
       - 'market_monitor.py'
-      - '.github/workflows/run_market_monitor.yml' # 当工作流文件本身更新时触发
-  workflow_dispatch:  # 支持手动触发
+      - '.github/workflows/run_market_monitor.yml'
+  workflow_dispatch:
 
 jobs:
   monitor:
@@ -27,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade pandas numpy requests beautifulsoup4 lxml
-          python -c "import pandas; import numpy; import requests; from bs4 import BeautifulSoup; import lxml; print('Dependencies installed successfully.')"
+          python -c "import pandas; import numpy; import requests; from bs4 import BeautifulSoup; import lxml; print('Dependencies installed successfully: pandas=%s, numpy=%s, requests=%s, bs4=%s, lxml=%s' % (pandas.__version__, numpy.__version__, requests.__version__, BeautifulSoup.__version__, lxml.__version__))"
         env:
           pythonLocation: /opt/hostedtoolcache/Python/3.10.18/x64
 
@@ -45,33 +45,49 @@ jobs:
 
       - name: Run Market Monitor script
         run: |
-          python market_monitor.py || echo "Script failed, check market_monitor.log"
+          for i in {1..3}; do
+            echo "Attempt $i of 3"
+            python market_monitor.py && break
+            echo "Script failed, retrying after 10 seconds..."
+            sleep 10
+          done || echo "Script failed after 3 attempts, check market_monitor.log"
+
+      - name: Upload log file as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-monitor-log
+          path: market_monitor.log
 
       - name: Commit and push results
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add market_monitor_report.md market_monitor.log || true
+          mkdir -p reports
+          REPORT_FILE="reports/market_monitor_report_$(date +%Y%m%d).md"
+          mv market_monitor_report.md $REPORT_FILE || true
+          git add $REPORT_FILE market_monitor.log || true
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
             git commit -m "Update market monitor report and log - $(date)"
             git push
+            echo "Changes committed and pushed"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-      - name: Check for errors in log
+      - name: Check for errors and warnings in log
         if: always()
         run: |
           if [ -f market_monitor.log ]; then
-            if grep -i "ERROR" market_monitor.log; then
-              echo "Errors found in log:"
-              grep -i "ERROR" market_monitor.log
+            if grep -i -E "ERROR|WARNING" market_monitor.log; then
+              echo "Errors or warnings found in log:"
+              grep -i -E "ERROR|WARNING" market_monitor.log
               exit 1
             else
-              echo "No errors found in log. Success!"
+              echo "No errors or warnings found in log. Success!"
             fi
           else
             echo "market_monitor.log not found. Workflow may have failed at an earlier step."
