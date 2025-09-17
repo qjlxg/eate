@@ -58,7 +58,7 @@ class MarketMonitor:
 
     def _get_fund_data_from_jijin(self, fund_code):
         """
-        使用 Selenium 从网页抓取基金历史净值数据
+        使用 Selenium 从基金速查网抓取基金历史净值数据
         """
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
@@ -72,23 +72,27 @@ class MarketMonitor:
             
             self.driver = webdriver.Chrome(options=options)
             
-            # 使用东方财富网URL，因为其数据结构更稳定
-            url = f"http://fund.eastmoney.com/{fund_code}.html"
+            # 使用基金速查网的URL
+            url = f"http://www.jijinsucha.com/fundvalue/{fund_code}.html"
             self.driver.get(url)
 
             # 显式等待，确保净值表格加载完成，防止因网络延迟导致抓取失败
             wait = WebDriverWait(self.driver, 10)
-            table_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tz_table')))
+            table_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'table.mt1')))
             
             # 使用 pandas 直接读取网页源代码中的表格
-            df_list = pd.read_html(self.driver.page_source)
+            df_list = pd.read_html(self.driver.page_source, flavor='html5lib')
+            
+            # 找到正确的表格，它通常是页面上的第一个表格或结构最完整的表格
             df = df_list[0]
             
-            # 假设表格结构为：日期、单位净值、累计净值、日增长率
-            df.columns = ['date', 'net_value', 'accumulated_net_value', 'daily_growth_rate']
+            # 根据基金速查网的表格结构重新命名列
+            df.columns = ['date', 'fund_code', 'fund_name', 'net_value', 'accumulated_net_value', 'prev_net_value', 'prev_accumulated_net_value', 'daily_growth_value', 'daily_growth_rate']
+            
             df['date'] = pd.to_datetime(df['date'])
             df['net_value'] = pd.to_numeric(df['net_value'])
             
+            # 只需要日期和净值列
             return df[['date', 'net_value']]
 
         except Exception as e:
