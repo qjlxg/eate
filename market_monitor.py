@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
+import re
+import os
+import logging
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import io
-import logging
-from datetime import datetime
 
 # 配置日志
 logging.basicConfig(
@@ -24,27 +26,31 @@ class MarketMonitor:
         self.technical_indicators = {}
 
     def _parse_report(self):
-        """从analysis_report.md提取推荐基金代码"""
+        """从 analysis_report.md 提取推荐基金代码"""
         logger.info("正在解析 %s 获取推荐基金代码...", self.report_file)
         if not os.path.exists(self.report_file):
             logger.error("报告文件 %s 不存在", self.report_file)
             raise FileNotFoundError(f"{self.report_file} 不存在")
         
-        with open(self.report_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # 提取推荐基金表格
-        pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\.?\d*) *\|'
-        matches = re.findall(pattern, content)
-        self.fund_codes = [code for code, score in matches if float(score) >= 30][:20]
-        logger.info("提取到 %d 个推荐基金 (限制前20): %s", len(self.fund_codes), self.fund_codes)
-        
+        try:
+            with open(self.report_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # 提取推荐基金表格
+            pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\.?\d*) *\|'
+            matches = re.findall(pattern, content)
+            self.fund_codes = [code for code, score in matches if float(score) >= 30][:20]
+            logger.info("提取到 %d 个推荐基金 (限制前20): %s", len(self.fund_codes), self.fund_codes)
+        except Exception as e:
+            logger.error("解析 %s 失败: %s", self.report_file, str(e))
+            raise
+
     def _get_fund_data(self, fund_code):
         """通过网络爬虫获取基金历史净值数据并计算技术指标"""
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
         try:
-            url = f"https://www.dayfund.cn/fundvalue/{fund_code}.html"
+            url = f"http://www.dayfund.cn/fundvalue/{fund_code}.html"
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             }
@@ -57,21 +63,21 @@ class MarketMonitor:
             table = soup.find('table', class_='mt1 clear')
             
             if not table:
-                logger.warning("未找到基金 %s 的历史净值表格", fund_code)
+                logger.warning("未找到基金 %s 的历史净值表格，可能网页结构已变更", fund_code)
                 self.fund_data[fund_code] = None
                 return
 
-            # 使用 pd.read_html 解析表格
-            df = pd.read_html(io.StringIO(str(table)), header=0)[0]
-            df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', 
-                         '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
-            
-            # 数据清洗
-            df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
-            df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
-            df['当日增长率'] = df['当日增长率'].str.rstrip('%').astype(float) / 100  # 去除%并转换为小数
-            df.set_index('净值日期', inplace=True)
-            df.sort_index(inplace=True)
+            try:
+                df = pd.read_html(io.StringIO(str(table)), flavor='lxml')[0]
+                df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
+                df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
+                df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
+                df.set_index('净值日期', inplace=True)
+                df.sort_index(inplace=True)
+            except Exception as e:
+                logger.error("解析基金 %s 的表格数据失败: %s", fund_code, str(e))
+                self.fund_data[fund_code] = None
+                return
 
             if len(df) < 50:
                 logger.warning("基金 %s 历史净值数据不足50天，无法计算指标", fund_code)
@@ -96,8 +102,11 @@ class MarketMonitor:
             }
             logger.info("成功获取并计算基金 %s 的技术指标", fund_code)
 
+        except requests.exceptions.RequestException as e:
+            logger.error("获取基金 %s 数据失败 (网络错误): %s", fund_code, str(e))
+            self.fund_data[fund_code] = None
         except Exception as e:
-            logger.error("获取基金 %s 数据失败: %s", fund_code, str(e))
+            logger.error("获取基金 %s 数据失败 (其他错误): %s", fund_code, str(e))
             self.fund_data[fund_code] = None
 
     def run(self):
@@ -136,11 +145,11 @@ class MarketMonitor:
 
         except FileNotFoundError as e:
             logger.error("文件缺失: %s", e)
+            raise
         except Exception as e:
             logger.error("运行过程中发生错误: %s", e)
+            raise
 
 if __name__ == "__main__":
     monitor = MarketMonitor()
-    # 为了测试，临时设置基金代码
-    monitor.fund_codes = ['023567']
     monitor.run()
