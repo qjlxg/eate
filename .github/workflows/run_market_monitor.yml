@@ -1,4 +1,3 @@
-
 name: Run Market Monitor
 
 on:
@@ -88,6 +87,6 @@ jobs:
               echo "No errors found in log. Success!"
             fi
           else
-            echo "market_monitor.log not found"
+            echo "market_monitor.log not found. Unable to check for errors."
             exit 1
           fi
