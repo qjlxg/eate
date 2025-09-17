@@ -1919,3 +1919,190 @@ Stacktrace:
 |:-----------|--------:|------------:|:---------------------|--------:|
 | 观望         |      35 |      000363 | 国泰聚信价值优势混合C (000363) |    7.87 |
 2025-09-17 09:35:56,814 - INFO - Selenium驱动已关闭。
+2025-09-17 10:33:15,166 - INFO - 正在从 CSV 导入基金代码列表...
+2025-09-17 10:33:15,407 - INFO - 导入成功，共 1894 个基金代码
+2025-09-17 10:33:15,407 - INFO - 分析前 10 个基金：['000363', '000796', '000850', '001174', '001326', '001388', '001407', '001426', '001467', '001515']...
+2025-09-17 10:33:15,408 - INFO - [数据获取] 正在初始化 SeleniumFetcher...
+2025-09-17 10:33:16,118 - INFO - Selenium驱动初始化成功。
+2025-09-17 10:33:16,119 - INFO - 使用 Selenium 访问: https://cn.investing.com/rates-bonds/china-10-year-bond-yield
+2025-09-17 10:33:19,734 - INFO - [数据获取] 网页抓取无风险利率失败，使用默认值。
+2025-09-17 10:33:19,735 - INFO - [数据获取] 正在获取市场情绪数据...
+2025-09-17 10:33:57,895 - INFO - [数据获取] 获取市场情绪数据失败: 'NoneType' object is not subscriptable
+2025-09-17 10:33:57,898 - INFO - [分析报告] --- 批量基金分析启动 ---
+2025-09-17 10:33:57,898 - INFO - [分析报告] 
+--- 正在分析基金 000363 ---
+2025-09-17 10:33:57,898 - INFO - [数据获取] 使用缓存的基金 000363 信息。
+2025-09-17 10:33:57,898 - INFO - [数据获取] 使用缓存的基金 000363 历史净值数据。
+2025-09-17 10:33:57,899 - INFO - [数据获取] 正在获取基金 000363 的基金经理数据...
+2025-09-17 10:33:57,899 - INFO - [数据获取] akshare 获取基金 000363 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 10:33:57,899 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_000363.html
+2025-09-17 10:35:57,985 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:35:57,985 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 10:35:57,985 - INFO - [数据获取] 正在使用 Selenium 抓取基金 000363 持仓数据...
+2025-09-17 10:37:58,085 - INFO - [数据获取] 获取基金 000363 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:37:58,086 - INFO - [数据获取] 获取基金 000363 持仓数据失败。
+2025-09-17 10:37:58,087 - INFO - [决策引擎] 通用指标: 夏普比率: 911.3698, 最大回撤: -0.0000, 3年涨幅: nan%
+2025-09-17 10:37:58,087 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 10:37:58,087 - INFO - [决策引擎] 基金持仓数据不足，无法评分。
+2025-09-17 10:37:58,087 - INFO - [决策引擎] 基本信息: 基金类型: 未知, 规模: 7.87亿元
+2025-09-17 10:37:58,087 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 10, 'sharpe_ratio_score': 10, 'max_drawdown_score': 10, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': np.float64(911.3698280335929), 'max_drawdown_value': np.float64(-0.0), 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 0, 'sector_preference_score': 0, 'holding_concentration_value': nan, 'scale_score': 5, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 10:37:59,089 - INFO - [分析报告] 
+--- 正在分析基金 000796 ---
+2025-09-17 10:37:59,089 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_000796.html
+2025-09-17 10:39:59,170 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:39:59,171 - INFO - [数据获取] 获取基金 000796 信息失败。
+2025-09-17 10:39:59,171 - INFO - [数据获取] 正在获取基金 000796 历史净值数据...
+2025-09-17 10:40:20,586 - INFO - [数据获取] akshare 获取基金 000796 历史净值失败: 'day'
+2025-09-17 10:40:20,586 - INFO - [数据获取] 正在获取基金 000796 的基金经理数据...
+2025-09-17 10:40:20,586 - INFO - [数据获取] akshare 获取基金 000796 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 10:40:20,586 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_000796.html
+2025-09-17 10:42:20,671 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:42:20,672 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 10:42:20,672 - INFO - [数据获取] 正在使用 Selenium 抓取基金 000796 持仓数据...
+2025-09-17 10:44:20,773 - INFO - [数据获取] 获取基金 000796 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:44:20,773 - INFO - [数据获取] 获取基金 000796 持仓数据失败。
+2025-09-17 10:44:20,773 - INFO - [分析报告] 基金 000796 基本信息获取失败，跳过分析。
+2025-09-17 10:44:20,773 - INFO - [分析报告] 
+--- 正在分析基金 000850 ---
+2025-09-17 10:44:20,773 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_000850.html
+2025-09-17 10:46:20,834 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:46:20,834 - INFO - [数据获取] 获取基金 000850 信息失败。
+2025-09-17 10:46:20,834 - INFO - [数据获取] 正在获取基金 000850 历史净值数据...
+2025-09-17 10:46:20,834 - INFO - [数据获取] akshare 获取基金 000850 历史净值失败: 'day'
+2025-09-17 10:46:21,835 - INFO - [数据获取] 正在获取基金 000850 的基金经理数据...
+2025-09-17 10:46:21,835 - INFO - [数据获取] akshare 获取基金 000850 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 10:46:21,835 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_000850.html
+2025-09-17 10:48:21,897 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:48:21,897 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 10:48:21,897 - INFO - [数据获取] 正在使用 Selenium 抓取基金 000850 持仓数据...
+2025-09-17 10:50:21,998 - INFO - [数据获取] 获取基金 000850 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:50:21,998 - INFO - [数据获取] 获取基金 000850 持仓数据失败。
+2025-09-17 10:50:21,998 - INFO - [分析报告] 基金 000850 基本信息获取失败，跳过分析。
+2025-09-17 10:50:21,998 - INFO - [分析报告] 
+--- 正在分析基金 001174 ---
+2025-09-17 10:50:21,999 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001174.html
+2025-09-17 10:52:22,055 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:52:22,055 - INFO - [数据获取] 获取基金 001174 信息失败。
+2025-09-17 10:52:22,055 - INFO - [数据获取] 正在获取基金 001174 历史净值数据...
+2025-09-17 10:52:22,056 - INFO - [数据获取] akshare 获取基金 001174 历史净值失败: 'day'
+2025-09-17 10:52:23,056 - INFO - [数据获取] 正在获取基金 001174 的基金经理数据...
+2025-09-17 10:52:23,056 - INFO - [数据获取] akshare 获取基金 001174 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 10:52:23,056 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001174.html
+2025-09-17 10:54:23,136 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:54:23,136 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 10:54:23,136 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001174 持仓数据...
+2025-09-17 10:56:23,152 - INFO - [数据获取] 获取基金 001174 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:56:23,152 - INFO - [数据获取] 获取基金 001174 持仓数据失败。
+2025-09-17 10:56:23,152 - INFO - [分析报告] 基金 001174 基本信息获取失败，跳过分析。
+2025-09-17 10:56:23,152 - INFO - [分析报告] 
+--- 正在分析基金 001326 ---
+2025-09-17 10:56:23,152 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001326.html
+2025-09-17 10:58:23,201 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 10:58:23,201 - INFO - [数据获取] 获取基金 001326 信息失败。
+2025-09-17 10:58:23,201 - INFO - [数据获取] 正在获取基金 001326 历史净值数据...
+2025-09-17 10:58:23,201 - INFO - [数据获取] akshare 获取基金 001326 历史净值失败: 'day'
+2025-09-17 10:58:24,203 - INFO - [数据获取] 正在获取基金 001326 的基金经理数据...
+2025-09-17 10:58:24,203 - INFO - [数据获取] akshare 获取基金 001326 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 10:58:24,203 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001326.html
+2025-09-17 11:00:24,301 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:00:24,301 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 11:00:24,301 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001326 持仓数据...
+2025-09-17 11:02:24,387 - INFO - [数据获取] 获取基金 001326 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:02:24,387 - INFO - [数据获取] 获取基金 001326 持仓数据失败。
+2025-09-17 11:02:24,387 - INFO - [分析报告] 基金 001326 基本信息获取失败，跳过分析。
+2025-09-17 11:02:24,388 - INFO - [分析报告] 
+--- 正在分析基金 001388 ---
+2025-09-17 11:02:24,388 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001388.html
+2025-09-17 11:04:24,479 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:04:24,480 - INFO - [数据获取] 获取基金 001388 信息失败。
+2025-09-17 11:04:24,480 - INFO - [数据获取] 正在获取基金 001388 历史净值数据...
+2025-09-17 11:04:24,480 - INFO - [数据获取] akshare 获取基金 001388 历史净值失败: 'day'
+2025-09-17 11:04:25,481 - INFO - [数据获取] 正在获取基金 001388 的基金经理数据...
+2025-09-17 11:04:25,481 - INFO - [数据获取] akshare 获取基金 001388 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 11:04:25,481 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001388.html
+2025-09-17 11:06:25,567 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:06:25,568 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 11:06:25,568 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001388 持仓数据...
+2025-09-17 11:08:25,657 - INFO - [数据获取] 获取基金 001388 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:08:25,658 - INFO - [数据获取] 获取基金 001388 持仓数据失败。
+2025-09-17 11:08:25,658 - INFO - [分析报告] 基金 001388 基本信息获取失败，跳过分析。
+2025-09-17 11:08:25,658 - INFO - [分析报告] 
+--- 正在分析基金 001407 ---
+2025-09-17 11:08:25,658 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001407.html
+2025-09-17 11:10:25,679 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:10:25,680 - INFO - [数据获取] 获取基金 001407 信息失败。
+2025-09-17 11:10:25,680 - INFO - [数据获取] 正在获取基金 001407 历史净值数据...
+2025-09-17 11:10:25,680 - INFO - [数据获取] akshare 获取基金 001407 历史净值失败: 'day'
+2025-09-17 11:10:26,681 - INFO - [数据获取] 正在获取基金 001407 的基金经理数据...
+2025-09-17 11:10:26,681 - INFO - [数据获取] akshare 获取基金 001407 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 11:10:26,681 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001407.html
+2025-09-17 11:12:26,768 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:12:26,768 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 11:12:26,768 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001407 持仓数据...
+2025-09-17 11:14:26,869 - INFO - [数据获取] 获取基金 001407 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:14:26,869 - INFO - [数据获取] 获取基金 001407 持仓数据失败。
+2025-09-17 11:14:26,869 - INFO - [分析报告] 基金 001407 基本信息获取失败，跳过分析。
+2025-09-17 11:14:26,870 - INFO - [分析报告] 
+--- 正在分析基金 001426 ---
+2025-09-17 11:14:26,870 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001426.html
+2025-09-17 11:16:26,912 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:16:26,913 - INFO - [数据获取] 获取基金 001426 信息失败。
+2025-09-17 11:16:26,913 - INFO - [数据获取] 正在获取基金 001426 历史净值数据...
+2025-09-17 11:16:26,913 - INFO - [数据获取] akshare 获取基金 001426 历史净值失败: 'day'
+2025-09-17 11:16:27,914 - INFO - [数据获取] 正在获取基金 001426 的基金经理数据...
+2025-09-17 11:16:27,914 - INFO - [数据获取] akshare 获取基金 001426 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 11:16:27,914 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001426.html
+2025-09-17 11:18:27,999 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:18:28,000 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 11:18:28,000 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001426 持仓数据...
+2025-09-17 11:20:28,079 - INFO - [数据获取] 获取基金 001426 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:20:28,080 - INFO - [数据获取] 获取基金 001426 持仓数据失败。
+2025-09-17 11:20:28,080 - INFO - [分析报告] 基金 001426 基本信息获取失败，跳过分析。
+2025-09-17 11:20:28,080 - INFO - [分析报告] 
+--- 正在分析基金 001467 ---
+2025-09-17 11:20:28,080 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001467.html
+2025-09-17 11:22:28,169 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:22:28,169 - INFO - [数据获取] 获取基金 001467 信息失败。
+2025-09-17 11:22:28,169 - INFO - [数据获取] 正在获取基金 001467 历史净值数据...
+2025-09-17 11:22:28,169 - INFO - [数据获取] akshare 获取基金 001467 历史净值失败: 'day'
+2025-09-17 11:22:29,170 - INFO - [数据获取] 正在获取基金 001467 的基金经理数据...
+2025-09-17 11:22:29,170 - INFO - [数据获取] akshare 获取基金 001467 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 11:22:29,170 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001467.html
+2025-09-17 11:24:29,271 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:24:29,272 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 11:24:29,272 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001467 持仓数据...
+2025-09-17 11:26:29,343 - INFO - [数据获取] 获取基金 001467 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:26:29,344 - INFO - [数据获取] 获取基金 001467 持仓数据失败。
+2025-09-17 11:26:29,344 - INFO - [分析报告] 基金 001467 基本信息获取失败，跳过分析。
+2025-09-17 11:26:29,344 - INFO - [分析报告] 
+--- 正在分析基金 001515 ---
+2025-09-17 11:26:29,344 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001515.html
+2025-09-17 11:28:29,387 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:28:29,387 - INFO - [数据获取] 获取基金 001515 信息失败。
+2025-09-17 11:28:29,387 - INFO - [数据获取] 正在获取基金 001515 历史净值数据...
+2025-09-17 11:28:29,388 - INFO - [数据获取] akshare 获取基金 001515 历史净值失败: 'day'
+2025-09-17 11:28:30,389 - INFO - [数据获取] 正在获取基金 001515 的基金经理数据...
+2025-09-17 11:28:30,389 - INFO - [数据获取] akshare 获取基金 001515 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 11:28:30,389 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jjjl_001515.html
+2025-09-17 11:30:30,415 - ERROR - Selenium 抓取失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:30:30,416 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 11:30:30,416 - INFO - [数据获取] 正在使用 Selenium 抓取基金 001515 持仓数据...
+2025-09-17 11:32:30,501 - INFO - [数据获取] 获取基金 001515 持仓数据失败: HTTPConnectionPool(host='localhost', port=37051): Read timed out. (read timeout=120)
+2025-09-17 11:32:30,501 - INFO - [数据获取] 获取基金 001515 持仓数据失败。
+2025-09-17 11:32:30,501 - INFO - [分析报告] 基金 001515 基本信息获取失败，跳过分析。
+2025-09-17 11:32:30,502 - INFO - [分析报告] 
+--- 批量基金分析报告 ---
+2025-09-17 11:32:30,502 - INFO - [分析报告] 分析日期: 2025-09-17 11:32:30
+2025-09-17 11:32:30,502 - INFO - [分析报告] 市场趋势: unknown
+2025-09-17 11:32:30,503 - INFO - [分析报告] 
+--- 推荐基金（综合评分前10名）---
+2025-09-17 11:32:30,507 - INFO - [分析报告] 
+| decision   |   score |   fund_code | fund_name            |   rose_3y |   sharpe_ratio | max_drawdown   |   scale |
+|:-----------|--------:|------------:|:---------------------|----------:|---------------:|:---------------|--------:|
+| 观望         |      35 |      000363 | 国泰聚信价值优势混合C (000363) |       nan |         911.37 | -0.00%         |    7.87 |
+2025-09-17 11:32:30,507 - INFO - [分析报告] 
+--- 全部基金分析结果 ---
+2025-09-17 11:32:30,508 - INFO - [分析报告] 
+| decision   |   score |   fund_code | fund_name            |   scale |
+|:-----------|--------:|------------:|:---------------------|--------:|
+| 观望         |      35 |      000363 | 国泰聚信价值优势混合C (000363) |    7.87 |
