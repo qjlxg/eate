@@ -39,8 +39,8 @@ class SeleniumFetcher:
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
         
         try:
-            chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')  # 更新为GitHub Actions路径
-            self.driver = webdriver.Chrome(service=ChromeService(chromedriver_path), options=chrome_options)
+            chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')  # GitHub Actions路径
+            self.driver = webdriver.Chrome(service=ChromeService(chrome_driver_path), options=chrome_options)  # 修复：使用chrome_driver_path
             logger.info("Selenium驱动初始化成功。")
         except WebDriverException as e:
             logger.error(f"无法初始化 ChromeDriver: {e}.")
@@ -50,6 +50,7 @@ class SeleniumFetcher:
     def get_page_source(self, url: str) -> str:
         """加载 URL 并返回页面源代码。"""
         if not self.driver:
+            logger.error(f"Selenium driver 未初始化，无法访问 {url}")
             return None
         try:
             logger.info(f"使用 Selenium 访问: {url}")
@@ -67,8 +68,9 @@ class SeleniumFetcher:
 
     def __del__(self):
         """确保浏览器实例在对象销毁时被正确关闭。"""
-        if self.driver:
+        if hasattr(self, 'driver') and self.driver:  # 修复：检查driver是否存在
             self.driver.quit()
+            logger.info("Selenium驱动已关闭。")
 
 class FundDataFetcher:
     """负责所有数据获取、清洗和缓存管理。"""
@@ -121,7 +123,7 @@ class FundDataFetcher:
         
     def _get_risk_free_rate(self) -> float:
         """获取无风险利率，尝试从可靠源获取，失败则用默认值。"""
-        url = "http://www.pbc.gov.cn/zhengcehuobisi/125207/125213/125440/index.html"  # 央行利率页面
+        url = "http://www.pbc.gov.cn/zhengcehuobisi/125207/125213/125440/index.html"
         source = None
         if self.selenium_fetcher.driver:
             source = self.selenium_fetcher.get_page_source(url)
@@ -656,8 +658,7 @@ class FundAnalyzer:
         
         self._log("--- 批量基金分析启动 ---")
         
-        # 调试：限制为单个基金
-        fund_codes = fund_codes[:1]  # 只分析第一个基金
+        fund_codes = fund_codes[:1]  # 调试模式：分析单个基金
         self._log(f"调试模式：分析基金 {fund_codes}")
         
         for fund_code in fund_codes:
@@ -722,7 +723,7 @@ if __name__ == '__main__':
         logger.info(f"导入成功，共 {len(fund_codes_to_analyze)} 个基金代码")
     except Exception as e:
         logger.error(f"导入基金列表失败: {e}")
-        fund_codes_to_analyze = ['000363']  # 调试：默认单个基金
+        fund_codes_to_analyze = ['000363']
     
     if fund_codes_to_analyze:
         logger.info(f"分析基金：{fund_codes_to_analyze[:1]}...")
