@@ -1,12 +1,10 @@
 import pandas as pd
 import numpy as np
-import re
-import os
-import logging
-from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import io
+import logging
+from datetime import datetime
 
 # 配置日志
 logging.basicConfig(
@@ -46,13 +44,14 @@ class MarketMonitor:
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
         try:
-            url = f"http://www.dayfund.cn/fundvalue/{fund_code}.html"
+            url = f"https://www.dayfund.cn/fundvalue/{fund_code}.html"
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             }
             # 设置10秒超时
             response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
+            response.encoding = 'utf-8'  # 确保正确解码中文
 
             soup = BeautifulSoup(response.text, 'html.parser')
             table = soup.find('table', class_='mt1 clear')
@@ -62,10 +61,15 @@ class MarketMonitor:
                 self.fund_data[fund_code] = None
                 return
 
-            df = pd.read_html(io.StringIO(str(table)))[0]
-            df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
+            # 使用 pd.read_html 解析表格
+            df = pd.read_html(io.StringIO(str(table)), header=0)[0]
+            df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', 
+                         '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
+            
+            # 数据清洗
             df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
             df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
+            df['当日增长率'] = df['当日增长率'].str.rstrip('%').astype(float) / 100  # 去除%并转换为小数
             df.set_index('净值日期', inplace=True)
             df.sort_index(inplace=True)
 
@@ -93,7 +97,7 @@ class MarketMonitor:
             logger.info("成功获取并计算基金 %s 的技术指标", fund_code)
 
         except Exception as e:
-            logger.error("获取基金 %s 数据失败: %s", fund_code, e)
+            logger.error("获取基金 %s 数据失败: %s", fund_code, str(e))
             self.fund_data[fund_code] = None
 
     def run(self):
@@ -137,4 +141,6 @@ class MarketMonitor:
 
 if __name__ == "__main__":
     monitor = MarketMonitor()
+    # 为了测试，临时设置基金代码
+    monitor.fund_codes = ['023567']
     monitor.run()
