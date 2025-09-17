@@ -42,7 +42,7 @@ class MarketMonitor:
         logger.info("提取到 %d 个推荐基金 (限制前20): %s", len(self.fund_codes), self.fund_codes)
         
     def _get_fund_data(self, fund_code):
-        """通过网络爬取获取基金历史净值数据并计算技术指标"""
+        """通过网络爬虫获取基金历史净值数据并计算技术指标"""
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
         try:
