@@ -1629,3 +1629,197 @@
 | 观望         |      20 |      001426 | 未知          |         |
 | 观望         |      15 |      001467 | 未知          |         |
 | 观望         |      15 |      001515 | 未知          |         |
+2025-09-17 08:45:59,410 - INFO - 正在从 CSV 导入基金代码列表...
+2025-09-17 08:45:59,712 - INFO - 导入成功，共 1894 个基金代码
+2025-09-17 08:45:59,712 - INFO - 分析前 10 个基金：['000363', '000796', '000850', '001174', '001326', '001388', '001407', '001426', '001467', '001515']...
+2025-09-17 08:45:59,713 - INFO - [数据获取] 正在初始化 SeleniumFetcher...
+2025-09-17 08:46:00,400 - INFO - Selenium驱动初始化成功。
+2025-09-17 08:46:00,400 - INFO - 使用 Selenium 访问: https://sc.macromicro.me/series/1849/china-bond-10-year
+2025-09-17 08:46:02,288 - INFO - [数据获取] 网页抓取无风险利率成功: 0.018600000000000002
+2025-09-17 08:46:02,288 - INFO - [数据获取] 正在获取市场情绪数据...
+2025-09-17 08:46:33,557 - INFO - [数据获取] 获取市场情绪数据失败: 'NoneType' object is not subscriptable
+2025-09-17 08:46:33,558 - INFO - [分析报告] --- 批量基金分析启动 ---
+2025-09-17 08:46:33,558 - INFO - [分析报告] 
+--- 正在分析基金 000363 ---
+2025-09-17 08:46:33,558 - INFO - [数据获取] 使用缓存的基金 000363 信息。
+2025-09-17 08:46:33,558 - INFO - [数据获取] 正在获取基金 000363 历史净值数据...
+2025-09-17 08:46:53,166 - INFO - [数据获取] akshare 获取基金 000363 历史净值失败: HTTPSConnectionPool(host='88.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=4&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=%7C0%7C0%7C0%7Cweb&fid=f3&fs=b%3AMK0021%2Cb%3AMK0022%2Cb%3AMK0023%2Cb%3AMK0024&fields=f3%2Cf12%2Cf13 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f0004e84fa0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2025-09-17 08:46:53,166 - INFO - [数据获取] 正在获取基金 000363 的基金经理数据...
+2025-09-17 08:46:53,166 - INFO - [数据获取] akshare 获取基金 000363 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:46:53,167 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_000363.html
+2025-09-17 08:46:57,778 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:46:57,778 - INFO - [数据获取] 使用缓存的基金 000363 持仓数据。
+2025-09-17 08:46:57,778 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:46:57,778 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:46:57,778 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.02
+2025-09-17 08:46:57,778 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:46:57,778 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': 0.019500000000000003, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:46:58,779 - INFO - [分析报告] 
+--- 正在分析基金 000796 ---
+2025-09-17 08:46:58,779 - INFO - [数据获取] 使用缓存的基金 000796 信息。
+2025-09-17 08:46:58,779 - INFO - [数据获取] 正在获取基金 000796 历史净值数据...
+2025-09-17 08:47:16,540 - INFO - [数据获取] akshare 获取基金 000796 历史净值失败: HTTPSConnectionPool(host='88.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=3&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=%7C0%7C0%7C0%7Cweb&fid=f3&fs=b%3AMK0021%2Cb%3AMK0022%2Cb%3AMK0023%2Cb%3AMK0024&fields=f3%2Cf12%2Cf13 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f0004e4f130>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2025-09-17 08:47:16,540 - INFO - [数据获取] 正在获取基金 000796 的基金经理数据...
+2025-09-17 08:47:16,540 - INFO - [数据获取] akshare 获取基金 000796 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:47:16,540 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_000796.html
+2025-09-17 08:47:19,592 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:47:19,592 - INFO - [数据获取] 使用缓存的基金 000796 持仓数据。
+2025-09-17 08:47:19,592 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:47:19,592 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:47:19,592 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.49
+2025-09-17 08:47:19,592 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:47:19,592 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 5, 'sector_preference_score': 10, 'holding_concentration_value': 0.48769999999999997, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:47:20,593 - INFO - [分析报告] 
+--- 正在分析基金 000850 ---
+2025-09-17 08:47:20,594 - INFO - [数据获取] 使用缓存的基金 000850 信息。
+2025-09-17 08:47:20,594 - INFO - [数据获取] 正在获取基金 000850 历史净值数据...
+2025-09-17 08:47:39,694 - INFO - [数据获取] akshare 获取基金 000850 历史净值失败: HTTPSConnectionPool(host='88.push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/clist/get?pn=4&pz=100&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&wbp2u=%7C0%7C0%7C0%7Cweb&fid=f3&fs=b%3AMK0021%2Cb%3AMK0022%2Cb%3AMK0023%2Cb%3AMK0024&fields=f3%2Cf12%2Cf13 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f0004e4a350>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2025-09-17 08:47:39,694 - INFO - [数据获取] 正在获取基金 000850 的基金经理数据...
+2025-09-17 08:47:39,694 - INFO - [数据获取] akshare 获取基金 000850 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:47:39,695 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_000850.html
+2025-09-17 08:47:41,484 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:47:41,485 - INFO - [数据获取] 使用缓存的基金 000850 持仓数据。
+2025-09-17 08:47:41,485 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:47:41,485 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:47:41,485 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.21
+2025-09-17 08:47:41,485 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:47:41,485 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': 0.20600000000000002, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:47:42,486 - INFO - [分析报告] 
+--- 正在分析基金 001174 ---
+2025-09-17 08:47:42,486 - INFO - [数据获取] 使用缓存的基金 001174 信息。
+2025-09-17 08:47:42,486 - INFO - [数据获取] 正在获取基金 001174 历史净值数据...
+2025-09-17 08:48:02,639 - INFO - [数据获取] akshare 获取基金 001174 历史净值失败: 'day'
+2025-09-17 08:48:02,639 - INFO - [数据获取] 正在获取基金 001174 的基金经理数据...
+2025-09-17 08:48:02,640 - INFO - [数据获取] akshare 获取基金 001174 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:02,640 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001174.html
+2025-09-17 08:48:04,438 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:04,438 - INFO - [数据获取] 使用缓存的基金 001174 持仓数据。
+2025-09-17 08:48:04,438 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:04,438 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:04,438 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: -0.03
+2025-09-17 08:48:04,438 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:04,438 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': -0.03399999999999999, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:05,440 - INFO - [分析报告] 
+--- 正在分析基金 001326 ---
+2025-09-17 08:48:05,440 - INFO - [数据获取] 使用缓存的基金 001326 信息。
+2025-09-17 08:48:05,440 - INFO - [数据获取] 正在获取基金 001326 历史净值数据...
+2025-09-17 08:48:05,440 - INFO - [数据获取] akshare 获取基金 001326 历史净值失败: 'day'
+2025-09-17 08:48:06,441 - INFO - [数据获取] 正在获取基金 001326 的基金经理数据...
+2025-09-17 08:48:06,441 - INFO - [数据获取] akshare 获取基金 001326 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:06,441 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001326.html
+2025-09-17 08:48:07,941 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:07,941 - INFO - [数据获取] 使用缓存的基金 001326 持仓数据。
+2025-09-17 08:48:07,941 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:07,941 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:07,941 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.14
+2025-09-17 08:48:07,941 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:07,941 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': 0.14049999999999999, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:08,942 - INFO - [分析报告] 
+--- 正在分析基金 001388 ---
+2025-09-17 08:48:08,942 - INFO - [数据获取] 使用缓存的基金 001388 信息。
+2025-09-17 08:48:08,943 - INFO - [数据获取] 正在获取基金 001388 历史净值数据...
+2025-09-17 08:48:08,943 - INFO - [数据获取] akshare 获取基金 001388 历史净值失败: 'day'
+2025-09-17 08:48:09,944 - INFO - [数据获取] 正在获取基金 001388 的基金经理数据...
+2025-09-17 08:48:09,944 - INFO - [数据获取] akshare 获取基金 001388 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:09,944 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001388.html
+2025-09-17 08:48:11,467 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:11,467 - INFO - [数据获取] 使用缓存的基金 001388 持仓数据。
+2025-09-17 08:48:11,467 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:11,467 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:11,467 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.15
+2025-09-17 08:48:11,467 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:11,467 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': 0.1486, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:12,469 - INFO - [分析报告] 
+--- 正在分析基金 001407 ---
+2025-09-17 08:48:12,469 - INFO - [数据获取] 使用缓存的基金 001407 信息。
+2025-09-17 08:48:12,469 - INFO - [数据获取] 正在获取基金 001407 历史净值数据...
+2025-09-17 08:48:12,469 - INFO - [数据获取] akshare 获取基金 001407 历史净值失败: 'day'
+2025-09-17 08:48:13,470 - INFO - [数据获取] 正在获取基金 001407 的基金经理数据...
+2025-09-17 08:48:13,470 - INFO - [数据获取] akshare 获取基金 001407 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:13,470 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001407.html
+2025-09-17 08:48:15,030 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:15,030 - INFO - [数据获取] 使用缓存的基金 001407 持仓数据。
+2025-09-17 08:48:15,030 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:15,030 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:15,031 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.07
+2025-09-17 08:48:15,031 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:15,031 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': 0.0704, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:16,032 - INFO - [分析报告] 
+--- 正在分析基金 001426 ---
+2025-09-17 08:48:16,032 - INFO - [数据获取] 使用缓存的基金 001426 信息。
+2025-09-17 08:48:16,032 - INFO - [数据获取] 正在获取基金 001426 历史净值数据...
+2025-09-17 08:48:16,032 - INFO - [数据获取] akshare 获取基金 001426 历史净值失败: 'day'
+2025-09-17 08:48:17,033 - INFO - [数据获取] 正在获取基金 001426 的基金经理数据...
+2025-09-17 08:48:17,034 - INFO - [数据获取] akshare 获取基金 001426 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:17,034 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001426.html
+2025-09-17 08:48:18,540 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:18,540 - INFO - [数据获取] 使用缓存的基金 001426 持仓数据。
+2025-09-17 08:48:18,540 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:18,540 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:18,540 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.03
+2025-09-17 08:48:18,540 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:18,541 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 10, 'holding_concentration_value': 0.0252, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:19,542 - INFO - [分析报告] 
+--- 正在分析基金 001467 ---
+2025-09-17 08:48:19,542 - INFO - [数据获取] 使用缓存的基金 001467 信息。
+2025-09-17 08:48:19,542 - INFO - [数据获取] 正在获取基金 001467 历史净值数据...
+2025-09-17 08:48:19,542 - INFO - [数据获取] akshare 获取基金 001467 历史净值失败: 'day'
+2025-09-17 08:48:20,543 - INFO - [数据获取] 正在获取基金 001467 的基金经理数据...
+2025-09-17 08:48:20,543 - INFO - [数据获取] akshare 获取基金 001467 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:20,543 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001467.html
+2025-09-17 08:48:22,058 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:22,058 - INFO - [数据获取] 使用缓存的基金 001467 持仓数据。
+2025-09-17 08:48:22,058 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:22,058 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:22,058 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.09
+2025-09-17 08:48:22,059 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:22,059 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 5, 'holding_concentration_value': 0.0897, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:23,060 - INFO - [分析报告] 
+--- 正在分析基金 001515 ---
+2025-09-17 08:48:23,060 - INFO - [数据获取] 使用缓存的基金 001515 信息。
+2025-09-17 08:48:23,060 - INFO - [数据获取] 正在获取基金 001515 历史净值数据...
+2025-09-17 08:48:23,060 - INFO - [数据获取] akshare 获取基金 001515 历史净值失败: 'day'
+2025-09-17 08:48:24,061 - INFO - [数据获取] 正在获取基金 001515 的基金经理数据...
+2025-09-17 08:48:24,061 - INFO - [数据获取] akshare 获取基金 001515 经理数据失败，尝试网页抓取: fund_manager_em() got an unexpected keyword argument 'symbol'
+2025-09-17 08:48:24,061 - INFO - 使用 Selenium 访问: http://fundf10.eastmoney.com/jbgk_001515.html
+2025-09-17 08:48:25,802 - INFO - [数据获取] 网页抓取基金经理数据失败。
+2025-09-17 08:48:25,802 - INFO - [数据获取] 使用缓存的基金 001515 持仓数据。
+2025-09-17 08:48:25,802 - INFO - [决策引擎] 历史数据不足，无法计算性能指标。
+2025-09-17 08:48:25,802 - INFO - [决策引擎] 基金经理数据不足，无法评分。
+2025-09-17 08:48:25,802 - INFO - [决策引擎] 基金持仓指标: 前十大持仓集中度: 0.39
+2025-09-17 08:48:25,802 - INFO - [决策引擎] 基本信息: 基金类型: None, 规模: None亿元
+2025-09-17 08:48:25,802 - INFO - [分析报告] 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 5, 'holding_concentration_value': 0.3945, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
+2025-09-17 08:48:26,804 - INFO - [分析报告] 
+--- 批量基金分析报告 ---
+2025-09-17 08:48:26,805 - INFO - [分析报告] 分析日期: 2025-09-17 08:48:26
+2025-09-17 08:48:26,805 - INFO - [分析报告] 市场趋势: unknown
+2025-09-17 08:48:26,805 - INFO - [分析报告] 
+--- 推荐基金（综合评分前10名）---
+2025-09-17 08:48:26,810 - INFO - [分析报告] 
+| decision   |   score |   fund_code | fund_name   |   rose_3y |   sharpe_ratio |   max_drawdown | scale   |
+|:-----------|--------:|------------:|:------------|----------:|---------------:|---------------:|:--------|
+| 观望         |      20 |      000363 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      20 |      000850 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      20 |      001407 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      20 |      001174 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      20 |      001326 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      20 |      001388 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      20 |      001426 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      15 |      000796 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      15 |      001467 | 未知          |       nan |            nan |            nan |         |
+| 观望         |      15 |      001515 | 未知          |       nan |            nan |            nan |         |
+2025-09-17 08:48:26,810 - INFO - [分析报告] 
+--- 全部基金分析结果 ---
+2025-09-17 08:48:26,811 - INFO - [分析报告] 
+| decision   |   score |   fund_code | fund_name   | scale   |
+|:-----------|--------:|------------:|:------------|:--------|
+| 观望         |      20 |      000363 | 未知          |         |
+| 观望         |      15 |      000796 | 未知          |         |
+| 观望         |      20 |      000850 | 未知          |         |
+| 观望         |      20 |      001174 | 未知          |         |
+| 观望         |      20 |      001326 | 未知          |         |
+| 观望         |      20 |      001388 | 未知          |         |
+| 观望         |      20 |      001407 | 未知          |         |
+| 观望         |      20 |      001426 | 未知          |         |
+| 观望         |      15 |      001467 | 未知          |         |
+| 观望         |      15 |      001515 | 未知          |         |

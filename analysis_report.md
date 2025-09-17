@@ -31,7 +31,7 @@
 评分详情: {'rose_3y_score': 0, 'rank_r_3y_score': 0, 'sharpe_ratio_score': 0, 'max_drawdown_score': 0, 'rose_3y_value': nan, 'rank_r_3y_value': nan, 'sharpe_ratio_value': nan, 'max_drawdown_value': nan, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'sector_preference_score': 5, 'holding_concentration_value': 0.3945, 'scale_score': 0, 'fund_type_score': 0, 'market_sentiment_adj_score': 0}
 
 --- 批量基金分析报告 ---
-分析日期: 2025-09-16 23:29:32
+分析日期: 2025-09-17 08:48:26
 市场趋势: unknown
 
 --- 推荐基金（综合评分前10名）---
