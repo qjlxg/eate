@@ -29,23 +29,18 @@ logging.basicConfig(
 logger = logging.getLogger('FundAnalyzer')
 
 class SeleniumFetcher:
-    """
-    使用 Selenium 模拟浏览器进行数据抓取。
-    """
+    """使用 Selenium 模拟浏览器进行数据抓取。"""
     def __init__(self):
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # 无头模式，不显示浏览器窗口
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
         
-        # 尝试从环境变量获取 ChromeDriver 路径
         try:
-            # 在 GitHub Actions 中，CHROMEDRIVER_PATH 由工作流文件设置
-            # 在本地，你可以手动指定路径
-            chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', 'C:/Users/QJL/Desktop/web_code/chromedriver-win64/chromedriver.exe')
-            self.driver = webdriver.Chrome(service=ChromeService(chrome_driver_path), options=chrome_options)
+            chrome_driver_path = os.getenv('CHROMEDRIVER_PATH', '/usr/local/bin/chromedriver')  # 更新为GitHub Actions路径
+            self.driver = webdriver.Chrome(service=ChromeService(chromedriver_path), options=chrome_options)
             logger.info("Selenium驱动初始化成功。")
         except WebDriverException as e:
             logger.error(f"无法初始化 ChromeDriver: {e}.")
@@ -53,15 +48,13 @@ class SeleniumFetcher:
             self.driver = None
 
     def get_page_source(self, url: str) -> str:
-        """
-        加载 URL 并返回页面源代码。
-        """
+        """加载 URL 并返回页面源代码。"""
         if not self.driver:
             return None
         try:
             logger.info(f"使用 Selenium 访问: {url}")
             self.driver.get(url)
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 15).until(
                 EC.presence_of_element_located((By.TAG_NAME, "body"))
             )
             return self.driver.page_source
@@ -73,9 +66,7 @@ class SeleniumFetcher:
             return None
 
     def __del__(self):
-        """
-        确保浏览器实例在对象销毁时被正确关闭。
-        """
+        """确保浏览器实例在对象销毁时被正确关闭。"""
         if self.driver:
             self.driver.quit()
 
@@ -88,12 +79,12 @@ class FundDataFetcher:
     def __init__(self, cache_data: bool = True, cache_file: str = 'fund_cache.json'):
         self.cache_data = cache_data
         self.cache_file = cache_file
+        if os.path.exists(self.cache_file):
+            os.remove(self.cache_file)  # 清空缓存以避免旧数据干扰
+            logger.info("已清空缓存文件。")
         self.cache = self._load_cache()
-        
-        # 懒加载 SeleniumFetcher 实例
         self._selenium_fetcher = None
         self.risk_free_rate = self._get_risk_free_rate()
-        
         self.akshare_rate_limit = 1
         self.last_akshare_call = time.time()
 
@@ -122,58 +113,32 @@ class FundDataFetcher:
         
     @property
     def selenium_fetcher(self):
-        """
-        懒加载（Lazy Loading）SeleniumFetcher 实例。
-        在第一次调用时才创建实例。
-        """
+        """懒加载SeleniumFetcher实例。"""
         if self._selenium_fetcher is None:
             self._log("正在初始化 SeleniumFetcher...")
             self._selenium_fetcher = SeleniumFetcher()
         return self._selenium_fetcher
         
     def _get_risk_free_rate(self) -> float:
-        """
-        从特定网页获取无风险利率，优先使用 Selenium，失败则退回 requests。
-        """
-        url = "https://sc.macromicro.me/series/1849/china-bond-10-year"
-        
-        # 尝试使用 Selenium 抓取
+        """获取无风险利率，尝试从可靠源获取，失败则用默认值。"""
+        url = "http://www.pbc.gov.cn/zhengcehuobisi/125207/125213/125440/index.html"  # 央行利率页面
         source = None
         if self.selenium_fetcher.driver:
             source = self.selenium_fetcher.get_page_source(url)
         
         if source:
             soup = BeautifulSoup(source, 'lxml')
-            stat_val_div = soup.find('div', class_='stat-val')
-            if stat_val_div:
-                val_span = stat_val_div.find('span', class_='val')
-                if val_span:
-                    try:
-                        rate = float(val_span.text.strip()) / 100.0
-                        self._log(f"网页抓取无风险利率成功: {rate}")
-                        return rate
-                    except ValueError:
-                        self._log("无法解析无风险利率数值。")
-        
-        self._log("Selenium 抓取无风险利率失败，尝试使用 requests...")
-        try:
-            r = requests.get(url, headers=self._web_headers, timeout=10)
-            r.raise_for_status()
-            r.encoding = 'utf-8'
-            soup = BeautifulSoup(r.text, 'lxml')
-            
-            stat_val_div = soup.find('div', class_='stat-val')
-            if stat_val_div:
-                val_span = stat_val_div.find('span', class_='val')
-                if val_span:
-                    rate = float(val_span.text.strip()) / 100.0
-                    self._log(f"requests 抓取无风险利率成功: {rate}")
+            rate_span = soup.find('span', string=re.compile(r'\d+\.\d+%'))
+            if rate_span:
+                try:
+                    rate = float(rate_span.text.strip().replace('%', '')) / 100.0
+                    self._log(f"网页抓取无风险利率成功: {rate}")
                     return rate
-        except Exception as e:
-            self._log(f"requests 抓取无风险利率也失败: {e}")
+                except ValueError:
+                    self._log("无法解析无风险利率数值。")
         
-        self._log("网页抓取无风险利率失败，使用默认值。")
-        return 0.018298
+        self._log("网页抓取无风险利率失败，使用默认值2.5%。")
+        return 0.025
 
     def _wait_for_akshare_call(self):
         """限制 akshare API 调用频率。"""
@@ -182,8 +147,55 @@ class FundDataFetcher:
             time.sleep(self.akshare_rate_limit - elapsed)
         self.last_akshare_call = time.time()
 
+    def _get_fund_info(self, fund_code: str, force_update: bool = False) -> dict:
+        """从网页抓取基金基本信息（名称、规模、类型）。"""
+        padded_code = self._pad_fund_code(fund_code)
+        cache_key = f"{padded_code}_info"
+        if not force_update and cache_key in self.cache:
+            self._log(f"使用缓存的基金 {padded_code} 基本信息。")
+            return self.cache[cache_key]
+        
+        url = f"http://fundf10.eastmoney.com/jbgk_{padded_code}.html"
+        source = None
+        if self.selenium_fetcher.driver:
+            source = self.selenium_fetcher.get_page_source(url)
+        
+        if source:
+            soup = BeautifulSoup(source, 'lxml')
+            data = {}
+            title = soup.find('h4', class_='title')
+            if title and title.find('a'):
+                data['name'] = title.find('a').text.strip()
+            else:
+                data['name'] = '未知'
+            
+            table = soup.find('table', class_='info w790')
+            if table:
+                rows = table.find_all('tr')
+                for row in rows:
+                    cells = row.find_all('td')
+                    headers = row.find_all('th')
+                    if len(cells) >= 2 and len(headers) >= 1:
+                        if headers[0].text.strip() == '资产规模':
+                            scale_text = cells[0].text.strip()
+                            try:
+                                scale = float(scale_text.split('亿元')[0])
+                                data['scale'] = scale
+                            except (ValueError, IndexError):
+                                data['scale'] = None
+                        if headers[0].text.strip() == '基金类型':
+                            data['fund_type'] = cells[0].text.strip()
+            
+            if data.get('name', '未知') != '未知':
+                self.cache[cache_key] = data
+                self._save_cache()
+                self._log(f"网页抓取基金 {padded_code} 基本信息成功: {data}")
+                return data
+        self._log(f"网页抓取基金 {padded_code} 基本信息失败。")
+        return {'name': '未知', 'scale': None, 'fund_type': '未知'}
+
     def _get_fund_historical_nav(self, fund_code: str, force_update: bool = False):
-        """从 akshare 获取基金历史净值数据。"""
+        """从 akshare 或网页获取基金历史净值数据。"""
         padded_code = self._pad_fund_code(fund_code)
         cache_key = f"{padded_code}_historical_nav"
         if not force_update and cache_key in self.cache:
@@ -192,10 +204,12 @@ class FundDataFetcher:
         
         self._wait_for_akshare_call()
         try:
-            self._log(f"正在获取基金 {padded_code} 历史净值数据...")
-            df = ak.fund_etf_hist_em(symbol=padded_code, period="day")
+            self._log(f"正在通过 akshare 获取基金 {padded_code} 历史净值数据...")
+            df = ak.fund_open_fund_info_em(fund=padded_code, indicator="unit_net_value")
             if df is not None and not df.empty and '单位净值' in df.columns:
                 df['净值日期'] = pd.to_datetime(df['净值日期'])
+                df['日增长率'] = df['单位净值'].pct_change().fillna(0)
+                df['累计净值'] = df['单位净值']
                 df.set_index('净值日期', inplace=True)
                 self._log(f"akshare 获取基金 {padded_code} 历史净值成功。")
                 self.cache[cache_key] = df.to_dict(orient='records')
@@ -205,17 +219,60 @@ class FundDataFetcher:
                 self._log(f"akshare 获取基金 {padded_code} 历史净值失败: 数据为空或列名不正确")
         except Exception as e:
             self._log(f"akshare 获取基金 {padded_code} 历史净值失败: {e}")
-        return None
-
-    def _get_latest_nav_from_web(self, fund_code: str):
-        """
-        从天天基金网网页抓取最新的单位净值和日增长率。
-        """
-        padded_code = self._pad_fund_code(fund_code)
+        
         url = f"http://fundf10.eastmoney.com/jjjz_{padded_code}.html"
         source = None
         if self.selenium_fetcher.driver:
             source = self.selenium_fetcher.get_page_source(url)
+        
+        if source:
+            soup = BeautifulSoup(source, 'lxml')
+            table = soup.find('table', class_='w782 comm lsjz')
+            if table:
+                rows = table.find_all('tr')
+                dates, navs, daily_growths = [], [], []
+                for row in rows[1:]:
+                    cells = row.find_all('td')
+                    if len(cells) >= 3:
+                        try:
+                            date = pd.to_datetime(cells[0].text.strip())
+                            nav = float(cells[1].text.strip())
+                            growth_rate = float(cells[2].text.strip().replace('%', '')) / 100.0
+                            dates.append(date)
+                            navs.append(nav)
+                            daily_growths.append(growth_rate)
+                        except (ValueError, IndexError):
+                            continue
+                df = pd.DataFrame({
+                    '净值日期': dates,
+                    '单位净值': navs,
+                    '日增长率': daily_growths,
+                    '累计净值': navs
+                })
+                if not df.empty:
+                    df.set_index('净值日期', inplace=True)
+                    self.cache[cache_key] = df.to_dict(orient='records')
+                    self._save_cache()
+                    self._log(f"网页抓取基金 {padded_code} 历史净值成功。")
+                    return df
+        self._log(f"网页抓取基金 {padded_code} 历史净值失败。")
+        return None
+
+    def _get_latest_nav_from_web(self, fund_code: str):
+        """从天天基金网网页抓取最新的单位净值和日增长率。"""
+        padded_code = self._pad_fund_code(fund_code)
+        url = f"http://fundf10.eastmoney.com/jjjz_{padded_code}.html"
+        source = None
+        if self.selenium_fetcher.driver:
+            self.selenium_fetcher.driver.get(url)
+            try:
+                WebDriverWait(self.selenium_fetcher.driver, 15).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "row row1"))
+                )
+                source = self.selenium_fetcher.driver.page_source
+            except TimeoutException:
+                logger.error(f"加载 {url} 超时")
+                return None
 
         if source:
             soup = BeautifulSoup(source, 'lxml')
@@ -233,10 +290,8 @@ class FundDataFetcher:
                             return {'nav': nav, 'daily_growth_rate': growth_rate / 100.0}
                         except (ValueError, IndexError):
                             self._log("解析最新净值数据失败。")
-
         self._log("网页抓取最新净值失败: 未找到指定的HTML元素或数据格式不正确。")
         return None
-
 
     def _get_fund_manager_data(self, fund_code: str, force_update: bool = False):
         """获取基金经理数据。"""
@@ -248,15 +303,15 @@ class FundDataFetcher:
         
         self._wait_for_akshare_call()
         try:
-            self._log(f"正在获取基金 {padded_code} 的基金经理数据...")
-            manager_df = ak.fund_manager_em(symbol=padded_code)
+            self._log(f"正在通过 akshare 获取基金 {padded_code} 的基金经理数据...")
+            manager_df = ak.fund_manager_em(fund=padded_code)
             if manager_df is not None and not manager_df.empty:
                 latest_manager = manager_df.iloc[0]
                 manager_name = latest_manager['姓名']
                 manager_start_date = latest_manager['任职起始日期']
                 start_date = datetime.strptime(manager_start_date, '%Y-%m-%d')
                 years_in_service = (datetime.now() - start_date).days / 365.25
-                return_rate = latest_manager['任职回报']
+                return_rate = float(latest_manager['任职回报'].replace('%', '')) if isinstance(latest_manager['任职回报'], str) else latest_manager['任职回报']
                 
                 data = {
                     'manager_name': manager_name,
@@ -275,26 +330,71 @@ class FundDataFetcher:
         return self._get_fund_manager_data_from_web(padded_code)
 
     def _get_fund_manager_data_from_web(self, fund_code: str):
-        """使用 Selenium 从网页抓取基金经理数据。"""
+        """使用 Selenium 从网页抓取基金经理数据，包括年限和回报率。"""
         url = f"http://fundf10.eastmoney.com/jbgk_{fund_code}.html"
         source = None
         if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
+            self.selenium_fetcher.driver.get(url)
+            try:
+                WebDriverWait(self.selenium_fetcher.driver, 15).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "bs_gl"))
+                )
+                source = self.selenium_fetcher.driver.page_source
+            except TimeoutException:
+                logger.error(f"加载 {url} 超时")
+                return None
 
         if source:
             soup = BeautifulSoup(source, 'lxml')
-            manager_label = soup.find('label', string=re.compile(r'基金经理：'))
-            if manager_label:
-                manager_link = manager_label.find('a')
-                if manager_link:
-                    manager_name = manager_link.text.strip()
-                    self._log(f"网页抓取基金经理姓名成功: {manager_name}")
-                    return {'manager_name': manager_name, 'years_in_service': None, 'return_rate': None}
-        self._log("网页抓取基金经理数据失败。")
+            labels = soup.find_all('label')
+            manager_name = None
+            manager_url = None
+            for label in labels:
+                if '基金经理' in label.text.strip():
+                    manager_link = label.find('a')
+                    if manager_link:
+                        manager_name = manager_link.text.strip()
+                        manager_url = manager_link['href']
+                        break
+            
+            if manager_name and manager_url:
+                source_manager = self.selenium_fetcher.get_page_source(manager_url)
+                if source_manager:
+                    soup_manager = BeautifulSoup(source_manager, 'lxml')
+                    table = soup_manager.find('table', class_='fxtb')
+                    if table:
+                        rows = table.find_all('tr')
+                        years_in_service = None
+                        return_rate = None
+                        for row in rows:
+                            cells = row.find_all('td')
+                            if len(cells) > 2:
+                                if '任职时间' in cells[0].text.strip():
+                                    try:
+                                        start_date = pd.to_datetime(cells[1].text.strip().split('至')[0])
+                                        years_in_service = (datetime.now() - start_date).days / 365.25
+                                    except (ValueError, IndexError):
+                                        pass
+                                if '任职回报' in cells[0].text.strip():
+                                    try:
+                                        return_rate = float(cells[1].text.strip().replace('%', ''))
+                                    except (ValueError, IndexError):
+                                        pass
+                        data = {
+                            'manager_name': manager_name,
+                            'years_in_service': years_in_service,
+                            'return_rate': return_rate
+                        }
+                        self.cache[f"{fund_code}_manager"] = data
+                        self._save_cache()
+                        logger.info(f"网页抓取基金经理数据成功: {data}")
+                        return data
+            logger.warning("未找到基金经理标签或经理页面")
+        logger.error("网页抓取基金经理数据失败。")
         return None
 
     def _get_fund_holdings_data(self, fund_code: str, force_update: bool = False):
-        """使用 Selenium 获取基金持仓数据。"""
+        """使用 Selenium 获取基金持仓数据，改进表格解析。"""
         padded_code = self._pad_fund_code(fund_code)
         cache_key = f"{padded_code}_holdings"
         if not force_update and cache_key in self.cache:
@@ -304,104 +404,53 @@ class FundDataFetcher:
         url = f"http://fundf10.eastmoney.com/ccmx_{padded_code}.html"
         source = None
         if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
+            self.selenium_fetcher.driver.get(url)
+            try:
+                WebDriverWait(self.selenium_fetcher.driver, 15).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "w782"))
+                )
+                source = self.selenium_fetcher.get_page_source(url)
+            except TimeoutException:
+                logger.error(f"加载 {url} 超时")
+                return None
             
         if source:
             soup = BeautifulSoup(source, 'lxml')
-            holdings_table = soup.find('div', id='cctable')
-            if holdings_table:
-                table = holdings_table.find('table')
-                if table:
-                    holdings_list = []
-                    rows = table.find_all('tr')[1:]
-                    for row in rows:
-                        cols = row.find_all('td')
-                        if len(cols) >= 5:
-                            stock_code_elem = cols[1].find('a')
-                            stock_name_elem = cols[2].find('a')
-                            holding_ratio_text = cols[4].text
-                            
-                            if stock_code_elem and stock_name_elem and '%' in holding_ratio_text:
-                                try:
-                                    stock_code = stock_code_elem.text.strip()
-                                    stock_name = stock_name_elem.text.strip()
-                                    holding_ratio = float(holding_ratio_text.replace('%', '')) / 100
-                                    holdings_list.append({'code': stock_code, 'name': stock_name, 'ratio': holding_ratio})
-                                except (ValueError, AttributeError) as e:
-                                    self._log(f"解析持仓数据失败: {e}")
-                                    continue
-                    
-                    if holdings_list:
-                        self._log(f"获取基金 {padded_code} 持仓数据成功。")
-                        self.cache[cache_key] = {'holdings': holdings_list}
-                        self._save_cache()
-                        return {'holdings': holdings_list}
-        self._log(f"获取基金 {padded_code} 持仓数据失败。")
-        return None
-
-    def _get_fund_info(self, fund_code: str, force_update: bool = False):
-        """使用 Selenium 获取基金规模、成立日期和类型。"""
-        padded_code = self._pad_fund_code(fund_code)
-        cache_key = f"{padded_code}_info"
-        if not force_update and cache_key in self.cache:
-            self._log(f"使用缓存的基金 {padded_code} 信息。")
-            return self.cache[cache_key]
-            
-        url = f"http://fundf10.eastmoney.com/jbgk_{padded_code}.html"
-        source = None
-        if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
-
-        if source:
-            soup = BeautifulSoup(source, 'lxml')
-            info_data = {}
-            
-            size_label = soup.find('label', string=re.compile(r'资产规模：'))
-            if size_label:
-                size_text = size_label.find_parent('p').text
-                size_match = re.search(r'(\d+\.?\d*)亿元', size_text)
-                if size_match:
-                    info_data['scale'] = float(size_match.group(1))
-
-            establish_label = soup.find('label', string=re.compile(r'成立日期：'))
-            if establish_label:
-                date_text = establish_label.find('span').text.strip()
-                try:
-                    info_data['establish_date'] = datetime.strptime(date_text, '%Y-%m-%d').strftime('%Y-%m-%d')
-                except ValueError:
-                    info_data['establish_date'] = None
-            
-            fund_type_label = soup.find('label', string=re.compile(r'类型：'))
-            if fund_type_label:
-                info_data['fund_type'] = fund_type_label.find('span').text.strip()
-                
-            fund_name_h1 = soup.find('div', class_='fundDetail-tit').find('h1')
-            if fund_name_h1:
-                info_data['name'] = fund_name_h1.find_all('a')[1].text.strip()
-                
-            if info_data:
-                self._log(f"获取基金 {padded_code} 信息成功。")
-                self.cache[cache_key] = info_data
+            holdings = []
+            table = soup.find('table', class_='w782 comm cc')
+            if table:
+                rows = table.find_all('tr')
+                for row in rows[1:]:
+                    cols = row.find_all('td')
+                    if len(cols) > 3:
+                        try:
+                            holding = {
+                                'name': cols[1].text.strip(),
+                                'ratio': float(cols[3].text.strip().replace('%', '')) / 100.0 if cols[3].text.strip() else 0.0
+                            }
+                            holdings.append(holding)
+                        except (ValueError, IndexError):
+                            continue
+            if holdings:
+                data = {'holdings': holdings}
+                self.cache[cache_key] = data
                 self._save_cache()
-                return info_data
-        
-        self._log(f"获取基金 {padded_code} 信息失败。")
+                self._log(f"网页抓取基金 {padded_code} 持仓数据成功。")
+                return data
+        self._log(f"网页抓取基金 {padded_code} 持仓数据失败。")
         return None
 
     def _get_market_sentiment(self) -> dict:
-        """获取市场情绪，通过分析上证指数。"""
+        """获取市场情绪数据，使用上证指数作为基准。"""
         try:
             self._log("正在获取市场情绪数据...")
-            self._wait_for_akshare_call()
-            sh_index = ak.index_zh_a_hist(symbol="sh000001")
-            sh_index['日期'] = pd.to_datetime(sh_index['日期'])
-            sh_index.set_index('日期', inplace=True)
+            df = ak.stock_zh_a_hist(symbol="000001", period="daily", start_date=(datetime.now() - timedelta(days=365)).strftime('%Y%m%d'), end_date=datetime.now().strftime('%Y%m%d'))
+            if df.empty:
+                self._log("未能获取上证指数数据，使用默认值。")
+                return {'sentiment': 'unknown', 'trend': 'unknown'}
             
-            one_year_ago = datetime.now() - timedelta(days=365)
-            last_year_data = sh_index.loc[sh_index.index > one_year_ago.strftime('%Y-%m-%d')]
-            
-            if len(last_year_data) < 2:
-                self._log("上证指数数据不足，无法判断市场情绪。")
+            last_year_data = df.tail(252)
+            if last_year_data.empty:
                 return {'sentiment': 'unknown', 'trend': 'unknown'}
             
             start_price = last_year_data['开盘'].iloc[0]
@@ -427,13 +476,18 @@ class FundDataFetcher:
 
     def get_fund_data(self, fund_code: str):
         """主入口，获取并整合所有基金数据。"""
-        data = {}
-        data['info'] = self._get_fund_info(fund_code)
-        data['nav'] = self._get_fund_historical_nav(fund_code)
-        data['manager'] = self._get_fund_manager_data(fund_code)
-        data['holdings'] = self._get_fund_holdings_data(fund_code)
-        data['risk_free_rate'] = self.risk_free_rate
-        return data
+        try:
+            data = {}
+            data['info'] = self._get_fund_info(fund_code)
+            data['nav'] = self._get_fund_historical_nav(fund_code)
+            data['manager'] = self._get_fund_manager_data(fund_code)
+            data['holdings'] = self._get_fund_holdings_data(fund_code)
+            data['risk_free_rate'] = self.risk_free_rate
+            self._log(f"基金 {fund_code} 数据获取完成: {data}")
+            return data
+        except Exception as e:
+            self._log(f"基金 {fund_code} 数据获取失败: {e}")
+            return None
 
 class InvestmentStrategy:
     """根据数据对基金进行评分和决策。"""
@@ -445,8 +499,8 @@ class InvestmentStrategy:
         """计算夏普比率。"""
         if returns.empty or len(returns) < 2:
             return np.nan
-        excess_returns = returns - risk_free_rate / 252 # 转换为日无风险利率
-        return excess_returns.mean() / excess_returns.std() * np.sqrt(252) # 年化
+        excess_returns = returns - risk_free_rate / 252
+        return excess_returns.mean() / excess_returns.std() * np.sqrt(252)
 
     def _calculate_max_drawdown(self, returns):
         """计算最大回撤。"""
@@ -483,23 +537,18 @@ class InvestmentStrategy:
         fund_type = info_data.get('fund_type', '未知')
         scale = info_data.get('scale', np.nan)
         
-        # 1. 基金通用指标（40分）
         if fund_nav is not None and not fund_nav.empty:
-            returns = fund_nav['日增长率'].astype(float) / 100.0
+            returns = fund_nav['日增长率'].astype(float)
             
-            # 3年涨幅
             rose_3y_val = fund_nav['累计净值'].iloc[-1] / fund_nav['累计净值'].iloc[0] - 1 if len(fund_nav) > 252*3 else np.nan
             points_log['rose_3y_score'] = 10 if rose_3y_val > 0.5 else 0
             
-            # 3年排名（此处仍为简化，需真实数据）
             rank_r_3y_val = np.nan
-            points_log['rank_r_3y_score'] = 10 if np.random.rand() < 0.2 else 0 # 随机模拟
+            points_log['rank_r_3y_score'] = 10 if np.random.rand() < 0.2 else 0
             
-            # 夏普比率
             sharpe_ratio_val = self._calculate_sharpe_ratio(returns, fund_data.get('risk_free_rate'))
             points_log['sharpe_ratio_score'] = 10 if sharpe_ratio_val > 0.5 else 0
             
-            # 最大回撤
             max_drawdown_val = self._calculate_max_drawdown(returns)
             points_log['max_drawdown_score'] = 10 if max_drawdown_val < 0.2 else 0
             
@@ -516,7 +565,6 @@ class InvestmentStrategy:
                 'rose_3y_value': np.nan, 'rank_r_3y_value': np.nan, 'sharpe_ratio_value': np.nan, 'max_drawdown_value': np.nan
             })
 
-        # 2. 基金经理指标（20分）
         if manager_data and manager_data.get('years_in_service') is not None:
             years = manager_data['years_in_service']
             return_rate = manager_data['return_rate']
@@ -530,10 +578,9 @@ class InvestmentStrategy:
             points_log['manager_years_score'] = 0
             points_log['manager_return_score'] = 0
             
-        # 3. 基金持仓指标（20分）
         if holdings_data and holdings_data.get('holdings'):
             holdings = holdings_data['holdings']
-            top_10_concentration = sum(h['ratio'] for h in holdings[:10]) if holdings else 0
+            top_10_concentration = sum(h['ratio'] for h in holdings[:10]) if len(holdings) >= 10 else 0
             points_log['holding_concentration_score'] = 10 if top_10_concentration < 0.4 else 5 if top_10_concentration < 0.6 else 0
             
             tech_consumer_healthcare = any('科技' in h['name'] or '消费' in h['name'] or '医疗' in h['name'] for h in holdings[:10])
@@ -547,22 +594,20 @@ class InvestmentStrategy:
             points_log['sector_preference_score'] = 0
             points_log['holding_concentration_value'] = np.nan
             
-        # 4. 基本信息（10分）
         if info_data:
             if scale and 5 <= scale <= 100:
                 points_log['scale_score'] = 5
             else:
                 points_log['scale_score'] = 0
             
-            if fund_type in ['混合型', '股票型']:
+            if fund_type in ['混合型-灵活', '股票型']:
                 points_log['fund_type_score'] = 5
             else:
                 points_log['fund_type_score'] = 0
                 
             self._log(f"基本信息: 基金类型: {fund_type}, 规模: {scale}亿元")
 
-        # 5. 市场情绪调整（10分）
-        market_sentiment = self.market_data.get('sentiment')
+        market_sentiment = self.market_data.get('sentiment', 'unknown')
         if market_sentiment == 'bullish':
             points_log['market_sentiment_adj_score'] = 10
         elif market_sentiment == 'neutral':
@@ -570,7 +615,6 @@ class InvestmentStrategy:
         else:
             points_log['market_sentiment_adj_score'] = 0
         
-        # 计算总分
         for key, value in points_log.items():
             if key.endswith('_score') and isinstance(value, (int, float)) and not np.isnan(value):
                 score += value
@@ -612,34 +656,41 @@ class FundAnalyzer:
         
         self._log("--- 批量基金分析启动 ---")
         
+        # 调试：限制为单个基金
+        fund_codes = fund_codes[:1]  # 只分析第一个基金
+        self._log(f"调试模式：分析基金 {fund_codes}")
+        
         for fund_code in fund_codes:
             self._log(f"\n--- 正在分析基金 {fund_code} ---")
             
-            fund_data = self.data_fetcher.get_fund_data(fund_code)
-            
-            if not fund_data.get('info'):
-                self._log(f"基金 {fund_code} 基本信息获取失败，跳过分析。")
-                continue
-            
-            fund_info = fund_data['info']
-            fund_name = fund_info.get('name', '未知')
-            
-            analysis_result = self.investment_strategy.analyze_and_score(fund_data)
-            decision = analysis_result.get('decision')
-            score = analysis_result.get('score')
-            points_log = analysis_result.get('points_log', {})
-            
-            results.append({
-                'fund_code': fund_code,
-                'fund_name': fund_name,
-                'rose_3y': f"{points_log.get('rose_3y_value', np.nan):.2%}" if not np.isnan(points_log.get('rose_3y_value', np.nan)) else np.nan,
-                'sharpe_ratio': f"{points_log.get('sharpe_ratio_value', np.nan):.4f}" if not np.isnan(points_log.get('sharpe_ratio_value', np.nan)) else np.nan,
-                'max_drawdown': f"{points_log.get('max_drawdown_value', np.nan):.2%}" if not np.isnan(points_log.get('max_drawdown_value', np.nan)) else np.nan,
-                'scale': fund_info.get('scale'),
-                'decision': decision,
-                'score': score
-            })
-            self._log(f"评分详情: {points_log}")
+            try:
+                fund_data = self.data_fetcher.get_fund_data(fund_code)
+                
+                if not fund_data or not fund_data.get('info'):
+                    self._log(f"基金 {fund_code} 基本信息获取失败，跳过分析。")
+                    continue
+                
+                fund_info = fund_data['info']
+                fund_name = fund_info.get('name', '未知')
+                
+                analysis_result = self.investment_strategy.analyze_and_score(fund_data)
+                decision = analysis_result.get('decision')
+                score = analysis_result.get('score')
+                points_log = analysis_result.get('points_log', {})
+                
+                results.append({
+                    'fund_code': fund_code,
+                    'fund_name': fund_name,
+                    'rose_3y': f"{points_log.get('rose_3y_value', np.nan):.2%}" if not np.isnan(points_log.get('rose_3y_value', np.nan)) else np.nan,
+                    'sharpe_ratio': f"{points_log.get('sharpe_ratio_value', np.nan):.4f}" if not np.isnan(points_log.get('sharpe_ratio_value', np.nan)) else np.nan,
+                    'max_drawdown': f"{points_log.get('max_drawdown_value', np.nan):.2%}" if not np.isnan(points_log.get('max_drawdown_value', np.nan)) else np.nan,
+                    'scale': fund_info.get('scale'),
+                    'decision': decision,
+                    'score': score
+                })
+                self._log(f"评分详情: {points_log}")
+            except Exception as e:
+                self._log(f"分析基金 {fund_code} 失败: {e}")
             time.sleep(1)
 
         results_df = pd.DataFrame(results)
@@ -662,10 +713,6 @@ class FundAnalyzer:
         return results_df
 
 if __name__ == '__main__':
-    # 请确保已安装所有库，特别是 Selenium 和 ChromeDriver
-    # pip install selenium akshare pandas numpy requests beautifulsoup4 lxml
-    # 还需要手动下载与您的 Chrome 版本匹配的 ChromeDriver 并配置环境变量或修改路径
-    
     funds_list_url = 'https://raw.githubusercontent.com/qjlxg/own/main/recommended_cn_funds.csv'
     
     try:
@@ -675,18 +722,14 @@ if __name__ == '__main__':
         logger.info(f"导入成功，共 {len(fund_codes_to_analyze)} 个基金代码")
     except Exception as e:
         logger.error(f"导入基金列表失败: {e}")
-        fund_codes_to_analyze = []
+        fund_codes_to_analyze = ['000363']  # 调试：默认单个基金
     
     if fund_codes_to_analyze:
-        test_fund_codes = fund_codes_to_analyze[:10]
-        logger.info(f"分析前 {len(test_fund_codes)} 个基金：{test_fund_codes}...")
-        
+        logger.info(f"分析基金：{fund_codes_to_analyze[:1]}...")
         data_fetcher = FundDataFetcher()
         market_data = data_fetcher._get_market_sentiment()
-        
         investment_strategy = InvestmentStrategy(market_data, logger)
-        
         analyzer = FundAnalyzer(data_fetcher, investment_strategy)
-        analyzer.run_analysis(test_fund_codes)
+        analyzer.run_analysis(fund_codes_to_analyze)
     else:
         logger.error("无法获取基金代码列表，程序终止。")
