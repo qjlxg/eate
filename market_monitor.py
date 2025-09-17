@@ -11,6 +11,12 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import time
 import random
+# 新增: 导入Selenium相关库
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 # 配置日志
 logging.basicConfig(
@@ -26,6 +32,8 @@ class MarketMonitor:
         self.output_file = output_file
         self.fund_codes = []
         self.fund_data = {}
+        # 新增: 初始化Selenium驱动
+        self.driver = None
 
     def _parse_report(self):
         """从 analysis_report.md 提取推荐基金代码"""
@@ -39,139 +47,131 @@ class MarketMonitor:
                 content = f.read()
             
             # 提取推荐基金表格
-            pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\.?\d*) *\|'
+            pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\\.?\\d*) *\|'
             matches = re.findall(pattern, content)
-            self.fund_codes = [code for code, score in matches if float(score) >= 30][:20]
-            logger.info("提取到 %d 个推荐基金 (限制前20): %s", len(self.fund_codes), self.fund_codes)
+            self.fund_codes = [code for code, _ in matches]
+            logger.info("提取到 %d 个推荐基金: %s", len(self.fund_codes), self.fund_codes)
+            
         except Exception as e:
-            logger.error("解析 %s 失败: %s", self.report_file, str(e))
+            logger.error("解析报告文件失败: %s", e)
             raise
 
-    def _get_fund_data(self, fund_code):
-        """通过网络爬虫获取基金历史净值数据并计算技术指标"""
+    def _get_fund_data_from_jijin(self, fund_code):
+        """
+        使用 Selenium 从网页抓取基金历史净值数据
+        """
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
+        # 使用 Selenium 抓取，代替原有的 requests + BeautifulSoup
         try:
-            url = f"http://www.dayfund.cn/fundvalue/{fund_code}.html"
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-            }
-            # 设置请求重试
-            session = requests.Session()
-            retries = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
-            session.mount('http://', HTTPAdapter(max_retries=retries))
+            # 配置 Chrome 选项，支持无头模式（在无GUI环境下运行）
+            options = webdriver.ChromeOptions()
+            options.add_argument('--headless')
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
             
-            # 添加随机延迟
-            time.sleep(random.uniform(1, 3))
-            response = session.get(url, headers=headers, timeout=15)
-            response.raise_for_status()
-            response.encoding = 'utf-8'  # 确保正确解码中文
-
-            soup = BeautifulSoup(response.text, 'lxml')
-            table = soup.find('table', class_='mt1 clear')
+            self.driver = webdriver.Chrome(options=options)
             
-            if not table:
-                logger.warning("未找到基金 %s 的历史净值表格，可能网页结构已变更或基金代码无效", fund_code)
-                self.fund_data[fund_code] = None
-                return
+            # 使用东方财富网URL，因为其数据结构更稳定
+            url = f"http://fund.eastmoney.com/{fund_code}.html"
+            self.driver.get(url)
 
-            try:
-                df = pd.read_html(io.StringIO(str(table)), flavor='lxml')[0]
-                expected_columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
-                if len(df.columns) != len(expected_columns):
-                    logger.warning("基金 %s 表格列数不符合预期，实际: %d，预期: %d", fund_code, len(df.columns), len(expected_columns))
-                    self.fund_data[fund_code] = None
-                    return
-                
-                df.columns = expected_columns
-                df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
-                df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
-                df.set_index('净值日期', inplace=True)
-                df.sort_index(inplace=True)
-                
-                # 检查数据完整性
-                if df['最新单位净值'].isna().all():
-                    logger.warning("基金 %s 净值数据全部无效", fund_code)
-                    self.fund_data[fund_code] = None
-                    return
+            # 显式等待，确保净值表格加载完成，防止因网络延迟导致抓取失败
+            wait = WebDriverWait(self.driver, 10)
+            table_element = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'tz_table')))
+            
+            # 使用 pandas 直接读取网页源代码中的表格
+            df_list = pd.read_html(self.driver.page_source)
+            df = df_list[0]
+            
+            # 假设表格结构为：日期、单位净值、累计净值、日增长率
+            df.columns = ['date', 'net_value', 'accumulated_net_value', 'daily_growth_rate']
+            df['date'] = pd.to_datetime(df['date'])
+            df['net_value'] = pd.to_numeric(df['net_value'])
+            
+            return df[['date', 'net_value']]
 
-                if len(df) < 50:
-                    logger.warning("基金 %s 历史净值数据不足50天，无法计算指标 (实际: %d)", fund_code, len(df))
-                    self.fund_data[fund_code] = None
-                    return
+        except Exception as e:
+            logger.warning("未能找到基金 %s 的历史净值表格，可能网页结构已变更或基金代码无效", fund_code)
+            logger.error(f"Selenium 抓取失败: {e}")
+            return None
+        finally:
+            if self.driver:
+                self.driver.quit() # 确保在任何情况下都关闭浏览器实例
 
-                # 计算RSI
-                delta = df['最新单位净值'].diff()
-                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                rs = gain / loss
+    def get_fund_data(self):
+        """获取所有基金的数据"""
+        for fund_code in self.fund_codes:
+            # 调用新修改的抓取方法
+            df = self._get_fund_data_from_jijin(fund_code)
+            
+            if df is not None and not df.empty:
+                df = df.sort_values(by='date', ascending=True)
+                # 计算 RSI
+                delta = df['net_value'].diff()
+                gain = delta.where(delta > 0, 0)
+                loss = -delta.where(delta < 0, 0)
+
+                avg_gain = gain.rolling(window=14).mean()
+                avg_loss = loss.rolling(window=14).mean()
+
+                rs = avg_gain / avg_loss
                 rsi = 100 - (100 / (1 + rs))
 
-                # 计算MA50
-                ma50 = df['最新单位净值'].rolling(window=50).mean()
-                ma_ratio = df['最新单位净值'].iloc[-1] / ma50.iloc[-1]
+                # 计算 MA50
+                ma50 = df['net_value'].rolling(window=50).mean()
+                
+                # 获取最新数据
+                latest_data = df.iloc[-1]
+                latest_net_value = latest_data['net_value']
+                latest_rsi = rsi.iloc[-1]
+                latest_ma50_ratio = latest_net_value / ma50.iloc[-1] if not pd.isna(ma50.iloc[-1]) and ma50.iloc[-1] != 0 else float('nan')
 
                 self.fund_data[fund_code] = {
-                    'latest_net_value': df['最新单位净值'].iloc[-1],
-                    'rsi': rsi.iloc[-1],
-                    'ma_ratio': ma_ratio
+                    'latest_net_value': latest_net_value,
+                    'rsi': latest_rsi,
+                    'ma_ratio': latest_ma50_ratio
                 }
                 logger.info("成功获取并计算基金 %s 的技术指标: 净值=%.4f, RSI=%.2f, MA50比率=%.2f", 
-                           fund_code, df['最新单位净值'].iloc[-1], rsi.iloc[-1], ma_ratio)
-
-            except Exception as e:
-                logger.error("解析基金 %s 的表格数据失败: %s", fund_code, str(e))
+                            fund_code, latest_net_value, latest_rsi, latest_ma50_ratio)
+            else:
                 self.fund_data[fund_code] = None
-                return
+                logger.warning("基金 %s 数据获取失败，跳过计算", fund_code)
 
-        except requests.exceptions.RequestException as e:
-            logger.error("获取基金 %s 数据失败 (网络错误): %s", fund_code, str(e))
-            self.fund_data[fund_code] = None
-        except Exception as e:
-            logger.error("获取基金 %s 数据失败 (其他错误): %s", fund_code, str(e))
-            self.fund_data[fund_code] = None
-
-    def run(self):
-        """主执行函数"""
-        try:
-            # 提取基金代码
-            self._parse_report()
+    def generate_report(self):
+        """生成市场情绪与技术指标监控报告"""
+        logger.info("正在生成市场监控报告...")
+        with open(self.output_file, 'w', encoding='utf-8') as f:
+            f.write(f"# 市场情绪与技术指标监控报告\n\n")
+            f.write(f"生成日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write(f"## 推荐基金技术指标\n")
+            f.write("| 基金代码 | 最新净值 | RSI | 净值/MA50 | 投资建议 |\n")
+            f.write("|----------|----------|-----|-----------|----------|\n")
             
-            # 获取基金数据
             for fund_code in self.fund_codes:
-                self._get_fund_data(fund_code)
-            
-            # 生成报告
-            with open(self.output_file, 'w', encoding='utf-8') as f:
-                f.write(f"# 市场情绪与技术指标监控报告\n\n")
-                f.write(f"生成日期: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
-                f.write(f"## 推荐基金技术指标\n")
-                f.write("| 基金代码 | 最新净值 | RSI | 净值/MA50 | 投资建议 |\n")
-                f.write("|----------|----------|-----|-----------|----------|\n")
-                
-                for fund_code in self.fund_codes:
-                    if fund_code in self.fund_data and self.fund_data[fund_code]:
-                        data = self.fund_data[fund_code]
-                        rsi = data['rsi']
-                        ma_ratio = data['ma_ratio']
-                        advice = (
-                            "等待回调" if rsi > 70 or ma_ratio > 1.2 else
-                            "可分批买入" if 30 <= rsi <= 70 and 0.8 <= ma_ratio <= 1.2 else
-                            "可加仓" if rsi < 30 else "观察"
-                        )
-                        f.write(f"| {fund_code} | {data['latest_net_value']:.4f} | {rsi:.2f} | {ma_ratio:.2f} | {advice} |\n")
-                    else:
-                        f.write(f"| {fund_code} | 数据获取失败 | - | - | 观察 |\n")
-            
-            logger.info("报告生成完成: %s", self.output_file)
-
-        except FileNotFoundError as e:
-            logger.error("文件缺失: %s", e)
-            raise
-        except Exception as e:
-            logger.error("运行过程中发生错误: %s", e)
-            raise
+                if fund_code in self.fund_data and self.fund_data[fund_code]:
+                    data = self.fund_data[fund_code]
+                    rsi = data['rsi']
+                    ma_ratio = data['ma_ratio']
+                    advice = (
+                        "等待回调" if rsi > 70 or ma_ratio > 1.2 else
+                        "可分批买入" if 30 <= rsi <= 70 and 0.8 <= ma_ratio <= 1.2 else
+                        "可加仓" if rsi < 30 else "观察"
+                    )
+                    f.write(f"| {fund_code} | {data['latest_net_value']:.4f} | {rsi:.2f} | {ma_ratio:.2f} | {advice} |\n")
+                else:
+                    f.write(f"| {fund_code} | 数据获取失败 | - | - | 观察 |\n")
+        
+        logger.info("报告生成完成: %s", self.output_file)
 
 if __name__ == "__main__":
-    monitor = MarketMonitor()
-    monitor.run()
+    try:
+        monitor = MarketMonitor()
+        monitor._parse_report()
+        monitor.get_fund_data()
+        monitor.generate_report()
+    except Exception as e:
+        logger.error("脚本运行失败: %s", e)
+        # 确保在失败时也创建日志文件，以便GitHub Action捕捉到
+        with open('market_monitor.log', 'a', encoding='utf-8') as f:
+            f.write(f"\n[CRITICAL] 脚本因致命错误终止: {e}\n")
