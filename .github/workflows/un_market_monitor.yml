@@ -1,0 +1,60 @@
+
+name: Run Market Monitor
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天UTC时间0点（北京时间8点）运行
+  push:
+    paths:
+      - 'analysis_report.md'  # 当analysis_report.md更新时触发
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'  # 与fund_analyzer.py一致
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy akshare
+
+      - name: Install Chromium and ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      - name: Run Market Monitor script
+        run: |
+          python market_monitor.py
+
+      - name: Commit and push results
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add market_monitor_report.md market_monitor.log
+          git commit -m "Update market monitor report and log - $(date)"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true  # 如果没有新文件可提交，继续运行
+
+      - name: Check for errors
+        run: |
+          if [ -f market_monitor.log ]; then
+            grep -i "ERROR" market_monitor.log || echo "No errors found in log"
+          else
+            echo "market_monitor.log not found"
+            exit 1
+          fi
