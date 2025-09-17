@@ -197,6 +197,12 @@ class FundDataFetcher:
             if df is not None and not df.empty and '单位净值' in df.columns:
                 df['净值日期'] = pd.to_datetime(df['净值日期'])
                 df.set_index('净值日期', inplace=True)
+                # --- 新增: 检查并处理实时净值数据可能存在的NoneType错误 ---
+                if '单位净值' in df.columns and '日增长率' in df.columns:
+                    df['单位净值'] = pd.to_numeric(df['单位净值'], errors='coerce')
+                    df['日增长率'] = pd.to_numeric(df['日增长率'], errors='coerce')
+                    df.dropna(subset=['单位净值', '日增长率'], inplace=True)
+                # --- 结束修改 ---
                 self._log(f"akshare 获取基金 {padded_code} 历史净值成功。")
                 self.cache[cache_key] = df.to_dict(orient='records')
                 self._save_cache()
@@ -306,33 +312,50 @@ class FundDataFetcher:
         return None
 
     def _get_fund_holdings_data(self, fund_code: str, force_update: bool = False):
-        """使用 Selenium 获取基金持仓数据。"""
+        """
+        --- 改进: 使用更稳定的Selenium抓取逻辑来获取基金持仓数据 ---
+        """
         padded_code = self._pad_fund_code(fund_code)
         cache_key = f"{padded_code}_holdings"
         if not force_update and cache_key in self.cache:
             self._log(f"使用缓存的基金 {padded_code} 持仓数据。")
             return self.cache[cache_key]
-        
+
         url = f"http://fundf10.eastmoney.com/ccmx_{padded_code}.html"
-        source = None
-        if self.selenium_fetcher.driver:
-            source = self.selenium_fetcher.get_page_source(url)
+        
+        # 确保 Selenium Fetcher 实例可用
+        if not self.selenium_fetcher.driver:
+            self._log("Selenium驱动不可用，无法抓取基金持仓数据。")
+            return None
+
+        try:
+            self._log(f"正在使用 Selenium 抓取基金 {padded_code} 持仓数据...")
+            self.selenium_fetcher.driver.get(url)
+
+            # 显式等待表格内容加载完成，这是关键的改进点
+            # 我们等待包含持仓数据的特定表格元素出现
+            WebDriverWait(self.selenium_fetcher.driver, 20).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "#cctable table"))
+            )
             
-        if source:
+            # 获取加载完成后的页面源代码
+            source = self.selenium_fetcher.driver.page_source
             soup = BeautifulSoup(source, 'lxml')
-            holdings_table = soup.find('div', id='cctable')
-            if holdings_table:
-                table = holdings_table.find('table')
+            
+            # 寻找包含持仓的表格
+            holdings_table_div = soup.find('div', id='cctable')
+            if holdings_table_div:
+                table = holdings_table_div.find('table')
                 if table:
                     holdings_list = []
-                    rows = table.find_all('tr')[1:]
+                    rows = table.find_all('tr')[1:] # 跳过表头
                     for row in rows:
                         cols = row.find_all('td')
                         if len(cols) >= 5:
                             stock_code_elem = cols[1].find('a')
                             stock_name_elem = cols[2].find('a')
                             holding_ratio_text = cols[4].text
-                            
+
                             if stock_code_elem and stock_name_elem and '%' in holding_ratio_text:
                                 try:
                                     stock_code = stock_code_elem.text.strip()
@@ -348,6 +371,11 @@ class FundDataFetcher:
                         self.cache[cache_key] = {'holdings': holdings_list}
                         self._save_cache()
                         return {'holdings': holdings_list}
+        except TimeoutException:
+            self._log(f"加载页面超时，基金 {padded_code} 持仓表格未在预期时间内加载。")
+        except Exception as e:
+            self._log(f"获取基金 {padded_code} 持仓数据失败: {e}")
+            
         self._log(f"获取基金 {padded_code} 持仓数据失败。")
         return None
 
