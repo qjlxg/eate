@@ -56,10 +56,10 @@ class MarketMonitor:
             }
             # 设置请求重试
             session = requests.Session()
-            retries = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+            retries = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
             session.mount('http://', HTTPAdapter(max_retries=retries))
             
-            response = session.get(url, headers=headers, timeout=10)
+            response = session.get(url, headers=headers, timeout=15)  # 增加超时时间
             response.raise_for_status()
             response.encoding = 'utf-8'  # 确保正确解码中文
 
