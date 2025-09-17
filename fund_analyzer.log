@@ -2385,3 +2385,154 @@ Stacktrace:
 | 推荐         |      36 |      007356 | 汇添富科技创新混合C     |
 | 推荐         |      48 |      007509 | 华商润丰灵活配置混合C    |
 | 推荐         |      33 |      007771 | 同泰开泰混合C        |
+2025-09-17 14:30:28,938 - INFO - 正在从 CSV 导入基金代码列表...
+2025-09-17 14:30:29,141 - INFO - 导入成功，共 214 个基金代码
+2025-09-17 14:30:29,141 - INFO - 分析前 20 个基金：['001407', '001724', '002052', '002112', '002163', '002170', '002580', '002771', '005118', '005312', '005551', '005959', '005963', '006503', '006523', '006888', '007114', '007356', '007509', '007771']...
+2025-09-17 14:30:29,827 - INFO - --- 批量基金分析启动 ---
+2025-09-17 14:30:29,827 - INFO - 正在获取市场情绪数据...
+2025-09-17 14:30:31,788 - INFO - 市场情绪数据已获取：{'sentiment': 'neutral', 'trend': 'neutral'}
+2025-09-17 14:30:31,788 - INFO - --- 正在分析基金 001407 ---
+2025-09-17 14:30:31,788 - INFO - 使用缓存的基金 001407 数据
+2025-09-17 14:30:31,788 - INFO - 使用缓存的基金 001407 经理数据
+2025-09-17 14:30:31,788 - INFO - 使用缓存的基金 001407 持仓数据
+2025-09-17 14:30:31,789 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,789 - INFO - 基金 001407 评估完成，总分: 38，决策: 推荐
+2025-09-17 14:30:31,789 - INFO - --- 正在分析基金 001724 ---
+2025-09-17 14:30:31,789 - INFO - 使用缓存的基金 001724 数据
+2025-09-17 14:30:31,789 - INFO - 使用缓存的基金 001724 经理数据
+2025-09-17 14:30:31,789 - INFO - 使用缓存的基金 001724 持仓数据
+2025-09-17 14:30:31,790 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,790 - INFO - 基金 001724 评估完成，总分: 37，决策: 推荐
+2025-09-17 14:30:31,790 - INFO - --- 正在分析基金 002052 ---
+2025-09-17 14:30:31,790 - INFO - 使用缓存的基金 002052 数据
+2025-09-17 14:30:31,790 - INFO - 使用缓存的基金 002052 经理数据
+2025-09-17 14:30:31,790 - INFO - 使用缓存的基金 002052 持仓数据
+2025-09-17 14:30:31,791 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,791 - INFO - 基金 002052 评估完成，总分: 30，决策: 观望
+2025-09-17 14:30:31,791 - INFO - --- 正在分析基金 002112 ---
+2025-09-17 14:30:31,791 - INFO - 使用缓存的基金 002112 数据
+2025-09-17 14:30:31,791 - INFO - 使用缓存的基金 002112 经理数据
+2025-09-17 14:30:31,791 - INFO - 使用缓存的基金 002112 持仓数据
+2025-09-17 14:30:31,792 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,792 - INFO - 基金 002112 评估完成，总分: 32，决策: 推荐
+2025-09-17 14:30:31,792 - INFO - --- 正在分析基金 002163 ---
+2025-09-17 14:30:31,792 - INFO - 使用缓存的基金 002163 数据
+2025-09-17 14:30:31,792 - INFO - 使用缓存的基金 002163 经理数据
+2025-09-17 14:30:31,792 - INFO - 使用缓存的基金 002163 持仓数据
+2025-09-17 14:30:31,793 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 3, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,793 - INFO - 基金 002163 评估完成，总分: 43，决策: 推荐
+2025-09-17 14:30:31,793 - INFO - --- 正在分析基金 002170 ---
+2025-09-17 14:30:31,793 - INFO - 使用缓存的基金 002170 数据
+2025-09-17 14:30:31,793 - INFO - 使用缓存的基金 002170 经理数据
+2025-09-17 14:30:31,793 - INFO - 使用缓存的基金 002170 持仓数据
+2025-09-17 14:30:31,794 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,794 - INFO - 基金 002170 评估完成，总分: 42，决策: 推荐
+2025-09-17 14:30:31,794 - INFO - --- 正在分析基金 002580 ---
+2025-09-17 14:30:31,794 - INFO - 使用缓存的基金 002580 数据
+2025-09-17 14:30:31,794 - INFO - 使用缓存的基金 002580 经理数据
+2025-09-17 14:30:31,794 - INFO - 使用缓存的基金 002580 持仓数据
+2025-09-17 14:30:31,795 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,795 - INFO - 基金 002580 评估完成，总分: 39，决策: 推荐
+2025-09-17 14:30:31,795 - INFO - --- 正在分析基金 002771 ---
+2025-09-17 14:30:31,795 - INFO - 使用缓存的基金 002771 数据
+2025-09-17 14:30:31,795 - INFO - 使用缓存的基金 002771 经理数据
+2025-09-17 14:30:31,796 - INFO - 使用缓存的基金 002771 持仓数据
+2025-09-17 14:30:31,796 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,796 - INFO - 基金 002771 评估完成，总分: 45，决策: 推荐
+2025-09-17 14:30:31,796 - INFO - --- 正在分析基金 005118 ---
+2025-09-17 14:30:31,797 - INFO - 使用缓存的基金 005118 数据
+2025-09-17 14:30:31,797 - INFO - 使用缓存的基金 005118 经理数据
+2025-09-17 14:30:31,797 - INFO - 使用缓存的基金 005118 持仓数据
+2025-09-17 14:30:31,798 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,798 - INFO - 基金 005118 评估完成，总分: 26，决策: 观望
+2025-09-17 14:30:31,798 - INFO - --- 正在分析基金 005312 ---
+2025-09-17 14:30:31,798 - INFO - 使用缓存的基金 005312 数据
+2025-09-17 14:30:31,798 - INFO - 使用缓存的基金 005312 经理数据
+2025-09-17 14:30:31,798 - INFO - 使用缓存的基金 005312 持仓数据
+2025-09-17 14:30:31,799 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,799 - INFO - 基金 005312 评估完成，总分: 39，决策: 推荐
+2025-09-17 14:30:31,799 - INFO - --- 正在分析基金 005551 ---
+2025-09-17 14:30:31,799 - INFO - 使用缓存的基金 005551 数据
+2025-09-17 14:30:31,799 - INFO - 使用缓存的基金 005551 经理数据
+2025-09-17 14:30:31,799 - INFO - 使用缓存的基金 005551 持仓数据
+2025-09-17 14:30:31,800 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,800 - INFO - 基金 005551 评估完成，总分: 29，决策: 观望
+2025-09-17 14:30:31,800 - INFO - --- 正在分析基金 005959 ---
+2025-09-17 14:30:31,800 - INFO - 使用缓存的基金 005959 数据
+2025-09-17 14:30:31,800 - INFO - 使用缓存的基金 005959 经理数据
+2025-09-17 14:30:31,800 - INFO - 使用缓存的基金 005959 持仓数据
+2025-09-17 14:30:31,801 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,801 - INFO - 基金 005959 评估完成，总分: 42，决策: 推荐
+2025-09-17 14:30:31,801 - INFO - --- 正在分析基金 005963 ---
+2025-09-17 14:30:31,801 - INFO - 使用缓存的基金 005963 数据
+2025-09-17 14:30:31,801 - INFO - 使用缓存的基金 005963 经理数据
+2025-09-17 14:30:31,801 - INFO - 使用缓存的基金 005963 持仓数据
+2025-09-17 14:30:31,802 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,802 - INFO - 基金 005963 评估完成，总分: 35，决策: 推荐
+2025-09-17 14:30:31,802 - INFO - --- 正在分析基金 006503 ---
+2025-09-17 14:30:31,802 - INFO - 使用缓存的基金 006503 数据
+2025-09-17 14:30:31,802 - INFO - 使用缓存的基金 006503 经理数据
+2025-09-17 14:30:31,802 - INFO - 使用缓存的基金 006503 持仓数据
+2025-09-17 14:30:31,803 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,803 - INFO - 基金 006503 评估完成，总分: 30，决策: 观望
+2025-09-17 14:30:31,803 - INFO - --- 正在分析基金 006523 ---
+2025-09-17 14:30:31,803 - INFO - 使用缓存的基金 006523 数据
+2025-09-17 14:30:31,803 - INFO - 使用缓存的基金 006523 经理数据
+2025-09-17 14:30:31,803 - INFO - 使用缓存的基金 006523 持仓数据
+2025-09-17 14:30:31,804 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,804 - INFO - 基金 006523 评估完成，总分: 35，决策: 推荐
+2025-09-17 14:30:31,804 - INFO - --- 正在分析基金 006888 ---
+2025-09-17 14:30:31,804 - INFO - 使用缓存的基金 006888 数据
+2025-09-17 14:30:31,804 - INFO - 使用缓存的基金 006888 经理数据
+2025-09-17 14:30:31,805 - INFO - 使用缓存的基金 006888 持仓数据
+2025-09-17 14:30:31,805 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,805 - INFO - 基金 006888 评估完成，总分: 29，决策: 观望
+2025-09-17 14:30:31,805 - INFO - --- 正在分析基金 007114 ---
+2025-09-17 14:30:31,805 - INFO - 使用缓存的基金 007114 数据
+2025-09-17 14:30:31,806 - INFO - 使用缓存的基金 007114 经理数据
+2025-09-17 14:30:31,806 - INFO - 使用缓存的基金 007114 持仓数据
+2025-09-17 14:30:31,806 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,806 - INFO - 基金 007114 评估完成，总分: 34，决策: 推荐
+2025-09-17 14:30:31,807 - INFO - --- 正在分析基金 007356 ---
+2025-09-17 14:30:31,807 - INFO - 使用缓存的基金 007356 数据
+2025-09-17 14:30:31,807 - INFO - 使用缓存的基金 007356 经理数据
+2025-09-17 14:30:31,807 - INFO - 使用缓存的基金 007356 持仓数据
+2025-09-17 14:30:31,808 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,808 - INFO - 基金 007356 评估完成，总分: 36，决策: 推荐
+2025-09-17 14:30:31,808 - INFO - --- 正在分析基金 007509 ---
+2025-09-17 14:30:31,808 - INFO - 使用缓存的基金 007509 数据
+2025-09-17 14:30:31,808 - INFO - 使用缓存的基金 007509 经理数据
+2025-09-17 14:30:31,808 - INFO - 使用缓存的基金 007509 持仓数据
+2025-09-17 14:30:31,809 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 8, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,809 - INFO - 基金 007509 评估完成，总分: 48，决策: 推荐
+2025-09-17 14:30:31,809 - INFO - --- 正在分析基金 007771 ---
+2025-09-17 14:30:31,809 - INFO - 使用缓存的基金 007771 数据
+2025-09-17 14:30:31,809 - INFO - 使用缓存的基金 007771 经理数据
+2025-09-17 14:30:31,809 - INFO - 使用缓存的基金 007771 持仓数据
+2025-09-17 14:30:31,810 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 3, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-17 14:30:31,810 - INFO - 基金 007771 评估完成，总分: 33，决策: 推荐
+2025-09-17 14:30:31,811 - INFO - 
+--- 全部基金分析结果 ---
+2025-09-17 14:30:31,815 - INFO - 
+| decision   |   score |   fund_code | fund_name      |
+|:-----------|--------:|------------:|:---------------|
+| 推荐         |      38 |      001407 | 景顺长城稳健回报混合C    |
+| 推荐         |      37 |      001724 | 申万菱信多策略灵活配置混合C |
+| 观望         |      30 |      002052 | 诺安稳健回报混合C      |
+| 推荐         |      32 |      002112 | 德邦鑫星价值灵活配置混合C  |
+| 推荐         |      43 |      002163 | 东方惠新灵活配置混合C    |
+| 推荐         |      42 |      002170 | 东吴移动互联混合C      |
+| 推荐         |      39 |      002580 | 泰信鑫选灵活配置混合C    |
+| 推荐         |      45 |      002771 | 安信新回报混合C       |
+| 观望         |      26 |      005118 | 金信价值精选混合C      |
+| 推荐         |      39 |      005312 | 万家经济新动能混合C     |
+| 观望         |      29 |      005551 | 汇安成长优选混合C      |
+| 推荐         |      42 |      005959 | 财通新视野灵活配置混合C   |
+| 推荐         |      35 |      005963 | 宝盈人工智能股票C      |
+| 观望         |      30 |      006503 | 财通集成电路产业股票C    |
+| 推荐         |      35 |      006523 | 财通新兴蓝筹混合C      |
+| 观望         |      29 |      006888 | 诺德新生活混合C       |
+| 推荐         |      34 |      007114 | 永赢高端制造混合C      |
+| 推荐         |      36 |      007356 | 汇添富科技创新混合C     |
+| 推荐         |      48 |      007509 | 华商润丰灵活配置混合C    |
+| 推荐         |      33 |      007771 | 同泰开泰混合C        |
