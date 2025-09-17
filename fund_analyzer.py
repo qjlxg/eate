@@ -545,7 +545,7 @@ if __name__ == '__main__':
         fund_info_dict = {}
     
     if fund_codes_to_analyze:
-        test_fund_codes = fund_codes_to_analyze[:120] # 减少测试基金数量，避免频繁网络请求
+        test_fund_codes = fund_codes_to_analyze[:1500] # 减少测试基金数量，避免频繁网络请求
         logger.info(f"分析前 {len(test_fund_codes)} 个基金：{test_fund_codes}...")
         analyzer = FundAnalyzer()
         analyzer.run_analysis(test_fund_codes, fund_info_dict)
