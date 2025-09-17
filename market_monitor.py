@@ -6,6 +6,7 @@ import logging
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
+import io
 
 # 配置日志
 logging.basicConfig(
@@ -37,8 +38,8 @@ class MarketMonitor:
         # 提取推荐基金表格
         pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\.?\d*) *\|'
         matches = re.findall(pattern, content)
-        self.fund_codes = [code for code, score in matches if float(score) >= 30] # 设定一个合理的阈值
-        logger.info("提取到 %d 个推荐基金: %s", len(self.fund_codes), self.fund_codes)
+        self.fund_codes = [code for code, score in matches if float(score) >= 30][:20]
+        logger.info("提取到 %d 个推荐基金 (限制前20): %s", len(self.fund_codes), self.fund_codes)
         
     def _get_fund_data(self, fund_code):
         """通过网络爬取获取基金历史净值数据并计算技术指标"""
@@ -50,7 +51,7 @@ class MarketMonitor:
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             }
             response = requests.get(url, headers=headers)
-            response.raise_for_status() # 如果请求不成功，会抛出HTTPError
+            response.raise_for_status()
 
             soup = BeautifulSoup(response.text, 'html.parser')
             table = soup.find('table', class_='mt1 clear')
@@ -60,9 +61,11 @@ class MarketMonitor:
                 self.fund_data[fund_code] = None
                 return
 
-            df = pd.read_html(str(table))[0]
+            # 使用io.StringIO包装字符串以消除UserWarning
+            df = pd.read_html(io.StringIO(str(table)))[0]
             df.columns = ['净值日期', '基金代码', '基金名称', '最新单位净值', '最新累计净值', '上期单位净值', '上期累计净值', '当日增长值', '当日增长率']
-            df['净值日期'] = pd.to_datetime(df['净值日期'])
+            # 指定日期格式以消除UserWarning
+            df['净值日期'] = pd.to_datetime(df['净值日期'], format='%Y-%m-%d', errors='coerce')
             df['最新单位净值'] = pd.to_numeric(df['最新单位净值'], errors='coerce')
             df.set_index('净值日期', inplace=True)
             df.sort_index(inplace=True)
