@@ -525,7 +525,7 @@ if __name__ == '__main__':
     # pip install selenium akshare pandas numpy requests beautifulsoup4 lxml
     # 还需要手动下载与您的 Chrome 版本匹配的 ChromeDriver 并配置环境变量或修改路径
     
-    funds_list_url = 'https://raw.githubusercontent.com/qjlxg/own/main/recommended_cn_funds.csv'
+    funds_list_url = 'https://raw.githubusercontent.com/qjlxg/rep/main/recommended_cn_funds.csv'
     
     try:
         logger.info("正在从 CSV 导入基金代码列表...")
