@@ -1,3 +1,4 @@
+```python
 import pandas as pd
 import numpy as np
 import akshare as ak
@@ -36,8 +37,8 @@ class MarketMonitor:
         # 提取推荐基金表格
         pattern = r'\| *(\d{6}) *\|.*?\| *(\d+\.?\d*) *\|'
         matches = re.findall(pattern, content)
-        self.fund_codes = [code for code, score in matches if float(score) > 30]
-        logger.info("提取到 %d 个推荐基金: %s", len(self.fund_codes), self.fund_codes)
+        self.fund_codes = [code for code, score in matches if float(score) > 30][:20]  # 限制前20个
+        logger.info("提取到 %d 个推荐基金 (限制前20): %s", len(self.fund_codes), self.fund_codes)
 
     def _calculate_rsi(self, returns, period=14):
         """计算14日RSI"""
@@ -53,7 +54,7 @@ class MarketMonitor:
         """获取基金净值历史并计算技术指标"""
         try:
             logger.info("获取基金 %s 的净值数据...", fund_code)
-            df = ak.fund_open_fund_info_em(fund=fund_code, indicator="累计净值走势")
+            df = ak.fund_open_fund_info_em(symbol=fund_code, indicator="累计净值走势")  # 修正为 symbol
             df['date'] = pd.to_datetime(df['净值日期'])
             df = df.sort_values('date').tail(200)  # 取最近200个交易日
             df['returns'] = df['累计净值'].pct_change()
@@ -138,7 +139,7 @@ class MarketMonitor:
                         "label": f"{fund_code} 净值",
                         "data": navs,
                         "borderColor": colors[i % len(colors)],
-                        "fill": False,
+                        "fill": false,
                         "yAxisID": "yAxes[0]"
                     },
                     {
@@ -146,7 +147,7 @@ class MarketMonitor:
                         "data": rsi,
                         "borderColor": colors[i % len(colors)],
                         "borderDash": [5, 5],
-                        "fill": False,
+                        "fill": false,
                         "yAxisID": "yAxes[1]"
                     }
                 ])
@@ -192,4 +193,4 @@ class MarketMonitor:
 if __name__ == "__main__":
     monitor = MarketMonitor()
     monitor.run()
-
+```
