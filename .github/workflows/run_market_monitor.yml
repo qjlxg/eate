@@ -43,6 +43,14 @@ jobs:
           fi
           echo "Required files found: analysis_report.md, market_monitor.py"
 
+      - name: Verify market_monitor.py does not use akshare
+        run: |
+          if grep -i "akshare\|fund_open_fund_info_em" market_monitor.py; then
+            echo "Error: market_monitor.py contains akshare or fund_open_fund_info_em references!"
+            exit 1
+          fi
+          echo "market_monitor.py does not contain akshare references."
+
       - name: Run Market Monitor script
         run: |
           python market_monitor.py || { echo "Script failed, check market_monitor.log"; exit 1; }
