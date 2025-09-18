@@ -3,19 +3,12 @@ import numpy as np
 import re
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import random
-from io import StringIO
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
-from selenium.common.exceptions import TimeoutException, WebDriverException
 import requests
 import tenacity
+from io import StringIO
 import concurrent.futures
 
 # 配置日志
@@ -68,8 +61,6 @@ class MarketMonitor:
                 logger.warning("未提取到任何有效基金代码，请检查 analysis_report.md")
             else:
                 logger.info("提取到 %d 个基金（测试限制前10个）: %s", len(self.fund_codes), self.fund_codes)
-            for handler in logger.handlers:
-                handler.flush()
             
         except Exception as e:
             logger.error("解析报告文件失败: %s", e)
@@ -105,143 +96,72 @@ class MarketMonitor:
     @tenacity.retry(
         stop=tenacity.stop_after_attempt(3),
         wait=tenacity.wait_fixed(5),
-        retry=tenacity.retry_if_exception_type((TimeoutException, WebDriverException, IndexError, Exception)), # 增加对 IndexEror 和更广泛的 Exception 的重试
+        retry=tenacity.retry_if_exception_type((requests.RequestException, ValueError)),
         before_sleep=lambda retry_state: logger.info(f"重试基金 {retry_state.args[1]}，第 {retry_state.attempt_number} 次")
     )
     def _get_fund_data_from_eastmoney(self, fund_code):
-        """使用 Selenium 从 fund.eastmoney.com 抓取基金历史净值数据（含URL参数翻页）"""
+        """从天天基金API获取基金历史净值数据"""
         logger.info("正在获取基金 %s 的净值数据...", fund_code)
         
         latest_local_date, local_df = self._get_latest_local_date(fund_code)
+        start_date = (latest_local_date + timedelta(days=1)).strftime('%Y-%m-%d') if latest_local_date else '1900-01-01'
+        end_date = datetime.now().strftime('%Y-%m-%d')
         
-        driver = None
+        url = f"https://fundf10.eastmoney.com/F10DataApi.aspx?type=lsjz&code={fund_code}&page=1&per=50000&sdate={start_date}&edate={end_date}&rt={int(time.time())}"
+        
         try:
-            options = webdriver.ChromeOptions()
-            options.add_argument('--headless')
-            options.add_argument('--no-sandbox')
-            options.add_argument('--disable-dev-shm-usage')
-            options.add_argument('--disable-gpu')
-            options.add_argument('--window-size=1920,1080')
-            options.add_argument('--disable-extensions')
-            options.add_argument('--disable-infobars')
-            options.add_argument('--disable-software-rasterizer')
-            options.add_argument('--enable-javascript-i18n-api')
-            options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36')
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
             
-            service = Service(ChromeDriverManager().install())
-            driver = webdriver.Chrome(service=service, options=options)
-            
-            all_data = []
-            page_index = 1
-            max_pages = 200
-            
-            found_new_data = False
-            
-            while page_index <= max_pages:
-                try:
-                    url = f"http://fundf10.eastmoney.com/jjjz_{fund_code}.html?p={page_index}"
-                    driver.set_page_load_timeout(40)
-                    driver.get(url)
-                    logger.info("访问URL: %s", url)
-                    
-                    wait = WebDriverWait(driver, 30)
-                    wait.until(EC.visibility_of_element_located((By.ID, 'jztable')))
-                    logger.info("第 %d 页: 历史净值表格容器加载完成并可见", page_index)
-                    
-                    # 尝试解析表格，如果失败则捕获 IndexEror
-                    try:
-                        table_html = driver.find_element(By.ID, 'jztable').get_attribute('innerHTML')
-                        df_list = pd.read_html(StringIO(table_html), flavor='lxml')
-                    except IndexError as e:
-                        logger.error("基金 %s 第 %d 页解析表格失败: %s", fund_code, page_index, str(e))
-                        # 尝试捕获是否有反爬页面
-                        if "验证码" in driver.page_source or "Access Denied" in driver.page_source:
-                            logger.error("检测到反爬措施，跳过此基金。")
-                            raise Exception("反爬措施")
-                        # 如果没有反爬措施，页面可能只是没有表格，继续正常处理
-                        df_list = []
-                        
-                    if not df_list or df_list[0].empty:
-                        logger.warning("第 %d 页: 表格内容为空，可能已无更多数据", page_index)
-                        break
-
-                    df = df_list[0]
-                    df = df.iloc[:, [0, 1]].copy()
-                    df.columns = ['date', 'net_value']
-                    df['date'] = pd.to_datetime(df['date'], errors='coerce')
-                    df['net_value'] = pd.to_numeric(df['net_value'], errors='coerce')
-                    df = df.dropna(subset=['date', 'net_value'])
-                    
-                    if latest_local_date:
-                        new_df = df[df['date'].dt.date > latest_local_date]
-                        if not new_df.empty:
-                            all_data.append(new_df)
-                            found_new_data = True
-                            logger.info("第 %d 页: 发现 %d 行新数据", page_index, len(new_df))
-                        
-                        if new_df.empty and len(df) == 20:
-                            logger.info("基金 %s 已获取到最新数据，爬取结束", fund_code)
-                            break
-                    else:
-                        all_data.append(df)
-                        found_new_data = True
-
-                    if len(df) < 20:
-                        logger.info("基金 %s 数据量不足20行，翻页结束", fund_code)
-                        break
-                        
-                    page_index += 1
-                    time.sleep(random.uniform(2, 4))
-
-                except TimeoutException as e:
-                    logger.error("基金 %s 页面加载超时: %s", fund_code, str(e))
-                    raise
-                except Exception as e:
-                    logger.error("基金 %s 翻页失败: %s", fund_code, str(e))
-                    break
-
-            if all_data:
-                new_full_df = pd.concat(all_data, ignore_index=True)
-                new_full_df = new_full_df.drop_duplicates(subset=['date']).sort_values(by='date', ascending=True)
-
-                if found_new_data:
-                    self._save_to_local_file(fund_code, new_full_df)
-
+            # 解析表格数据
+            content = response.text
+            if '<table' not in content:
+                logger.warning("基金 %s 返回数据无表格，可能无新数据", fund_code)
                 if not local_df.empty:
-                    df_combined = pd.concat([local_df, new_full_df]).drop_duplicates(subset=['date']).sort_values(by='date', ascending=True)
-                else:
-                    df_combined = new_full_df
-                    
-                if len(df_combined) < 100:
-                    logger.warning("基金 %s 总数据量不足，仅获取 %d 行", fund_code, len(df_combined))
-                
-                df_combined = df_combined.tail(100)
-                logger.info("成功解析基金 %s 的数据，共获取 %d 页，总行数: %d, 最新日期: %s, 最新净值: %.4f", 
-                                 fund_code, page_index - 1, len(df_combined), df_combined['date'].iloc[-1].strftime('%Y-%m-%d'), df_combined['net_value'].iloc[-1])
-                return df_combined[['date', 'net_value']]
+                    return local_df[['date', 'net_value']].tail(100)
+                raise ValueError("无有效数据")
+            
+            # 使用pandas直接解析HTML表格
+            df = pd.read_html(StringIO(content), flavor='lxml')[0]
+            df = df[['净值日期', '单位净值']].rename(columns={'净值日期': 'date', '单位净值': 'net_value'})
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            df['net_value'] = pd.to_numeric(df['net_value'], errors='coerce')
+            df = df.dropna(subset=['date', 'net_value']).sort_values('date').drop_duplicates('date')
+            
+            if df.empty:
+                logger.warning("基金 %s 数据清洗后为空", fund_code)
+                if not local_df.empty:
+                    return local_df[['date', 'net_value']].tail(100)
+                raise ValueError("无有效数据")
+            
+            # 合并本地和新数据
+            if not local_df.empty:
+                df_combined = pd.concat([local_df, df]).drop_duplicates(subset=['date']).sort_values(by='date', ascending=True)
             else:
-                if not local_df.empty:
-                    logger.info("基金 %s 无新数据，使用本地历史数据", fund_code)
-                    df_combined = local_df.tail(100)
-                    return df_combined[['date', 'net_value']]
-                else:
-                    raise ValueError("未获取到任何有效数据")
-
+                df_combined = df
+                
+            # 保存新数据
+            if latest_local_date:
+                new_df = df[df['date'].dt.date > latest_local_date]
+                if not new_df.empty:
+                    self._save_to_local_file(fund_code, new_df)
+                    logger.info("基金 %s 新增 %d 行数据", fund_code, len(new_df))
+            else:
+                self._save_to_local_file(fund_code, df_combined)
+                logger.info("基金 %s 保存全量数据 %d 行", fund_code, len(df_combined))
+            
+            df_combined = df_combined.tail(100)
+            logger.info("基金 %s 数据获取成功，最新日期: %s, 最新净值: %.4f", 
+                       fund_code, df_combined['date'].iloc[-1].strftime('%Y-%m-%d'), df_combined['net_value'].iloc[-1])
+            return df_combined[['date', 'net_value']]
+            
         except Exception as e:
-            logger.error("Selenium 抓取基金 %s 失败: %s", fund_code, str(e))
-            if driver:
-                try:
-                    driver.save_screenshot(f"error_screenshot_{fund_code}.png")
-                    with open(f"error_page_{fund_code}.html", "w", encoding="utf-8") as f:
-                        f.write(driver.page_source)
-                    logger.info("错误截图和页面已保存到 error_screenshot_%s.png 和 error_page_%s.html", fund_code, fund_code)
-                except:
-                    logger.warning("无法保存错误截图或页面源码")
+            logger.error("获取基金 %s 数据失败: %s", fund_code, str(e))
+            if not local_df.empty:
+                logger.info("使用本地历史数据返回")
+                return local_df[['date', 'net_value']].tail(100)
             raise
-        finally:
-            if driver:
-                driver.quit()
-
+        
     def process_fund(self, fund_code):
         """处理单个基金，用于多线程调用"""
         try:
@@ -278,9 +198,6 @@ class MarketMonitor:
         except Exception as e:
             logger.error("处理基金 %s 时发生异常: %s", fund_code, str(e))
             return None
-        finally:
-            for handler in logger.handlers:
-                handler.flush()
 
     def get_fund_data(self):
         """使用多线程获取所有基金的数据"""
@@ -337,8 +254,6 @@ class MarketMonitor:
         logger.info("报告生成完成: %s", self.output_file)
         with open(self.output_file, 'r', encoding='utf-8') as f:
             logger.info("market_monitor_report.md 内容: %s", f.read())
-        for handler in logger.handlers:
-            handler.flush()
 
 if __name__ == "__main__":
     try:
@@ -350,6 +265,4 @@ if __name__ == "__main__":
         logger.info("脚本执行完成")
     except Exception as e:
         logger.error("脚本运行失败: %s", e)
-        for handler in logger.handlers:
-            handler.flush()
         raise
