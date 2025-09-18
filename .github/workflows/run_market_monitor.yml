@@ -37,8 +37,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade pandas numpy requests tenacity lxml
-          
+          pip install --upgrade pandas numpy requests tenacity lxml tabulate
+        
       - name: Run Market Monitor script
         run: |
           rm -f market_monitor.log
