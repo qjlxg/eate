@@ -10,6 +10,7 @@ import requests
 import tenacity
 from io import StringIO
 import concurrent.futures
+from bs4 import BeautifulSoup
 
 # 配置日志
 logging.basicConfig(
@@ -109,35 +110,56 @@ class MarketMonitor:
         start_date = (latest_local_date + timedelta(days=1)).strftime('%Y-%m-%d') if latest_local_date else '1900-01-01'
         end_date = datetime.now().strftime('%Y-%m-%d')
         
-        all_data = []
-        page = 1
-        total_pages = 1  # 初始值，稍后更新
+        url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx'
+        params = {'type': 'lsjz', 'code': fund_code, 'page': 1, 'per': 49, 'sdate': start_date, 'edate': end_date}
         
-        while page <= total_pages:
-            url = f"https://fundf10.eastmoney.com/F10DataApi.aspx?type=lsjz&code={fund_code}&page={page}&per=20&sdate={start_date}&edate={end_date}&rt={int(time.time())}"
+        # 获取第一页以确定总页数
+        try:
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            html = response.text
             
-            try:
-                response = requests.get(url, timeout=10)
+            # 解析总页数
+            pattern = re.compile(r'pages:(\d+),')
+            result = re.search(pattern, html)
+            if not result:
+                logger.warning("基金 %s 未找到总页数信息", fund_code)
+                raise ValueError("无法解析总页数")
+            total_pages = int(result.group(1))
+            logger.info("基金 %s 总页数: %d", fund_code, total_pages)
+            
+            all_data = []
+            page = 1
+            
+            # 循环获取所有页面
+            while page <= total_pages:
+                params['page'] = page
+                response = requests.get(url, params=params, timeout=10)
                 response.raise_for_status()
+                html = response.text
                 
-                # 解析响应中的records和pages
-                content = response.text
-                if '<table' not in content:
-                    logger.warning("基金 %s 第 %d 页返回数据无表格，可能无新数据", fund_code, page)
+                # 解析表格
+                soup = BeautifulSoup(html, 'html.parser')
+                table = soup.find('tbody')
+                if not table:
+                    logger.warning("基金 %s 第 %d 页无表格数据", fund_code, page)
                     break
                 
-                # 提取records和pages
-                apidata_match = re.search(r'var apidata=\{ content:".*?",records:(\d+),pages:(\d+),curpage:\d+\};', content, re.DOTALL)
-                if apidata_match:
-                    total_records = int(apidata_match.group(1))
-                    total_pages = int(apidata_match.group(2))
-                    logger.info("基金 %s 总记录数: %d, 总页数: %d, 当前页: %d", fund_code, total_records, total_pages, page)
-                else:
-                    logger.warning("基金 %s 第 %d 页未找到records或pages信息", fund_code, page)
+                records = []
+                for row in table.findAll('tr'):
+                    row_records = []
+                    for cell in row.findAll('td'):
+                        val = cell.contents[0] if cell.contents else np.nan
+                        row_records.append(val)
+                    records.append(row_records)
+                
+                if not records:
+                    logger.warning("基金 %s 第 %d 页无数据", fund_code, page)
                     break
                 
-                # 解析表格数据
-                df = pd.read_html(StringIO(content), flavor='lxml')[0]
+                # 转换为DataFrame
+                heads = [th.contents[0] for th in soup.findAll('th')]
+                df = pd.DataFrame(records, columns=heads)
                 df = df[['净值日期', '单位净值']].rename(columns={'净值日期': 'date', '单位净值': 'net_value'})
                 df['date'] = pd.to_datetime(df['date'], errors='coerce')
                 df['net_value'] = pd.to_numeric(df['net_value'], errors='coerce')
@@ -146,46 +168,48 @@ class MarketMonitor:
                 if df.empty:
                     logger.warning("基金 %s 第 %d 页数据清洗后为空", fund_code, page)
                     break
-                    
+                
                 all_data.append(df)
                 logger.info("基金 %s 第 %d 页获取 %d 行数据", fund_code, page, len(df))
                 
-                # 如果当前页数据少于20行，通常是最后一页
-                if len(df) < 20:
-                    logger.info("基金 %s 第 %d 页数据不足20行，结束翻页", fund_code, page)
+                if len(df) < params['per']:
+                    logger.info("基金 %s 第 %d 页数据不足 %d 行，结束翻页", fund_code, page, params['per'])
                     break
                     
                 page += 1
                 time.sleep(random.uniform(0.5, 1.5))  # 防限频
+            
+            # 合并所有页面数据
+            if all_data:
+                df_combined = pd.concat(all_data, ignore_index=True).drop_duplicates(subset=['date']).sort_values(by='date', ascending=True)
                 
-            except Exception as e:
-                logger.error("获取基金 %s 第 %d 页失败: %s", fund_code, page, str(e))
-                break
-        
-        # 合并所有页面数据
-        if all_data:
-            df_combined = pd.concat(all_data, ignore_index=True).drop_duplicates(subset=['date']).sort_values(by='date', ascending=True)
-            
-            # 保存新数据
-            if latest_local_date:
-                new_df = df_combined[df_combined['date'].dt.date > latest_local_date]
-                if not new_df.empty:
-                    self._save_to_local_file(fund_code, new_df)
-                    logger.info("基金 %s 新增 %d 行数据", fund_code, len(new_df))
+                # 保存新数据
+                if latest_local_date:
+                    new_df = df_combined[df_combined['date'].dt.date > latest_local_date]
+                    if not new_df.empty:
+                        self._save_to_local_file(fund_code, new_df)
+                        logger.info("基金 %s 新增 %d 行数据", fund_code, len(new_df))
+                else:
+                    self._save_to_local_file(fund_code, df_combined)
+                    logger.info("基金 %s 保存全量数据 %d 行", fund_code, len(df_combined))
+                
+                df_combined = df_combined.tail(100)
+                logger.info("基金 %s 数据获取成功，最新日期: %s, 最新净值: %.4f", 
+                           fund_code, df_combined['date'].iloc[-1].strftime('%Y-%m-%d'), df_combined['net_value'].iloc[-1])
+                return df_combined[['date', 'net_value']]
             else:
-                self._save_to_local_file(fund_code, df_combined)
-                logger.info("基金 %s 保存全量数据 %d 行", fund_code, len(df_combined))
-            
-            df_combined = df_combined.tail(100)
-            logger.info("基金 %s 数据获取成功，最新日期: %s, 最新净值: %.4f", 
-                       fund_code, df_combined['date'].iloc[-1].strftime('%Y-%m-%d'), df_combined['net_value'].iloc[-1])
-            return df_combined[['date', 'net_value']]
-        else:
-            logger.warning("基金 %s 无新数据", fund_code)
+                logger.warning("基金 %s 无新数据", fund_code)
+                if not local_df.empty:
+                    logger.info("使用本地历史数据返回")
+                    return local_df[['date', 'net_value']].tail(100)
+                raise ValueError("无有效数据")
+                
+        except Exception as e:
+            logger.error("获取基金 %s 数据失败: %s", fund_code, str(e))
             if not local_df.empty:
                 logger.info("使用本地历史数据返回")
                 return local_df[['date', 'net_value']].tail(100)
-            raise ValueError("无有效数据")
+            raise
 
     def process_fund(self, fund_code):
         """处理单个基金，用于多线程调用"""
