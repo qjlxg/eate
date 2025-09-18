@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 import re
@@ -72,7 +71,7 @@ class MarketMonitor:
                 extracted_codes.add(code)
             
             sorted_codes = sorted(list(extracted_codes))
-            self.fund_codes = sorted_codes[:1000]
+            self.fund_codes = sorted_codes[:10]
             
             if not self.fund_codes:
                 logger.warning("未提取到任何有效基金代码，请检查 analysis_report.md")
@@ -283,14 +282,6 @@ class MarketMonitor:
                  (not np.isnan(latest_ma50_ratio) and latest_ma50_ratio < 1):
                 action_signal = "弱买入"
             
-            # 如果是买入信号，则强制覆盖卖出信号
-            # 这段逻辑保证买入信号的优先级高于卖出信号，但新的排序逻辑已涵盖此功能
-            # if action_signal in ["强买入", "弱买入"] and latest_ma50_ratio > 1.2:
-            #     action_signal = action_signal
-            # elif action_signal in ["强卖出/规避", "弱卖出/规避"] and latest_ma50_ratio < 1:
-            #     action_signal = action_signal
-
-
             return {
                 'fund_code': fund_code,
                 'latest_net_value': latest_net_value,
@@ -319,70 +310,6 @@ class MarketMonitor:
         finally:
             for handler in logger.handlers:
                 handler.flush()
-
-    def get_fund_data(self):
-        """主控函数：优先从本地加载，仅在数据非最新或不完整时下载"""
-        # 步骤1: 解析推荐基金代码
-        self._parse_report()
-        if not self.fund_codes:
-            logger.error("没有提取到任何基金代码，无法继续处理")
-            return
-
-        # 步骤2: 预加载本地数据并检查是否需要下载
-        logger.info("开始预加载本地缓存数据...")
-        fund_codes_to_fetch = []
-        expected_latest_date = self._get_expected_latest_date()
-        min_data_points = 26  # 确保有足够数据计算技术指标
-
-        for fund_code in self.fund_codes:
-            local_df = self._read_local_data(fund_code)
-            
-            if not local_df.empty:
-                latest_local_date = local_df['date'].max().date()
-                data_points = len(local_df)
-                
-                # 检查数据是否最新且完整
-                if latest_local_date >= expected_latest_date and data_points >= min_data_points:
-                    logger.info("基金 %s 的本地数据已是最新 (%s, 期望: %s) 且数据量足够 (%d 行)，直接加载。",
-                                 fund_code, latest_local_date, expected_latest_date, data_points)
-                    self.fund_data[fund_code] = self._calculate_indicators(fund_code, local_df.tail(100))
-                    continue
-                else:
-                    if latest_local_date < expected_latest_date:
-                        logger.info("基金 %s 本地数据已过时（最新日期为 %s，期望 %s），需要从网络获取新数据。",
-                                     fund_code, latest_local_date, expected_latest_date)
-                    if data_points < min_data_points:
-                        logger.info("基金 %s 本地数据量不足（仅 %d 行，需至少 %d 行），需要从网络获取。",
-                                     fund_code, data_points, min_data_points)
-            else:
-                logger.info("基金 %s 本地数据不存在，需要从网络获取。", fund_code)
-            
-            fund_codes_to_fetch.append(fund_code)
-
-        # 步骤3: 多线程网络下载
-        if fund_codes_to_fetch:
-            logger.info("开始使用多线程获取 %d 个基金的新数据...", len(fund_codes_to_fetch))
-            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-                future_to_code = {executor.submit(self._fetch_fund_data, code): code for code in fund_codes_to_fetch}
-                for future in concurrent.futures.as_completed(future_to_code):
-                    fund_code = future_to_code[future]
-                    try:
-                        df = future.result()
-                        result = self._calculate_indicators(fund_code, df)
-                        self.fund_data[fund_code] = result
-                    except Exception as e:
-                        logger.error("获取和处理基金 %s 数据时出错: %s", fund_code, str(e))
-                        self.fund_data[fund_code] = {
-                            'fund_code': fund_code, 'latest_net_value': "数据获取失败", 'rsi': np.nan,
-                            'ma_ratio': np.nan, 'macd_diff': np.nan, 'bb_upper': np.nan, 'bb_lower': np.nan, 'advice': "观察", 'action_signal': 'N/A'
-                        }
-        else:
-            logger.info("所有基金数据均来自本地缓存，无需网络下载。")
-        
-        if len(self.fund_data) > 0:
-            logger.info("所有基金数据处理完成。")
-        else:
-            logger.error("所有基金数据均获取失败。")
 
     def _backtest_strategy(self, fund_code, df):
         """历史回测策略性能"""
@@ -455,11 +382,12 @@ class MarketMonitor:
             returns = [trade['return'] for trade in trades if 'return' in trade]
             cum_return = np.prod([1 + r for r in returns]) - 1 if returns else 0
             win_rate = len([r for r in returns if r > 0]) / len(returns) if returns else 0
-            equity = np.cumprod([1 + r for r in df['return'].fillna(0)])
+            equity_list = np.cumprod([1 + r for r in df['return'].fillna(0)])  # 先计算为 NumPy 数组
+            equity = pd.Series(equity_list)  # 转换为 Pandas Series
             roll_max = equity.cummax()
             drawdown = equity / roll_max - 1
             max_drawdown = drawdown.min()
-            sharpe_ratio = np.mean(returns) / np.std(returns) * np.sqrt(252) if returns else np.nan  # 假设年化
+            sharpe_ratio = np.mean(returns) / np.std(returns) * np.sqrt(252) if returns and np.std(returns) != 0 else np.nan  # 假设年化，防零除
         else:
             cum_return = max_drawdown = sharpe_ratio = win_rate = np.nan
 
@@ -658,4 +586,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error("脚本运行失败: %s", e)
         raise
-
