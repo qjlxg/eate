@@ -68,12 +68,12 @@ class MarketMonitor:
                 extracted_codes.add(code)
             
             sorted_codes = sorted(list(extracted_codes))
-            self.fund_codes = sorted_codes[:10]
+            self.fund_codes = sorted_codes[:1000]
             
             if not self.fund_codes:
                 logger.warning("未提取到任何有效基金代码，请检查 analysis_report.md")
             else:
-                logger.info("提取到 %d 个基金（测试限制前10个）: %s", len(self.fund_codes), self.fund_codes)
+                logger.info("提取到 %d 个基金（测试限制前1000个）: %s", len(self.fund_codes), self.fund_codes)
             
         except Exception as e:
             logger.error("解析报告文件失败: %s", e)
