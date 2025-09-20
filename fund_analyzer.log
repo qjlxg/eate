@@ -10721,3 +10721,1534 @@ Stacktrace:
 | 推荐         |      38 |      021934 | 富国中证通信设备主题ETF发起式联接C      |
 | 推荐         |      39 |      167507 | 安信深圳科技指数(LOF)C           |
 | 推荐         |      49 |      519771 | 交银优择回报灵活配置混合C            |
+2025-09-20 09:04:03,792 - INFO - 正在从 CSV 导入基金代码列表...
+2025-09-20 09:04:04,038 - INFO - 导入成功，共 214 个基金代码
+2025-09-20 09:04:04,038 - INFO - 分析前 214 个基金：['001407', '001724', '002052', '002112', '002163', '002170', '002580', '002771', '005118', '005312', '005551', '005959', '005963', '006503', '006523', '006888', '007114', '007356', '007509', '007771', '007818', '008021', '008087', '008327', '008586', '008843', '008989', '009009', '009063', '009239', '009492', '009645', '009708', '009856', '010034', '010052', '010238', '010392', '010416', '010422', '010524', '010531', '010647', '011020', '011036', '011120', '011145', '011197', '011223', '011270', '011306', '011370', '011372', '011412', '011452', '011487', '011833', '011840', '011892', '012083', '012224', '012322', '012457', '012478', '012536', '012617', '012651', '012697', '012734', '012800', '013153', '013239', '013370', '013722', '014037', '014130', '014143', '014243', '014262', '014318', '014320', '014332', '014417', '014419', '014544', '014581', '014601', '014642', '014728', '014916', '014939', '015044', '015097', '015144', '015152', '015271', '015290', '015369', '015389', '015456', '015576', '015608', '015642', '015683', '015686', '015690', '015692', '015715', '015751', '015849', '015857', '015881', '015916', '015968', '016068', '016076', '016234', '016244', '016251', '016371', '016373', '016461', '016463', '016531', '016919', '016971', '017076', '017103', '017290', '017366', '017461', '017470', '017484', '017489', '017491', '017511', '017513', '017516', '017518', '017520', '017522', '017524', '017526', '017528', '017560', '017612', '017745', '017747', '017836', '017854', '017968', '018082', '018113', '018115', '018121', '018123', '018125', '018129', '018216', '018227', '018241', '018288', '018326', '018359', '018495', '018731', '018836', '018933', '018957', '018986', '018994', '019018', '019024', '019053', '019170', '019190', '019213', '019331', '019348', '019416', '019458', '019514', '019671', '019703', '019786', '019830', '019865', '019924', '019994', '020227', '020398', '020477', '020592', '020629', '020635', '020662', '020671', '020692', '020829', '020900', '021031', '021091', '021173', '021225', '021299', '021475', '021490', '021500', '021523', '021528', '021608', '021934', '167507', '519771']...
+2025-09-20 09:04:04,786 - INFO - --- 批量基金分析启动 ---
+2025-09-20 09:04:04,786 - INFO - 正在获取市场情绪数据...
+2025-09-20 09:04:06,420 - INFO - 市场情绪数据已获取：{'sentiment': 'pessimistic', 'trend': 'bearish'}
+2025-09-20 09:04:06,421 - INFO - --- 正在分析基金 001407 ---
+2025-09-20 09:04:06,421 - INFO - 使用缓存的基金 001407 数据
+2025-09-20 09:04:06,421 - INFO - 使用缓存的基金 001407 经理数据
+2025-09-20 09:04:06,421 - INFO - 使用缓存的基金 001407 持仓数据
+2025-09-20 09:04:06,422 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,422 - INFO - 基金 001407 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:06,422 - INFO - --- 正在分析基金 001724 ---
+2025-09-20 09:04:06,422 - INFO - 使用缓存的基金 001724 数据
+2025-09-20 09:04:06,422 - INFO - 使用缓存的基金 001724 经理数据
+2025-09-20 09:04:06,422 - INFO - 使用缓存的基金 001724 持仓数据
+2025-09-20 09:04:06,423 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,423 - INFO - 基金 001724 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:06,423 - INFO - --- 正在分析基金 002052 ---
+2025-09-20 09:04:06,423 - INFO - 使用缓存的基金 002052 数据
+2025-09-20 09:04:06,423 - INFO - 使用缓存的基金 002052 经理数据
+2025-09-20 09:04:06,423 - INFO - 使用缓存的基金 002052 持仓数据
+2025-09-20 09:04:06,424 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,424 - INFO - 基金 002052 评估完成，总分: 31，决策: 推荐
+2025-09-20 09:04:06,424 - INFO - --- 正在分析基金 002112 ---
+2025-09-20 09:04:06,424 - INFO - 使用缓存的基金 002112 数据
+2025-09-20 09:04:06,424 - INFO - 使用缓存的基金 002112 经理数据
+2025-09-20 09:04:06,424 - INFO - 使用缓存的基金 002112 持仓数据
+2025-09-20 09:04:06,425 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,425 - INFO - 基金 002112 评估完成，总分: 37，决策: 推荐
+2025-09-20 09:04:06,425 - INFO - --- 正在分析基金 002163 ---
+2025-09-20 09:04:06,425 - INFO - 使用缓存的基金 002163 数据
+2025-09-20 09:04:06,425 - INFO - 使用缓存的基金 002163 经理数据
+2025-09-20 09:04:06,425 - INFO - 使用缓存的基金 002163 持仓数据
+2025-09-20 09:04:06,426 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 3, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,426 - INFO - 基金 002163 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:06,426 - INFO - --- 正在分析基金 002170 ---
+2025-09-20 09:04:06,426 - INFO - 使用缓存的基金 002170 数据
+2025-09-20 09:04:06,426 - INFO - 使用缓存的基金 002170 经理数据
+2025-09-20 09:04:06,426 - INFO - 使用缓存的基金 002170 持仓数据
+2025-09-20 09:04:06,427 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,427 - INFO - 基金 002170 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:06,427 - INFO - --- 正在分析基金 002580 ---
+2025-09-20 09:04:06,427 - INFO - 使用缓存的基金 002580 数据
+2025-09-20 09:04:06,427 - INFO - 使用缓存的基金 002580 经理数据
+2025-09-20 09:04:06,427 - INFO - 使用缓存的基金 002580 持仓数据
+2025-09-20 09:04:06,428 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,428 - INFO - 基金 002580 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:06,428 - INFO - --- 正在分析基金 002771 ---
+2025-09-20 09:04:06,428 - INFO - 使用缓存的基金 002771 数据
+2025-09-20 09:04:06,428 - INFO - 使用缓存的基金 002771 经理数据
+2025-09-20 09:04:06,429 - INFO - 使用缓存的基金 002771 持仓数据
+2025-09-20 09:04:06,429 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,429 - INFO - 基金 002771 评估完成，总分: 52，决策: 推荐
+2025-09-20 09:04:06,429 - INFO - --- 正在分析基金 005118 ---
+2025-09-20 09:04:06,430 - INFO - 使用缓存的基金 005118 数据
+2025-09-20 09:04:06,430 - INFO - 使用缓存的基金 005118 经理数据
+2025-09-20 09:04:06,430 - INFO - 使用缓存的基金 005118 持仓数据
+2025-09-20 09:04:06,430 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 0, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,431 - INFO - 基金 005118 评估完成，总分: 29，决策: 观望
+2025-09-20 09:04:06,431 - INFO - --- 正在分析基金 005312 ---
+2025-09-20 09:04:06,431 - INFO - 使用缓存的基金 005312 数据
+2025-09-20 09:04:06,431 - INFO - 使用缓存的基金 005312 经理数据
+2025-09-20 09:04:06,431 - INFO - 使用缓存的基金 005312 持仓数据
+2025-09-20 09:04:06,432 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,432 - INFO - 基金 005312 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:06,432 - INFO - --- 正在分析基金 005551 ---
+2025-09-20 09:04:06,432 - INFO - 使用缓存的基金 005551 数据
+2025-09-20 09:04:06,432 - INFO - 使用缓存的基金 005551 经理数据
+2025-09-20 09:04:06,432 - INFO - 使用缓存的基金 005551 持仓数据
+2025-09-20 09:04:06,433 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,433 - INFO - 基金 005551 评估完成，总分: 33，决策: 推荐
+2025-09-20 09:04:06,433 - INFO - --- 正在分析基金 005959 ---
+2025-09-20 09:04:06,433 - INFO - 使用缓存的基金 005959 数据
+2025-09-20 09:04:06,433 - INFO - 使用缓存的基金 005959 经理数据
+2025-09-20 09:04:06,433 - INFO - 使用缓存的基金 005959 持仓数据
+2025-09-20 09:04:06,434 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,434 - INFO - 基金 005959 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:06,434 - INFO - --- 正在分析基金 005963 ---
+2025-09-20 09:04:06,434 - INFO - 使用缓存的基金 005963 数据
+2025-09-20 09:04:06,434 - INFO - 使用缓存的基金 005963 经理数据
+2025-09-20 09:04:06,434 - INFO - 使用缓存的基金 005963 持仓数据
+2025-09-20 09:04:06,435 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,435 - INFO - 基金 005963 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:06,435 - INFO - --- 正在分析基金 006503 ---
+2025-09-20 09:04:06,435 - INFO - 使用缓存的基金 006503 数据
+2025-09-20 09:04:06,435 - INFO - 使用缓存的基金 006503 经理数据
+2025-09-20 09:04:06,435 - INFO - 使用缓存的基金 006503 持仓数据
+2025-09-20 09:04:06,436 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,436 - INFO - 基金 006503 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:06,436 - INFO - --- 正在分析基金 006523 ---
+2025-09-20 09:04:06,436 - INFO - 使用缓存的基金 006523 数据
+2025-09-20 09:04:06,436 - INFO - 使用缓存的基金 006523 经理数据
+2025-09-20 09:04:06,436 - INFO - 使用缓存的基金 006523 持仓数据
+2025-09-20 09:04:06,437 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,437 - INFO - 基金 006523 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:06,437 - INFO - --- 正在分析基金 006888 ---
+2025-09-20 09:04:06,437 - INFO - 使用缓存的基金 006888 数据
+2025-09-20 09:04:06,437 - INFO - 使用缓存的基金 006888 经理数据
+2025-09-20 09:04:06,437 - INFO - 使用缓存的基金 006888 持仓数据
+2025-09-20 09:04:06,438 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,438 - INFO - 基金 006888 评估完成，总分: 33，决策: 推荐
+2025-09-20 09:04:06,438 - INFO - --- 正在分析基金 007114 ---
+2025-09-20 09:04:06,438 - INFO - 使用缓存的基金 007114 数据
+2025-09-20 09:04:06,438 - INFO - 使用缓存的基金 007114 经理数据
+2025-09-20 09:04:06,438 - INFO - 使用缓存的基金 007114 持仓数据
+2025-09-20 09:04:06,439 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,439 - INFO - 基金 007114 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:06,439 - INFO - --- 正在分析基金 007356 ---
+2025-09-20 09:04:06,440 - INFO - 使用缓存的基金 007356 数据
+2025-09-20 09:04:06,440 - INFO - 使用缓存的基金 007356 经理数据
+2025-09-20 09:04:06,440 - INFO - 使用缓存的基金 007356 持仓数据
+2025-09-20 09:04:06,441 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,441 - INFO - 基金 007356 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:06,441 - INFO - --- 正在分析基金 007509 ---
+2025-09-20 09:04:06,441 - INFO - 使用缓存的基金 007509 数据
+2025-09-20 09:04:06,441 - INFO - 使用缓存的基金 007509 经理数据
+2025-09-20 09:04:06,441 - INFO - 使用缓存的基金 007509 持仓数据
+2025-09-20 09:04:06,442 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,442 - INFO - 基金 007509 评估完成，总分: 58，决策: 推荐
+2025-09-20 09:04:06,442 - INFO - --- 正在分析基金 007771 ---
+2025-09-20 09:04:06,442 - INFO - 使用缓存的基金 007771 数据
+2025-09-20 09:04:06,442 - INFO - 使用缓存的基金 007771 经理数据
+2025-09-20 09:04:06,442 - INFO - 使用缓存的基金 007771 持仓数据
+2025-09-20 09:04:06,443 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 3, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,443 - INFO - 基金 007771 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:06,443 - INFO - --- 正在分析基金 007818 ---
+2025-09-20 09:04:06,443 - INFO - 使用缓存的基金 007818 数据
+2025-09-20 09:04:06,443 - INFO - 使用缓存的基金 007818 经理数据
+2025-09-20 09:04:06,443 - INFO - 使用缓存的基金 007818 持仓数据
+2025-09-20 09:04:06,444 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,444 - INFO - 基金 007818 评估完成，总分: 51，决策: 推荐
+2025-09-20 09:04:06,444 - INFO - --- 正在分析基金 008021 ---
+2025-09-20 09:04:06,444 - INFO - 使用缓存的基金 008021 数据
+2025-09-20 09:04:06,444 - INFO - 使用缓存的基金 008021 经理数据
+2025-09-20 09:04:06,444 - INFO - 使用缓存的基金 008021 持仓数据
+2025-09-20 09:04:06,445 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,445 - INFO - 基金 008021 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:06,445 - INFO - --- 正在分析基金 008087 ---
+2025-09-20 09:04:06,445 - INFO - 使用缓存的基金 008087 数据
+2025-09-20 09:04:06,445 - INFO - 使用缓存的基金 008087 经理数据
+2025-09-20 09:04:06,445 - INFO - 使用缓存的基金 008087 持仓数据
+2025-09-20 09:04:06,446 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,446 - INFO - 基金 008087 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:06,446 - INFO - --- 正在分析基金 008327 ---
+2025-09-20 09:04:06,446 - INFO - 使用缓存的基金 008327 数据
+2025-09-20 09:04:06,446 - INFO - 使用缓存的基金 008327 经理数据
+2025-09-20 09:04:06,446 - INFO - 使用缓存的基金 008327 持仓数据
+2025-09-20 09:04:06,447 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,447 - INFO - 基金 008327 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:06,447 - INFO - --- 正在分析基金 008586 ---
+2025-09-20 09:04:06,447 - INFO - 使用缓存的基金 008586 数据
+2025-09-20 09:04:06,447 - INFO - 使用缓存的基金 008586 经理数据
+2025-09-20 09:04:06,448 - INFO - 使用缓存的基金 008586 持仓数据
+2025-09-20 09:04:06,448 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,448 - INFO - 基金 008586 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:06,448 - INFO - --- 正在分析基金 008843 ---
+2025-09-20 09:04:06,448 - INFO - 使用缓存的基金 008843 数据
+2025-09-20 09:04:06,448 - INFO - 使用缓存的基金 008843 经理数据
+2025-09-20 09:04:06,449 - INFO - 使用缓存的基金 008843 持仓数据
+2025-09-20 09:04:06,449 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,449 - INFO - 基金 008843 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:06,450 - INFO - --- 正在分析基金 008989 ---
+2025-09-20 09:04:06,450 - INFO - 使用缓存的基金 008989 数据
+2025-09-20 09:04:06,450 - INFO - 使用缓存的基金 008989 经理数据
+2025-09-20 09:04:06,450 - INFO - 使用缓存的基金 008989 持仓数据
+2025-09-20 09:04:06,450 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,451 - INFO - 基金 008989 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:06,451 - INFO - --- 正在分析基金 009009 ---
+2025-09-20 09:04:06,451 - INFO - 使用缓存的基金 009009 数据
+2025-09-20 09:04:06,451 - INFO - 使用缓存的基金 009009 经理数据
+2025-09-20 09:04:06,451 - INFO - 使用缓存的基金 009009 持仓数据
+2025-09-20 09:04:06,452 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,452 - INFO - 基金 009009 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:06,452 - INFO - --- 正在分析基金 009063 ---
+2025-09-20 09:04:06,452 - INFO - 使用缓存的基金 009063 数据
+2025-09-20 09:04:06,452 - INFO - 使用缓存的基金 009063 经理数据
+2025-09-20 09:04:06,452 - INFO - 使用缓存的基金 009063 持仓数据
+2025-09-20 09:04:06,453 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,453 - INFO - 基金 009063 评估完成，总分: 35，决策: 推荐
+2025-09-20 09:04:06,453 - INFO - --- 正在分析基金 009239 ---
+2025-09-20 09:04:06,453 - INFO - 使用缓存的基金 009239 数据
+2025-09-20 09:04:06,453 - INFO - 使用缓存的基金 009239 经理数据
+2025-09-20 09:04:06,453 - INFO - 使用缓存的基金 009239 持仓数据
+2025-09-20 09:04:06,454 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,454 - INFO - 基金 009239 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:06,454 - INFO - --- 正在分析基金 009492 ---
+2025-09-20 09:04:06,454 - INFO - 使用缓存的基金 009492 数据
+2025-09-20 09:04:06,454 - INFO - 使用缓存的基金 009492 经理数据
+2025-09-20 09:04:06,454 - INFO - 使用缓存的基金 009492 持仓数据
+2025-09-20 09:04:06,455 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,455 - INFO - 基金 009492 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:06,455 - INFO - --- 正在分析基金 009645 ---
+2025-09-20 09:04:06,455 - INFO - 使用缓存的基金 009645 数据
+2025-09-20 09:04:06,455 - INFO - 使用缓存的基金 009645 经理数据
+2025-09-20 09:04:06,455 - INFO - 使用缓存的基金 009645 持仓数据
+2025-09-20 09:04:06,456 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,456 - INFO - 基金 009645 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:06,456 - INFO - --- 正在分析基金 009708 ---
+2025-09-20 09:04:06,456 - INFO - 使用缓存的基金 009708 数据
+2025-09-20 09:04:06,456 - INFO - 使用缓存的基金 009708 经理数据
+2025-09-20 09:04:06,457 - INFO - 使用缓存的基金 009708 持仓数据
+2025-09-20 09:04:06,457 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,457 - INFO - 基金 009708 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:06,458 - INFO - --- 正在分析基金 009856 ---
+2025-09-20 09:04:06,458 - INFO - 使用缓存的基金 009856 数据
+2025-09-20 09:04:06,458 - INFO - 使用缓存的基金 009856 经理数据
+2025-09-20 09:04:06,458 - INFO - 使用缓存的基金 009856 持仓数据
+2025-09-20 09:04:06,458 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,459 - INFO - 基金 009856 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:06,459 - INFO - --- 正在分析基金 010034 ---
+2025-09-20 09:04:06,459 - INFO - 使用缓存的基金 010034 数据
+2025-09-20 09:04:06,459 - INFO - 使用缓存的基金 010034 经理数据
+2025-09-20 09:04:06,459 - INFO - 使用缓存的基金 010034 持仓数据
+2025-09-20 09:04:06,460 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,460 - INFO - 基金 010034 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:06,460 - INFO - --- 正在分析基金 010052 ---
+2025-09-20 09:04:06,460 - INFO - 使用缓存的基金 010052 数据
+2025-09-20 09:04:06,460 - INFO - 使用缓存的基金 010052 经理数据
+2025-09-20 09:04:06,460 - INFO - 使用缓存的基金 010052 持仓数据
+2025-09-20 09:04:06,461 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,461 - INFO - 基金 010052 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:06,461 - INFO - --- 正在分析基金 010238 ---
+2025-09-20 09:04:06,461 - INFO - 使用缓存的基金 010238 数据
+2025-09-20 09:04:06,461 - INFO - 使用缓存的基金 010238 经理数据
+2025-09-20 09:04:06,461 - INFO - 使用缓存的基金 010238 持仓数据
+2025-09-20 09:04:06,462 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 3, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,462 - INFO - 基金 010238 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:06,462 - INFO - --- 正在分析基金 010392 ---
+2025-09-20 09:04:06,462 - INFO - 使用缓存的基金 010392 数据
+2025-09-20 09:04:06,462 - INFO - 使用缓存的基金 010392 经理数据
+2025-09-20 09:04:06,462 - INFO - 使用缓存的基金 010392 持仓数据
+2025-09-20 09:04:06,463 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,463 - INFO - 基金 010392 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:06,463 - INFO - --- 正在分析基金 010416 ---
+2025-09-20 09:04:06,463 - INFO - 使用缓存的基金 010416 数据
+2025-09-20 09:04:06,463 - INFO - 使用缓存的基金 010416 经理数据
+2025-09-20 09:04:06,463 - INFO - 使用缓存的基金 010416 持仓数据
+2025-09-20 09:04:06,464 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,464 - INFO - 基金 010416 评估完成，总分: 35，决策: 推荐
+2025-09-20 09:04:06,464 - INFO - --- 正在分析基金 010422 ---
+2025-09-20 09:04:06,464 - INFO - 使用缓存的基金 010422 数据
+2025-09-20 09:04:06,464 - INFO - 使用缓存的基金 010422 经理数据
+2025-09-20 09:04:06,464 - INFO - 使用缓存的基金 010422 持仓数据
+2025-09-20 09:04:06,465 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:06,465 - INFO - 基金 010422 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:06,465 - INFO - --- 正在分析基金 010524 ---
+2025-09-20 09:04:06,465 - INFO - 使用缓存的基金 010524 数据
+2025-09-20 09:04:06,465 - INFO - 使用缓存的基金 010524 经理数据
+2025-09-20 09:04:06,466 - INFO - 正在获取基金 010524 的持仓数据...
+2025-09-20 09:04:08,101 - INFO - 通过akshare获取基金 010524 持仓数据失败: '占净值比例'
+2025-09-20 09:04:08,698 - INFO - 获取基金 010524 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:08,698 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,698 - INFO - 基金 010524 评估完成，总分: 30，决策: 观望
+2025-09-20 09:04:08,698 - INFO - --- 正在分析基金 010531 ---
+2025-09-20 09:04:08,698 - INFO - 使用缓存的基金 010531 数据
+2025-09-20 09:04:08,698 - INFO - 使用缓存的基金 010531 经理数据
+2025-09-20 09:04:08,698 - INFO - 使用缓存的基金 010531 持仓数据
+2025-09-20 09:04:08,699 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,699 - INFO - 基金 010531 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:08,700 - INFO - --- 正在分析基金 010647 ---
+2025-09-20 09:04:08,700 - INFO - 使用缓存的基金 010647 数据
+2025-09-20 09:04:08,700 - INFO - 使用缓存的基金 010647 经理数据
+2025-09-20 09:04:08,700 - INFO - 使用缓存的基金 010647 持仓数据
+2025-09-20 09:04:08,700 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,700 - INFO - 基金 010647 评估完成，总分: 32，决策: 推荐
+2025-09-20 09:04:08,701 - INFO - --- 正在分析基金 011020 ---
+2025-09-20 09:04:08,701 - INFO - 使用缓存的基金 011020 数据
+2025-09-20 09:04:08,701 - INFO - 使用缓存的基金 011020 经理数据
+2025-09-20 09:04:08,701 - INFO - 使用缓存的基金 011020 持仓数据
+2025-09-20 09:04:08,701 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,701 - INFO - 基金 011020 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:08,701 - INFO - --- 正在分析基金 011036 ---
+2025-09-20 09:04:08,702 - INFO - 使用缓存的基金 011036 数据
+2025-09-20 09:04:08,702 - INFO - 使用缓存的基金 011036 经理数据
+2025-09-20 09:04:08,702 - INFO - 使用缓存的基金 011036 持仓数据
+2025-09-20 09:04:08,702 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,702 - INFO - 基金 011036 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,702 - INFO - --- 正在分析基金 011120 ---
+2025-09-20 09:04:08,702 - INFO - 使用缓存的基金 011120 数据
+2025-09-20 09:04:08,703 - INFO - 使用缓存的基金 011120 经理数据
+2025-09-20 09:04:08,703 - INFO - 使用缓存的基金 011120 持仓数据
+2025-09-20 09:04:08,703 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,703 - INFO - 基金 011120 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:08,703 - INFO - --- 正在分析基金 011145 ---
+2025-09-20 09:04:08,703 - INFO - 使用缓存的基金 011145 数据
+2025-09-20 09:04:08,704 - INFO - 使用缓存的基金 011145 经理数据
+2025-09-20 09:04:08,704 - INFO - 使用缓存的基金 011145 持仓数据
+2025-09-20 09:04:08,704 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,704 - INFO - 基金 011145 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:08,704 - INFO - --- 正在分析基金 011197 ---
+2025-09-20 09:04:08,704 - INFO - 使用缓存的基金 011197 数据
+2025-09-20 09:04:08,705 - INFO - 使用缓存的基金 011197 经理数据
+2025-09-20 09:04:08,705 - INFO - 使用缓存的基金 011197 持仓数据
+2025-09-20 09:04:08,705 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,705 - INFO - 基金 011197 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:08,705 - INFO - --- 正在分析基金 011223 ---
+2025-09-20 09:04:08,705 - INFO - 使用缓存的基金 011223 数据
+2025-09-20 09:04:08,706 - INFO - 使用缓存的基金 011223 经理数据
+2025-09-20 09:04:08,706 - INFO - 使用缓存的基金 011223 持仓数据
+2025-09-20 09:04:08,706 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,706 - INFO - 基金 011223 评估完成，总分: 33，决策: 推荐
+2025-09-20 09:04:08,706 - INFO - --- 正在分析基金 011270 ---
+2025-09-20 09:04:08,706 - INFO - 使用缓存的基金 011270 数据
+2025-09-20 09:04:08,706 - INFO - 使用缓存的基金 011270 经理数据
+2025-09-20 09:04:08,706 - INFO - 使用缓存的基金 011270 持仓数据
+2025-09-20 09:04:08,707 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,707 - INFO - 基金 011270 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:08,707 - INFO - --- 正在分析基金 011306 ---
+2025-09-20 09:04:08,707 - INFO - 使用缓存的基金 011306 数据
+2025-09-20 09:04:08,707 - INFO - 使用缓存的基金 011306 经理数据
+2025-09-20 09:04:08,707 - INFO - 使用缓存的基金 011306 持仓数据
+2025-09-20 09:04:08,708 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,708 - INFO - 基金 011306 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,708 - INFO - --- 正在分析基金 011370 ---
+2025-09-20 09:04:08,708 - INFO - 使用缓存的基金 011370 数据
+2025-09-20 09:04:08,708 - INFO - 使用缓存的基金 011370 经理数据
+2025-09-20 09:04:08,708 - INFO - 使用缓存的基金 011370 持仓数据
+2025-09-20 09:04:08,709 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,709 - INFO - 基金 011370 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:08,709 - INFO - --- 正在分析基金 011372 ---
+2025-09-20 09:04:08,709 - INFO - 使用缓存的基金 011372 数据
+2025-09-20 09:04:08,709 - INFO - 使用缓存的基金 011372 经理数据
+2025-09-20 09:04:08,709 - INFO - 使用缓存的基金 011372 持仓数据
+2025-09-20 09:04:08,710 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 3, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,710 - INFO - 基金 011372 评估完成，总分: 33，决策: 推荐
+2025-09-20 09:04:08,710 - INFO - --- 正在分析基金 011412 ---
+2025-09-20 09:04:08,710 - INFO - 使用缓存的基金 011412 数据
+2025-09-20 09:04:08,710 - INFO - 使用缓存的基金 011412 经理数据
+2025-09-20 09:04:08,711 - INFO - 使用缓存的基金 011412 持仓数据
+2025-09-20 09:04:08,711 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,711 - INFO - 基金 011412 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:08,711 - INFO - --- 正在分析基金 011452 ---
+2025-09-20 09:04:08,711 - INFO - 使用缓存的基金 011452 数据
+2025-09-20 09:04:08,711 - INFO - 使用缓存的基金 011452 经理数据
+2025-09-20 09:04:08,712 - INFO - 使用缓存的基金 011452 持仓数据
+2025-09-20 09:04:08,712 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,712 - INFO - 基金 011452 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:08,712 - INFO - --- 正在分析基金 011487 ---
+2025-09-20 09:04:08,712 - INFO - 使用缓存的基金 011487 数据
+2025-09-20 09:04:08,712 - INFO - 使用缓存的基金 011487 经理数据
+2025-09-20 09:04:08,713 - INFO - 使用缓存的基金 011487 持仓数据
+2025-09-20 09:04:08,713 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,713 - INFO - 基金 011487 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:08,713 - INFO - --- 正在分析基金 011833 ---
+2025-09-20 09:04:08,713 - INFO - 使用缓存的基金 011833 数据
+2025-09-20 09:04:08,713 - INFO - 使用缓存的基金 011833 经理数据
+2025-09-20 09:04:08,714 - INFO - 使用缓存的基金 011833 持仓数据
+2025-09-20 09:04:08,714 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,714 - INFO - 基金 011833 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:08,714 - INFO - --- 正在分析基金 011840 ---
+2025-09-20 09:04:08,714 - INFO - 使用缓存的基金 011840 数据
+2025-09-20 09:04:08,715 - INFO - 使用缓存的基金 011840 经理数据
+2025-09-20 09:04:08,715 - INFO - 使用缓存的基金 011840 持仓数据
+2025-09-20 09:04:08,715 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,715 - INFO - 基金 011840 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,715 - INFO - --- 正在分析基金 011892 ---
+2025-09-20 09:04:08,715 - INFO - 使用缓存的基金 011892 数据
+2025-09-20 09:04:08,716 - INFO - 使用缓存的基金 011892 经理数据
+2025-09-20 09:04:08,716 - INFO - 使用缓存的基金 011892 持仓数据
+2025-09-20 09:04:08,716 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,716 - INFO - 基金 011892 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,716 - INFO - --- 正在分析基金 012083 ---
+2025-09-20 09:04:08,716 - INFO - 使用缓存的基金 012083 数据
+2025-09-20 09:04:08,717 - INFO - 使用缓存的基金 012083 经理数据
+2025-09-20 09:04:08,717 - INFO - 使用缓存的基金 012083 持仓数据
+2025-09-20 09:04:08,717 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,717 - INFO - 基金 012083 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:08,717 - INFO - --- 正在分析基金 012224 ---
+2025-09-20 09:04:08,718 - INFO - 使用缓存的基金 012224 数据
+2025-09-20 09:04:08,718 - INFO - 使用缓存的基金 012224 经理数据
+2025-09-20 09:04:08,718 - INFO - 使用缓存的基金 012224 持仓数据
+2025-09-20 09:04:08,718 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,719 - INFO - 基金 012224 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:08,719 - INFO - --- 正在分析基金 012322 ---
+2025-09-20 09:04:08,719 - INFO - 使用缓存的基金 012322 数据
+2025-09-20 09:04:08,719 - INFO - 使用缓存的基金 012322 经理数据
+2025-09-20 09:04:08,719 - INFO - 使用缓存的基金 012322 持仓数据
+2025-09-20 09:04:08,720 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,720 - INFO - 基金 012322 评估完成，总分: 50，决策: 推荐
+2025-09-20 09:04:08,720 - INFO - --- 正在分析基金 012457 ---
+2025-09-20 09:04:08,720 - INFO - 使用缓存的基金 012457 数据
+2025-09-20 09:04:08,720 - INFO - 使用缓存的基金 012457 经理数据
+2025-09-20 09:04:08,720 - INFO - 使用缓存的基金 012457 持仓数据
+2025-09-20 09:04:08,721 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,721 - INFO - 基金 012457 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:08,721 - INFO - --- 正在分析基金 012478 ---
+2025-09-20 09:04:08,721 - INFO - 使用缓存的基金 012478 数据
+2025-09-20 09:04:08,721 - INFO - 使用缓存的基金 012478 经理数据
+2025-09-20 09:04:08,721 - INFO - 使用缓存的基金 012478 持仓数据
+2025-09-20 09:04:08,722 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,722 - INFO - 基金 012478 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:08,722 - INFO - --- 正在分析基金 012536 ---
+2025-09-20 09:04:08,722 - INFO - 使用缓存的基金 012536 数据
+2025-09-20 09:04:08,722 - INFO - 使用缓存的基金 012536 经理数据
+2025-09-20 09:04:08,722 - INFO - 使用缓存的基金 012536 持仓数据
+2025-09-20 09:04:08,722 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 0, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,723 - INFO - 基金 012536 评估完成，总分: 29，决策: 观望
+2025-09-20 09:04:08,723 - INFO - --- 正在分析基金 012617 ---
+2025-09-20 09:04:08,723 - INFO - 使用缓存的基金 012617 数据
+2025-09-20 09:04:08,723 - INFO - 使用缓存的基金 012617 经理数据
+2025-09-20 09:04:08,723 - INFO - 使用缓存的基金 012617 持仓数据
+2025-09-20 09:04:08,723 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 3, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,723 - INFO - 基金 012617 评估完成，总分: 33，决策: 推荐
+2025-09-20 09:04:08,724 - INFO - --- 正在分析基金 012651 ---
+2025-09-20 09:04:08,724 - INFO - 使用缓存的基金 012651 数据
+2025-09-20 09:04:08,724 - INFO - 使用缓存的基金 012651 经理数据
+2025-09-20 09:04:08,724 - INFO - 使用缓存的基金 012651 持仓数据
+2025-09-20 09:04:08,724 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,725 - INFO - 基金 012651 评估完成，总分: 37，决策: 推荐
+2025-09-20 09:04:08,725 - INFO - --- 正在分析基金 012697 ---
+2025-09-20 09:04:08,725 - INFO - 使用缓存的基金 012697 数据
+2025-09-20 09:04:08,725 - INFO - 使用缓存的基金 012697 经理数据
+2025-09-20 09:04:08,725 - INFO - 使用缓存的基金 012697 持仓数据
+2025-09-20 09:04:08,725 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,725 - INFO - 基金 012697 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:08,726 - INFO - --- 正在分析基金 012734 ---
+2025-09-20 09:04:08,726 - INFO - 使用缓存的基金 012734 数据
+2025-09-20 09:04:08,726 - INFO - 使用缓存的基金 012734 经理数据
+2025-09-20 09:04:08,726 - INFO - 使用缓存的基金 012734 持仓数据
+2025-09-20 09:04:08,726 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,726 - INFO - 基金 012734 评估完成，总分: 51，决策: 推荐
+2025-09-20 09:04:08,726 - INFO - --- 正在分析基金 012800 ---
+2025-09-20 09:04:08,727 - INFO - 使用缓存的基金 012800 数据
+2025-09-20 09:04:08,727 - INFO - 使用缓存的基金 012800 经理数据
+2025-09-20 09:04:08,727 - INFO - 使用缓存的基金 012800 持仓数据
+2025-09-20 09:04:08,727 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,727 - INFO - 基金 012800 评估完成，总分: 31，决策: 推荐
+2025-09-20 09:04:08,727 - INFO - --- 正在分析基金 013153 ---
+2025-09-20 09:04:08,727 - INFO - 使用缓存的基金 013153 数据
+2025-09-20 09:04:08,728 - INFO - 使用缓存的基金 013153 经理数据
+2025-09-20 09:04:08,728 - INFO - 使用缓存的基金 013153 持仓数据
+2025-09-20 09:04:08,728 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,728 - INFO - 基金 013153 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:08,728 - INFO - --- 正在分析基金 013239 ---
+2025-09-20 09:04:08,728 - INFO - 使用缓存的基金 013239 数据
+2025-09-20 09:04:08,728 - INFO - 使用缓存的基金 013239 经理数据
+2025-09-20 09:04:08,729 - INFO - 使用缓存的基金 013239 持仓数据
+2025-09-20 09:04:08,729 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,729 - INFO - 基金 013239 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,729 - INFO - --- 正在分析基金 013370 ---
+2025-09-20 09:04:08,729 - INFO - 使用缓存的基金 013370 数据
+2025-09-20 09:04:08,729 - INFO - 使用缓存的基金 013370 经理数据
+2025-09-20 09:04:08,729 - INFO - 使用缓存的基金 013370 持仓数据
+2025-09-20 09:04:08,730 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,730 - INFO - 基金 013370 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,730 - INFO - --- 正在分析基金 013722 ---
+2025-09-20 09:04:08,730 - INFO - 使用缓存的基金 013722 数据
+2025-09-20 09:04:08,730 - INFO - 使用缓存的基金 013722 经理数据
+2025-09-20 09:04:08,730 - INFO - 使用缓存的基金 013722 持仓数据
+2025-09-20 09:04:08,731 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,731 - INFO - 基金 013722 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:08,731 - INFO - --- 正在分析基金 014037 ---
+2025-09-20 09:04:08,731 - INFO - 使用缓存的基金 014037 数据
+2025-09-20 09:04:08,731 - INFO - 使用缓存的基金 014037 经理数据
+2025-09-20 09:04:08,731 - INFO - 使用缓存的基金 014037 持仓数据
+2025-09-20 09:04:08,732 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,732 - INFO - 基金 014037 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,732 - INFO - --- 正在分析基金 014130 ---
+2025-09-20 09:04:08,732 - INFO - 使用缓存的基金 014130 数据
+2025-09-20 09:04:08,732 - INFO - 使用缓存的基金 014130 经理数据
+2025-09-20 09:04:08,732 - INFO - 使用缓存的基金 014130 持仓数据
+2025-09-20 09:04:08,733 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,733 - INFO - 基金 014130 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,733 - INFO - --- 正在分析基金 014143 ---
+2025-09-20 09:04:08,733 - INFO - 使用缓存的基金 014143 数据
+2025-09-20 09:04:08,733 - INFO - 使用缓存的基金 014143 经理数据
+2025-09-20 09:04:08,733 - INFO - 使用缓存的基金 014143 持仓数据
+2025-09-20 09:04:08,734 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 4, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,734 - INFO - 基金 014143 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,734 - INFO - --- 正在分析基金 014243 ---
+2025-09-20 09:04:08,734 - INFO - 使用缓存的基金 014243 数据
+2025-09-20 09:04:08,734 - INFO - 使用缓存的基金 014243 经理数据
+2025-09-20 09:04:08,734 - INFO - 使用缓存的基金 014243 持仓数据
+2025-09-20 09:04:08,735 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,735 - INFO - 基金 014243 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:08,735 - INFO - --- 正在分析基金 014262 ---
+2025-09-20 09:04:08,735 - INFO - 使用缓存的基金 014262 数据
+2025-09-20 09:04:08,735 - INFO - 使用缓存的基金 014262 经理数据
+2025-09-20 09:04:08,735 - INFO - 使用缓存的基金 014262 持仓数据
+2025-09-20 09:04:08,736 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,736 - INFO - 基金 014262 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:08,736 - INFO - --- 正在分析基金 014318 ---
+2025-09-20 09:04:08,736 - INFO - 使用缓存的基金 014318 数据
+2025-09-20 09:04:08,736 - INFO - 使用缓存的基金 014318 经理数据
+2025-09-20 09:04:08,736 - INFO - 使用缓存的基金 014318 持仓数据
+2025-09-20 09:04:08,737 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,737 - INFO - 基金 014318 评估完成，总分: 52，决策: 推荐
+2025-09-20 09:04:08,737 - INFO - --- 正在分析基金 014320 ---
+2025-09-20 09:04:08,737 - INFO - 使用缓存的基金 014320 数据
+2025-09-20 09:04:08,737 - INFO - 使用缓存的基金 014320 经理数据
+2025-09-20 09:04:08,737 - INFO - 使用缓存的基金 014320 持仓数据
+2025-09-20 09:04:08,738 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,738 - INFO - 基金 014320 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,738 - INFO - --- 正在分析基金 014332 ---
+2025-09-20 09:04:08,738 - INFO - 使用缓存的基金 014332 数据
+2025-09-20 09:04:08,738 - INFO - 使用缓存的基金 014332 经理数据
+2025-09-20 09:04:08,738 - INFO - 使用缓存的基金 014332 持仓数据
+2025-09-20 09:04:08,739 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,739 - INFO - 基金 014332 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,739 - INFO - --- 正在分析基金 014417 ---
+2025-09-20 09:04:08,739 - INFO - 使用缓存的基金 014417 数据
+2025-09-20 09:04:08,739 - INFO - 使用缓存的基金 014417 经理数据
+2025-09-20 09:04:08,739 - INFO - 使用缓存的基金 014417 持仓数据
+2025-09-20 09:04:08,740 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,740 - INFO - 基金 014417 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,740 - INFO - --- 正在分析基金 014419 ---
+2025-09-20 09:04:08,740 - INFO - 使用缓存的基金 014419 数据
+2025-09-20 09:04:08,740 - INFO - 使用缓存的基金 014419 经理数据
+2025-09-20 09:04:08,740 - INFO - 使用缓存的基金 014419 持仓数据
+2025-09-20 09:04:08,741 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,741 - INFO - 基金 014419 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:08,741 - INFO - --- 正在分析基金 014544 ---
+2025-09-20 09:04:08,741 - INFO - 使用缓存的基金 014544 数据
+2025-09-20 09:04:08,741 - INFO - 使用缓存的基金 014544 经理数据
+2025-09-20 09:04:08,741 - INFO - 使用缓存的基金 014544 持仓数据
+2025-09-20 09:04:08,742 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,742 - INFO - 基金 014544 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,742 - INFO - --- 正在分析基金 014581 ---
+2025-09-20 09:04:08,742 - INFO - 使用缓存的基金 014581 数据
+2025-09-20 09:04:08,742 - INFO - 使用缓存的基金 014581 经理数据
+2025-09-20 09:04:08,742 - INFO - 使用缓存的基金 014581 持仓数据
+2025-09-20 09:04:08,743 - INFO - 评分详情: {'sharpe_ratio_score': 0, 'max_drawdown_score': 4, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,743 - INFO - 基金 014581 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:08,743 - INFO - --- 正在分析基金 014601 ---
+2025-09-20 09:04:08,743 - INFO - 使用缓存的基金 014601 数据
+2025-09-20 09:04:08,743 - INFO - 使用缓存的基金 014601 经理数据
+2025-09-20 09:04:08,743 - INFO - 使用缓存的基金 014601 持仓数据
+2025-09-20 09:04:08,744 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,744 - INFO - 基金 014601 评估完成，总分: 50，决策: 推荐
+2025-09-20 09:04:08,744 - INFO - --- 正在分析基金 014642 ---
+2025-09-20 09:04:08,744 - INFO - 使用缓存的基金 014642 数据
+2025-09-20 09:04:08,744 - INFO - 使用缓存的基金 014642 经理数据
+2025-09-20 09:04:08,744 - INFO - 使用缓存的基金 014642 持仓数据
+2025-09-20 09:04:08,745 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,745 - INFO - 基金 014642 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,745 - INFO - --- 正在分析基金 014728 ---
+2025-09-20 09:04:08,745 - INFO - 使用缓存的基金 014728 数据
+2025-09-20 09:04:08,745 - INFO - 使用缓存的基金 014728 经理数据
+2025-09-20 09:04:08,745 - INFO - 使用缓存的基金 014728 持仓数据
+2025-09-20 09:04:08,746 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,746 - INFO - 基金 014728 评估完成，总分: 55，决策: 推荐
+2025-09-20 09:04:08,746 - INFO - --- 正在分析基金 014916 ---
+2025-09-20 09:04:08,746 - INFO - 使用缓存的基金 014916 数据
+2025-09-20 09:04:08,746 - INFO - 使用缓存的基金 014916 经理数据
+2025-09-20 09:04:08,746 - INFO - 使用缓存的基金 014916 持仓数据
+2025-09-20 09:04:08,746 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,747 - INFO - 基金 014916 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,747 - INFO - --- 正在分析基金 014939 ---
+2025-09-20 09:04:08,747 - INFO - 使用缓存的基金 014939 数据
+2025-09-20 09:04:08,747 - INFO - 使用缓存的基金 014939 经理数据
+2025-09-20 09:04:08,747 - INFO - 使用缓存的基金 014939 持仓数据
+2025-09-20 09:04:08,747 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,747 - INFO - 基金 014939 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:08,747 - INFO - --- 正在分析基金 015044 ---
+2025-09-20 09:04:08,747 - INFO - 使用缓存的基金 015044 数据
+2025-09-20 09:04:08,747 - INFO - 使用缓存的基金 015044 经理数据
+2025-09-20 09:04:08,747 - INFO - 使用缓存的基金 015044 持仓数据
+2025-09-20 09:04:08,748 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,748 - INFO - 基金 015044 评估完成，总分: 51，决策: 推荐
+2025-09-20 09:04:08,748 - INFO - --- 正在分析基金 015097 ---
+2025-09-20 09:04:08,748 - INFO - 使用缓存的基金 015097 数据
+2025-09-20 09:04:08,748 - INFO - 使用缓存的基金 015097 经理数据
+2025-09-20 09:04:08,748 - INFO - 使用缓存的基金 015097 持仓数据
+2025-09-20 09:04:08,749 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,749 - INFO - 基金 015097 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:08,749 - INFO - --- 正在分析基金 015144 ---
+2025-09-20 09:04:08,749 - INFO - 使用缓存的基金 015144 数据
+2025-09-20 09:04:08,749 - INFO - 使用缓存的基金 015144 经理数据
+2025-09-20 09:04:08,749 - INFO - 使用缓存的基金 015144 持仓数据
+2025-09-20 09:04:08,750 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,750 - INFO - 基金 015144 评估完成，总分: 52，决策: 推荐
+2025-09-20 09:04:08,750 - INFO - --- 正在分析基金 015152 ---
+2025-09-20 09:04:08,750 - INFO - 使用缓存的基金 015152 数据
+2025-09-20 09:04:08,750 - INFO - 使用缓存的基金 015152 经理数据
+2025-09-20 09:04:08,750 - INFO - 使用缓存的基金 015152 持仓数据
+2025-09-20 09:04:08,751 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,751 - INFO - 基金 015152 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:08,751 - INFO - --- 正在分析基金 015271 ---
+2025-09-20 09:04:08,751 - INFO - 使用缓存的基金 015271 数据
+2025-09-20 09:04:08,751 - INFO - 使用缓存的基金 015271 经理数据
+2025-09-20 09:04:08,751 - INFO - 使用缓存的基金 015271 持仓数据
+2025-09-20 09:04:08,752 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,752 - INFO - 基金 015271 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:08,752 - INFO - --- 正在分析基金 015290 ---
+2025-09-20 09:04:08,752 - INFO - 使用缓存的基金 015290 数据
+2025-09-20 09:04:08,752 - INFO - 使用缓存的基金 015290 经理数据
+2025-09-20 09:04:08,752 - INFO - 使用缓存的基金 015290 持仓数据
+2025-09-20 09:04:08,753 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,753 - INFO - 基金 015290 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,753 - INFO - --- 正在分析基金 015369 ---
+2025-09-20 09:04:08,753 - INFO - 使用缓存的基金 015369 数据
+2025-09-20 09:04:08,753 - INFO - 使用缓存的基金 015369 经理数据
+2025-09-20 09:04:08,753 - INFO - 使用缓存的基金 015369 持仓数据
+2025-09-20 09:04:08,754 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,754 - INFO - 基金 015369 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:08,754 - INFO - --- 正在分析基金 015389 ---
+2025-09-20 09:04:08,754 - INFO - 使用缓存的基金 015389 数据
+2025-09-20 09:04:08,754 - INFO - 使用缓存的基金 015389 经理数据
+2025-09-20 09:04:08,754 - INFO - 使用缓存的基金 015389 持仓数据
+2025-09-20 09:04:08,755 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,755 - INFO - 基金 015389 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,755 - INFO - --- 正在分析基金 015456 ---
+2025-09-20 09:04:08,755 - INFO - 使用缓存的基金 015456 数据
+2025-09-20 09:04:08,755 - INFO - 使用缓存的基金 015456 经理数据
+2025-09-20 09:04:08,755 - INFO - 使用缓存的基金 015456 持仓数据
+2025-09-20 09:04:08,756 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,756 - INFO - 基金 015456 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,756 - INFO - --- 正在分析基金 015576 ---
+2025-09-20 09:04:08,756 - INFO - 使用缓存的基金 015576 数据
+2025-09-20 09:04:08,756 - INFO - 使用缓存的基金 015576 经理数据
+2025-09-20 09:04:08,756 - INFO - 使用缓存的基金 015576 持仓数据
+2025-09-20 09:04:08,757 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,757 - INFO - 基金 015576 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:08,757 - INFO - --- 正在分析基金 015608 ---
+2025-09-20 09:04:08,757 - INFO - 使用缓存的基金 015608 数据
+2025-09-20 09:04:08,757 - INFO - 使用缓存的基金 015608 经理数据
+2025-09-20 09:04:08,757 - INFO - 使用缓存的基金 015608 持仓数据
+2025-09-20 09:04:08,757 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,758 - INFO - 基金 015608 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:08,758 - INFO - --- 正在分析基金 015642 ---
+2025-09-20 09:04:08,758 - INFO - 使用缓存的基金 015642 数据
+2025-09-20 09:04:08,758 - INFO - 使用缓存的基金 015642 经理数据
+2025-09-20 09:04:08,758 - INFO - 使用缓存的基金 015642 持仓数据
+2025-09-20 09:04:08,758 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,758 - INFO - 基金 015642 评估完成，总分: 51，决策: 推荐
+2025-09-20 09:04:08,759 - INFO - --- 正在分析基金 015683 ---
+2025-09-20 09:04:08,759 - INFO - 使用缓存的基金 015683 数据
+2025-09-20 09:04:08,759 - INFO - 使用缓存的基金 015683 经理数据
+2025-09-20 09:04:08,759 - INFO - 使用缓存的基金 015683 持仓数据
+2025-09-20 09:04:08,759 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,759 - INFO - 基金 015683 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:08,759 - INFO - --- 正在分析基金 015686 ---
+2025-09-20 09:04:08,760 - INFO - 使用缓存的基金 015686 数据
+2025-09-20 09:04:08,760 - INFO - 使用缓存的基金 015686 经理数据
+2025-09-20 09:04:08,760 - INFO - 使用缓存的基金 015686 持仓数据
+2025-09-20 09:04:08,760 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,760 - INFO - 基金 015686 评估完成，总分: 52，决策: 推荐
+2025-09-20 09:04:08,760 - INFO - --- 正在分析基金 015690 ---
+2025-09-20 09:04:08,760 - INFO - 使用缓存的基金 015690 数据
+2025-09-20 09:04:08,760 - INFO - 使用缓存的基金 015690 经理数据
+2025-09-20 09:04:08,761 - INFO - 使用缓存的基金 015690 持仓数据
+2025-09-20 09:04:08,761 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,761 - INFO - 基金 015690 评估完成，总分: 55，决策: 推荐
+2025-09-20 09:04:08,761 - INFO - --- 正在分析基金 015692 ---
+2025-09-20 09:04:08,761 - INFO - 使用缓存的基金 015692 数据
+2025-09-20 09:04:08,761 - INFO - 使用缓存的基金 015692 经理数据
+2025-09-20 09:04:08,761 - INFO - 使用缓存的基金 015692 持仓数据
+2025-09-20 09:04:08,762 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 6, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,762 - INFO - 基金 015692 评估完成，总分: 54，决策: 推荐
+2025-09-20 09:04:08,762 - INFO - --- 正在分析基金 015715 ---
+2025-09-20 09:04:08,762 - INFO - 使用缓存的基金 015715 数据
+2025-09-20 09:04:08,762 - INFO - 使用缓存的基金 015715 经理数据
+2025-09-20 09:04:08,762 - INFO - 使用缓存的基金 015715 持仓数据
+2025-09-20 09:04:08,763 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,763 - INFO - 基金 015715 评估完成，总分: 53，决策: 推荐
+2025-09-20 09:04:08,763 - INFO - --- 正在分析基金 015751 ---
+2025-09-20 09:04:08,763 - INFO - 使用缓存的基金 015751 数据
+2025-09-20 09:04:08,763 - INFO - 使用缓存的基金 015751 经理数据
+2025-09-20 09:04:08,763 - INFO - 使用缓存的基金 015751 持仓数据
+2025-09-20 09:04:08,764 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,764 - INFO - 基金 015751 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:08,764 - INFO - --- 正在分析基金 015849 ---
+2025-09-20 09:04:08,764 - INFO - 使用缓存的基金 015849 数据
+2025-09-20 09:04:08,764 - INFO - 使用缓存的基金 015849 经理数据
+2025-09-20 09:04:08,764 - INFO - 使用缓存的基金 015849 持仓数据
+2025-09-20 09:04:08,765 - INFO - 评分详情: {'sharpe_ratio_score': 3, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,765 - INFO - 基金 015849 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:08,765 - INFO - --- 正在分析基金 015857 ---
+2025-09-20 09:04:08,765 - INFO - 使用缓存的基金 015857 数据
+2025-09-20 09:04:08,765 - INFO - 使用缓存的基金 015857 经理数据
+2025-09-20 09:04:08,765 - INFO - 使用缓存的基金 015857 持仓数据
+2025-09-20 09:04:08,766 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,766 - INFO - 基金 015857 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:08,766 - INFO - --- 正在分析基金 015881 ---
+2025-09-20 09:04:08,766 - INFO - 使用缓存的基金 015881 数据
+2025-09-20 09:04:08,766 - INFO - 使用缓存的基金 015881 经理数据
+2025-09-20 09:04:08,766 - INFO - 使用缓存的基金 015881 持仓数据
+2025-09-20 09:04:08,767 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,767 - INFO - 基金 015881 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,767 - INFO - --- 正在分析基金 015916 ---
+2025-09-20 09:04:08,767 - INFO - 使用缓存的基金 015916 数据
+2025-09-20 09:04:08,767 - INFO - 使用缓存的基金 015916 经理数据
+2025-09-20 09:04:08,767 - INFO - 使用缓存的基金 015916 持仓数据
+2025-09-20 09:04:08,768 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,768 - INFO - 基金 015916 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:08,768 - INFO - --- 正在分析基金 015968 ---
+2025-09-20 09:04:08,768 - INFO - 使用缓存的基金 015968 数据
+2025-09-20 09:04:08,768 - INFO - 使用缓存的基金 015968 经理数据
+2025-09-20 09:04:08,768 - INFO - 使用缓存的基金 015968 持仓数据
+2025-09-20 09:04:08,769 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,769 - INFO - 基金 015968 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:08,769 - INFO - --- 正在分析基金 016068 ---
+2025-09-20 09:04:08,769 - INFO - 使用缓存的基金 016068 数据
+2025-09-20 09:04:08,769 - INFO - 使用缓存的基金 016068 经理数据
+2025-09-20 09:04:08,769 - INFO - 使用缓存的基金 016068 持仓数据
+2025-09-20 09:04:08,771 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,771 - INFO - 基金 016068 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:08,771 - INFO - --- 正在分析基金 016076 ---
+2025-09-20 09:04:08,771 - INFO - 使用缓存的基金 016076 数据
+2025-09-20 09:04:08,771 - INFO - 使用缓存的基金 016076 经理数据
+2025-09-20 09:04:08,771 - INFO - 使用缓存的基金 016076 持仓数据
+2025-09-20 09:04:08,771 - INFO - 评分详情: {'sharpe_ratio_score': 2, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,772 - INFO - 基金 016076 评估完成，总分: 37，决策: 推荐
+2025-09-20 09:04:08,772 - INFO - --- 正在分析基金 016234 ---
+2025-09-20 09:04:08,772 - INFO - 使用缓存的基金 016234 数据
+2025-09-20 09:04:08,772 - INFO - 使用缓存的基金 016234 经理数据
+2025-09-20 09:04:08,772 - INFO - 使用缓存的基金 016234 持仓数据
+2025-09-20 09:04:08,772 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 7, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,772 - INFO - 基金 016234 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:08,773 - INFO - --- 正在分析基金 016244 ---
+2025-09-20 09:04:08,773 - INFO - 使用缓存的基金 016244 数据
+2025-09-20 09:04:08,773 - INFO - 使用缓存的基金 016244 经理数据
+2025-09-20 09:04:08,773 - INFO - 使用缓存的基金 016244 持仓数据
+2025-09-20 09:04:08,773 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,773 - INFO - 基金 016244 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:08,773 - INFO - --- 正在分析基金 016251 ---
+2025-09-20 09:04:08,774 - INFO - 使用缓存的基金 016251 数据
+2025-09-20 09:04:08,774 - INFO - 使用缓存的基金 016251 经理数据
+2025-09-20 09:04:08,774 - INFO - 使用缓存的基金 016251 持仓数据
+2025-09-20 09:04:08,774 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,774 - INFO - 基金 016251 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,774 - INFO - --- 正在分析基金 016371 ---
+2025-09-20 09:04:08,774 - INFO - 使用缓存的基金 016371 数据
+2025-09-20 09:04:08,775 - INFO - 使用缓存的基金 016371 经理数据
+2025-09-20 09:04:08,775 - INFO - 使用缓存的基金 016371 持仓数据
+2025-09-20 09:04:08,775 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 5, 'manager_years_score': 10, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,775 - INFO - 基金 016371 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:08,775 - INFO - --- 正在分析基金 016373 ---
+2025-09-20 09:04:08,775 - INFO - 使用缓存的基金 016373 数据
+2025-09-20 09:04:08,775 - INFO - 使用缓存的基金 016373 经理数据
+2025-09-20 09:04:08,775 - INFO - 使用缓存的基金 016373 持仓数据
+2025-09-20 09:04:08,776 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,776 - INFO - 基金 016373 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:08,776 - INFO - --- 正在分析基金 016461 ---
+2025-09-20 09:04:08,776 - INFO - 使用缓存的基金 016461 数据
+2025-09-20 09:04:08,776 - INFO - 使用缓存的基金 016461 经理数据
+2025-09-20 09:04:08,776 - INFO - 使用缓存的基金 016461 持仓数据
+2025-09-20 09:04:08,777 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,777 - INFO - 基金 016461 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:08,777 - INFO - --- 正在分析基金 016463 ---
+2025-09-20 09:04:08,777 - INFO - 使用缓存的基金 016463 数据
+2025-09-20 09:04:08,777 - INFO - 使用缓存的基金 016463 经理数据
+2025-09-20 09:04:08,777 - INFO - 使用缓存的基金 016463 持仓数据
+2025-09-20 09:04:08,778 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,778 - INFO - 基金 016463 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:08,778 - INFO - --- 正在分析基金 016531 ---
+2025-09-20 09:04:08,778 - INFO - 使用缓存的基金 016531 数据
+2025-09-20 09:04:08,778 - INFO - 使用缓存的基金 016531 经理数据
+2025-09-20 09:04:08,778 - INFO - 使用缓存的基金 016531 持仓数据
+2025-09-20 09:04:08,779 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,779 - INFO - 基金 016531 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:08,779 - INFO - --- 正在分析基金 016919 ---
+2025-09-20 09:04:08,779 - INFO - 使用缓存的基金 016919 数据
+2025-09-20 09:04:08,779 - INFO - 使用缓存的基金 016919 经理数据
+2025-09-20 09:04:08,779 - INFO - 使用缓存的基金 016919 持仓数据
+2025-09-20 09:04:08,780 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,780 - INFO - 基金 016919 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,780 - INFO - --- 正在分析基金 016971 ---
+2025-09-20 09:04:08,780 - INFO - 使用缓存的基金 016971 数据
+2025-09-20 09:04:08,780 - INFO - 使用缓存的基金 016971 经理数据
+2025-09-20 09:04:08,780 - INFO - 使用缓存的基金 016971 持仓数据
+2025-09-20 09:04:08,781 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,781 - INFO - 基金 016971 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,781 - INFO - --- 正在分析基金 017076 ---
+2025-09-20 09:04:08,781 - INFO - 使用缓存的基金 017076 数据
+2025-09-20 09:04:08,781 - INFO - 使用缓存的基金 017076 经理数据
+2025-09-20 09:04:08,781 - INFO - 使用缓存的基金 017076 持仓数据
+2025-09-20 09:04:08,782 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,782 - INFO - 基金 017076 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:08,782 - INFO - --- 正在分析基金 017103 ---
+2025-09-20 09:04:08,782 - INFO - 使用缓存的基金 017103 数据
+2025-09-20 09:04:08,782 - INFO - 使用缓存的基金 017103 经理数据
+2025-09-20 09:04:08,782 - INFO - 使用缓存的基金 017103 持仓数据
+2025-09-20 09:04:08,782 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,783 - INFO - 基金 017103 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,783 - INFO - --- 正在分析基金 017290 ---
+2025-09-20 09:04:08,783 - INFO - 使用缓存的基金 017290 数据
+2025-09-20 09:04:08,783 - INFO - 使用缓存的基金 017290 经理数据
+2025-09-20 09:04:08,783 - INFO - 使用缓存的基金 017290 持仓数据
+2025-09-20 09:04:08,783 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,783 - INFO - 基金 017290 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,783 - INFO - --- 正在分析基金 017366 ---
+2025-09-20 09:04:08,784 - INFO - 使用缓存的基金 017366 数据
+2025-09-20 09:04:08,784 - INFO - 使用缓存的基金 017366 经理数据
+2025-09-20 09:04:08,784 - INFO - 使用缓存的基金 017366 持仓数据
+2025-09-20 09:04:08,784 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,784 - INFO - 基金 017366 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,784 - INFO - --- 正在分析基金 017461 ---
+2025-09-20 09:04:08,785 - INFO - 使用缓存的基金 017461 数据
+2025-09-20 09:04:08,785 - INFO - 使用缓存的基金 017461 经理数据
+2025-09-20 09:04:08,785 - INFO - 使用缓存的基金 017461 持仓数据
+2025-09-20 09:04:08,785 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,785 - INFO - 基金 017461 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,785 - INFO - --- 正在分析基金 017470 ---
+2025-09-20 09:04:08,786 - INFO - 使用缓存的基金 017470 数据
+2025-09-20 09:04:08,786 - INFO - 使用缓存的基金 017470 经理数据
+2025-09-20 09:04:08,786 - INFO - 使用缓存的基金 017470 持仓数据
+2025-09-20 09:04:08,786 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,786 - INFO - 基金 017470 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,786 - INFO - --- 正在分析基金 017484 ---
+2025-09-20 09:04:08,786 - INFO - 使用缓存的基金 017484 数据
+2025-09-20 09:04:08,787 - INFO - 使用缓存的基金 017484 经理数据
+2025-09-20 09:04:08,787 - INFO - 使用缓存的基金 017484 持仓数据
+2025-09-20 09:04:08,787 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,787 - INFO - 基金 017484 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,787 - INFO - --- 正在分析基金 017489 ---
+2025-09-20 09:04:08,787 - INFO - 使用缓存的基金 017489 数据
+2025-09-20 09:04:08,787 - INFO - 使用缓存的基金 017489 经理数据
+2025-09-20 09:04:08,787 - INFO - 使用缓存的基金 017489 持仓数据
+2025-09-20 09:04:08,788 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,788 - INFO - 基金 017489 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:08,788 - INFO - --- 正在分析基金 017491 ---
+2025-09-20 09:04:08,788 - INFO - 使用缓存的基金 017491 数据
+2025-09-20 09:04:08,788 - INFO - 使用缓存的基金 017491 经理数据
+2025-09-20 09:04:08,788 - INFO - 使用缓存的基金 017491 持仓数据
+2025-09-20 09:04:08,789 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,789 - INFO - 基金 017491 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:08,789 - INFO - --- 正在分析基金 017511 ---
+2025-09-20 09:04:08,789 - INFO - 使用缓存的基金 017511 数据
+2025-09-20 09:04:08,789 - INFO - 使用缓存的基金 017511 经理数据
+2025-09-20 09:04:08,789 - INFO - 使用缓存的基金 017511 持仓数据
+2025-09-20 09:04:08,790 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,790 - INFO - 基金 017511 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:08,790 - INFO - --- 正在分析基金 017513 ---
+2025-09-20 09:04:08,790 - INFO - 使用缓存的基金 017513 数据
+2025-09-20 09:04:08,790 - INFO - 使用缓存的基金 017513 经理数据
+2025-09-20 09:04:08,790 - INFO - 使用缓存的基金 017513 持仓数据
+2025-09-20 09:04:08,791 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,791 - INFO - 基金 017513 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:08,791 - INFO - --- 正在分析基金 017516 ---
+2025-09-20 09:04:08,791 - INFO - 使用缓存的基金 017516 数据
+2025-09-20 09:04:08,791 - INFO - 使用缓存的基金 017516 经理数据
+2025-09-20 09:04:08,791 - INFO - 使用缓存的基金 017516 持仓数据
+2025-09-20 09:04:08,792 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,792 - INFO - 基金 017516 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,792 - INFO - --- 正在分析基金 017518 ---
+2025-09-20 09:04:08,792 - INFO - 使用缓存的基金 017518 数据
+2025-09-20 09:04:08,792 - INFO - 使用缓存的基金 017518 经理数据
+2025-09-20 09:04:08,792 - INFO - 使用缓存的基金 017518 持仓数据
+2025-09-20 09:04:08,793 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,793 - INFO - 基金 017518 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:08,793 - INFO - --- 正在分析基金 017520 ---
+2025-09-20 09:04:08,793 - INFO - 使用缓存的基金 017520 数据
+2025-09-20 09:04:08,793 - INFO - 使用缓存的基金 017520 经理数据
+2025-09-20 09:04:08,793 - INFO - 使用缓存的基金 017520 持仓数据
+2025-09-20 09:04:08,794 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,794 - INFO - 基金 017520 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,794 - INFO - --- 正在分析基金 017522 ---
+2025-09-20 09:04:08,794 - INFO - 使用缓存的基金 017522 数据
+2025-09-20 09:04:08,794 - INFO - 使用缓存的基金 017522 经理数据
+2025-09-20 09:04:08,794 - INFO - 使用缓存的基金 017522 持仓数据
+2025-09-20 09:04:08,795 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,795 - INFO - 基金 017522 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,795 - INFO - --- 正在分析基金 017524 ---
+2025-09-20 09:04:08,795 - INFO - 使用缓存的基金 017524 数据
+2025-09-20 09:04:08,795 - INFO - 使用缓存的基金 017524 经理数据
+2025-09-20 09:04:08,795 - INFO - 使用缓存的基金 017524 持仓数据
+2025-09-20 09:04:08,796 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,796 - INFO - 基金 017524 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,796 - INFO - --- 正在分析基金 017526 ---
+2025-09-20 09:04:08,796 - INFO - 使用缓存的基金 017526 数据
+2025-09-20 09:04:08,796 - INFO - 使用缓存的基金 017526 经理数据
+2025-09-20 09:04:08,796 - INFO - 使用缓存的基金 017526 持仓数据
+2025-09-20 09:04:08,797 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,797 - INFO - 基金 017526 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,797 - INFO - --- 正在分析基金 017528 ---
+2025-09-20 09:04:08,797 - INFO - 使用缓存的基金 017528 数据
+2025-09-20 09:04:08,797 - INFO - 使用缓存的基金 017528 经理数据
+2025-09-20 09:04:08,797 - INFO - 使用缓存的基金 017528 持仓数据
+2025-09-20 09:04:08,798 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:08,798 - INFO - 基金 017528 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:08,798 - INFO - --- 正在分析基金 017560 ---
+2025-09-20 09:04:08,798 - INFO - 使用缓存的基金 017560 数据
+2025-09-20 09:04:08,798 - INFO - 使用缓存的基金 017560 经理数据
+2025-09-20 09:04:08,798 - INFO - 正在获取基金 017560 的持仓数据...
+2025-09-20 09:04:09,692 - INFO - 通过akshare获取基金 017560 持仓数据失败: '占净值比例'
+2025-09-20 09:04:10,223 - INFO - 获取基金 017560 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:10,223 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:10,223 - INFO - 基金 017560 评估完成，总分: 34，决策: 推荐
+2025-09-20 09:04:10,223 - INFO - --- 正在分析基金 017612 ---
+2025-09-20 09:04:10,223 - INFO - 使用缓存的基金 017612 数据
+2025-09-20 09:04:10,223 - INFO - 使用缓存的基金 017612 经理数据
+2025-09-20 09:04:10,223 - INFO - 使用缓存的基金 017612 持仓数据
+2025-09-20 09:04:10,224 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:10,224 - INFO - 基金 017612 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:10,224 - INFO - --- 正在分析基金 017745 ---
+2025-09-20 09:04:10,224 - INFO - 使用缓存的基金 017745 数据
+2025-09-20 09:04:10,224 - INFO - 使用缓存的基金 017745 经理数据
+2025-09-20 09:04:10,224 - INFO - 使用缓存的基金 017745 持仓数据
+2025-09-20 09:04:10,225 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:10,225 - INFO - 基金 017745 评估完成，总分: 35，决策: 推荐
+2025-09-20 09:04:10,225 - INFO - --- 正在分析基金 017747 ---
+2025-09-20 09:04:10,225 - INFO - 使用缓存的基金 017747 数据
+2025-09-20 09:04:10,225 - INFO - 使用缓存的基金 017747 经理数据
+2025-09-20 09:04:10,225 - INFO - 使用缓存的基金 017747 持仓数据
+2025-09-20 09:04:10,226 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:10,226 - INFO - 基金 017747 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:10,226 - INFO - --- 正在分析基金 017836 ---
+2025-09-20 09:04:10,226 - INFO - 使用缓存的基金 017836 数据
+2025-09-20 09:04:10,226 - INFO - 使用缓存的基金 017836 经理数据
+2025-09-20 09:04:10,226 - INFO - 使用缓存的基金 017836 持仓数据
+2025-09-20 09:04:10,227 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:10,227 - INFO - 基金 017836 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:10,227 - INFO - --- 正在分析基金 017854 ---
+2025-09-20 09:04:10,227 - INFO - 使用缓存的基金 017854 数据
+2025-09-20 09:04:10,227 - INFO - 使用缓存的基金 017854 经理数据
+2025-09-20 09:04:10,227 - INFO - 正在获取基金 017854 的持仓数据...
+2025-09-20 09:04:11,163 - INFO - 通过akshare获取基金 017854 持仓数据失败: '占净值比例'
+2025-09-20 09:04:11,681 - INFO - 获取基金 017854 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:11,681 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,681 - INFO - 基金 017854 评估完成，总分: 32，决策: 推荐
+2025-09-20 09:04:11,681 - INFO - --- 正在分析基金 017968 ---
+2025-09-20 09:04:11,681 - INFO - 使用缓存的基金 017968 数据
+2025-09-20 09:04:11,682 - INFO - 使用缓存的基金 017968 经理数据
+2025-09-20 09:04:11,682 - INFO - 使用缓存的基金 017968 持仓数据
+2025-09-20 09:04:11,683 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,683 - INFO - 基金 017968 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:11,683 - INFO - --- 正在分析基金 018082 ---
+2025-09-20 09:04:11,683 - INFO - 使用缓存的基金 018082 数据
+2025-09-20 09:04:11,683 - INFO - 使用缓存的基金 018082 经理数据
+2025-09-20 09:04:11,683 - INFO - 使用缓存的基金 018082 持仓数据
+2025-09-20 09:04:11,684 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,684 - INFO - 基金 018082 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:11,684 - INFO - --- 正在分析基金 018113 ---
+2025-09-20 09:04:11,684 - INFO - 使用缓存的基金 018113 数据
+2025-09-20 09:04:11,684 - INFO - 使用缓存的基金 018113 经理数据
+2025-09-20 09:04:11,684 - INFO - 使用缓存的基金 018113 持仓数据
+2025-09-20 09:04:11,685 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,685 - INFO - 基金 018113 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:11,685 - INFO - --- 正在分析基金 018115 ---
+2025-09-20 09:04:11,685 - INFO - 使用缓存的基金 018115 数据
+2025-09-20 09:04:11,685 - INFO - 使用缓存的基金 018115 经理数据
+2025-09-20 09:04:11,685 - INFO - 使用缓存的基金 018115 持仓数据
+2025-09-20 09:04:11,686 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,686 - INFO - 基金 018115 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:11,686 - INFO - --- 正在分析基金 018121 ---
+2025-09-20 09:04:11,686 - INFO - 使用缓存的基金 018121 数据
+2025-09-20 09:04:11,686 - INFO - 使用缓存的基金 018121 经理数据
+2025-09-20 09:04:11,686 - INFO - 使用缓存的基金 018121 持仓数据
+2025-09-20 09:04:11,687 - INFO - 评分详情: {'sharpe_ratio_score': 6, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,687 - INFO - 基金 018121 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:11,687 - INFO - --- 正在分析基金 018123 ---
+2025-09-20 09:04:11,687 - INFO - 使用缓存的基金 018123 数据
+2025-09-20 09:04:11,687 - INFO - 使用缓存的基金 018123 经理数据
+2025-09-20 09:04:11,688 - INFO - 使用缓存的基金 018123 持仓数据
+2025-09-20 09:04:11,688 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,688 - INFO - 基金 018123 评估完成，总分: 41，决策: 推荐
+2025-09-20 09:04:11,688 - INFO - --- 正在分析基金 018125 ---
+2025-09-20 09:04:11,688 - INFO - 使用缓存的基金 018125 数据
+2025-09-20 09:04:11,689 - INFO - 使用缓存的基金 018125 经理数据
+2025-09-20 09:04:11,689 - INFO - 使用缓存的基金 018125 持仓数据
+2025-09-20 09:04:11,689 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,689 - INFO - 基金 018125 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:11,690 - INFO - --- 正在分析基金 018129 ---
+2025-09-20 09:04:11,690 - INFO - 使用缓存的基金 018129 数据
+2025-09-20 09:04:11,690 - INFO - 使用缓存的基金 018129 经理数据
+2025-09-20 09:04:11,690 - INFO - 使用缓存的基金 018129 持仓数据
+2025-09-20 09:04:11,691 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,691 - INFO - 基金 018129 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:11,691 - INFO - --- 正在分析基金 018216 ---
+2025-09-20 09:04:11,691 - INFO - 使用缓存的基金 018216 数据
+2025-09-20 09:04:11,691 - INFO - 使用缓存的基金 018216 经理数据
+2025-09-20 09:04:11,691 - INFO - 使用缓存的基金 018216 持仓数据
+2025-09-20 09:04:11,692 - INFO - 评分详情: {'sharpe_ratio_score': 1, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,692 - INFO - 基金 018216 评估完成，总分: 36，决策: 推荐
+2025-09-20 09:04:11,692 - INFO - --- 正在分析基金 018227 ---
+2025-09-20 09:04:11,692 - INFO - 使用缓存的基金 018227 数据
+2025-09-20 09:04:11,692 - INFO - 使用缓存的基金 018227 经理数据
+2025-09-20 09:04:11,692 - INFO - 使用缓存的基金 018227 持仓数据
+2025-09-20 09:04:11,693 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,693 - INFO - 基金 018227 评估完成，总分: 46，决策: 推荐
+2025-09-20 09:04:11,693 - INFO - --- 正在分析基金 018241 ---
+2025-09-20 09:04:11,693 - INFO - 使用缓存的基金 018241 数据
+2025-09-20 09:04:11,693 - INFO - 使用缓存的基金 018241 经理数据
+2025-09-20 09:04:11,693 - INFO - 使用缓存的基金 018241 持仓数据
+2025-09-20 09:04:11,694 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,694 - INFO - 基金 018241 评估完成，总分: 45，决策: 推荐
+2025-09-20 09:04:11,694 - INFO - --- 正在分析基金 018288 ---
+2025-09-20 09:04:11,694 - INFO - 使用缓存的基金 018288 数据
+2025-09-20 09:04:11,694 - INFO - 使用缓存的基金 018288 经理数据
+2025-09-20 09:04:11,694 - INFO - 使用缓存的基金 018288 持仓数据
+2025-09-20 09:04:11,695 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,695 - INFO - 基金 018288 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:11,695 - INFO - --- 正在分析基金 018326 ---
+2025-09-20 09:04:11,695 - INFO - 使用缓存的基金 018326 数据
+2025-09-20 09:04:11,695 - INFO - 使用缓存的基金 018326 经理数据
+2025-09-20 09:04:11,695 - INFO - 使用缓存的基金 018326 持仓数据
+2025-09-20 09:04:11,696 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,696 - INFO - 基金 018326 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:11,696 - INFO - --- 正在分析基金 018359 ---
+2025-09-20 09:04:11,696 - INFO - 使用缓存的基金 018359 数据
+2025-09-20 09:04:11,696 - INFO - 使用缓存的基金 018359 经理数据
+2025-09-20 09:04:11,696 - INFO - 使用缓存的基金 018359 持仓数据
+2025-09-20 09:04:11,697 - INFO - 评分详情: {'sharpe_ratio_score': 5, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,697 - INFO - 基金 018359 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:11,697 - INFO - --- 正在分析基金 018495 ---
+2025-09-20 09:04:11,697 - INFO - 使用缓存的基金 018495 数据
+2025-09-20 09:04:11,697 - INFO - 使用缓存的基金 018495 经理数据
+2025-09-20 09:04:11,698 - INFO - 使用缓存的基金 018495 持仓数据
+2025-09-20 09:04:11,698 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,698 - INFO - 基金 018495 评估完成，总分: 40，决策: 推荐
+2025-09-20 09:04:11,698 - INFO - --- 正在分析基金 018731 ---
+2025-09-20 09:04:11,699 - INFO - 使用缓存的基金 018731 数据
+2025-09-20 09:04:11,699 - INFO - 使用缓存的基金 018731 经理数据
+2025-09-20 09:04:11,699 - INFO - 使用缓存的基金 018731 持仓数据
+2025-09-20 09:04:11,699 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,699 - INFO - 基金 018731 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:11,700 - INFO - --- 正在分析基金 018836 ---
+2025-09-20 09:04:11,700 - INFO - 使用缓存的基金 018836 数据
+2025-09-20 09:04:11,700 - INFO - 使用缓存的基金 018836 经理数据
+2025-09-20 09:04:11,700 - INFO - 使用缓存的基金 018836 持仓数据
+2025-09-20 09:04:11,700 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,700 - INFO - 基金 018836 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:11,701 - INFO - --- 正在分析基金 018933 ---
+2025-09-20 09:04:11,701 - INFO - 使用缓存的基金 018933 数据
+2025-09-20 09:04:11,701 - INFO - 使用缓存的基金 018933 经理数据
+2025-09-20 09:04:11,701 - INFO - 使用缓存的基金 018933 持仓数据
+2025-09-20 09:04:11,701 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 6, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,702 - INFO - 基金 018933 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:11,702 - INFO - --- 正在分析基金 018957 ---
+2025-09-20 09:04:11,702 - INFO - 使用缓存的基金 018957 数据
+2025-09-20 09:04:11,702 - INFO - 使用缓存的基金 018957 经理数据
+2025-09-20 09:04:11,702 - INFO - 使用缓存的基金 018957 持仓数据
+2025-09-20 09:04:11,703 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,703 - INFO - 基金 018957 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:11,703 - INFO - --- 正在分析基金 018986 ---
+2025-09-20 09:04:11,703 - INFO - 使用缓存的基金 018986 数据
+2025-09-20 09:04:11,703 - INFO - 使用缓存的基金 018986 经理数据
+2025-09-20 09:04:11,703 - INFO - 使用缓存的基金 018986 持仓数据
+2025-09-20 09:04:11,704 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,704 - INFO - 基金 018986 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,704 - INFO - --- 正在分析基金 018994 ---
+2025-09-20 09:04:11,704 - INFO - 使用缓存的基金 018994 数据
+2025-09-20 09:04:11,704 - INFO - 使用缓存的基金 018994 经理数据
+2025-09-20 09:04:11,704 - INFO - 使用缓存的基金 018994 持仓数据
+2025-09-20 09:04:11,705 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,705 - INFO - 基金 018994 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,705 - INFO - --- 正在分析基金 019018 ---
+2025-09-20 09:04:11,705 - INFO - 使用缓存的基金 019018 数据
+2025-09-20 09:04:11,705 - INFO - 使用缓存的基金 019018 经理数据
+2025-09-20 09:04:11,705 - INFO - 使用缓存的基金 019018 持仓数据
+2025-09-20 09:04:11,706 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,707 - INFO - 基金 019018 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,707 - INFO - --- 正在分析基金 019024 ---
+2025-09-20 09:04:11,707 - INFO - 使用缓存的基金 019024 数据
+2025-09-20 09:04:11,707 - INFO - 使用缓存的基金 019024 经理数据
+2025-09-20 09:04:11,707 - INFO - 使用缓存的基金 019024 持仓数据
+2025-09-20 09:04:11,708 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,708 - INFO - 基金 019024 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,708 - INFO - --- 正在分析基金 019053 ---
+2025-09-20 09:04:11,708 - INFO - 使用缓存的基金 019053 数据
+2025-09-20 09:04:11,708 - INFO - 使用缓存的基金 019053 经理数据
+2025-09-20 09:04:11,708 - INFO - 使用缓存的基金 019053 持仓数据
+2025-09-20 09:04:11,709 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,709 - INFO - 基金 019053 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,709 - INFO - --- 正在分析基金 019170 ---
+2025-09-20 09:04:11,709 - INFO - 使用缓存的基金 019170 数据
+2025-09-20 09:04:11,709 - INFO - 使用缓存的基金 019170 经理数据
+2025-09-20 09:04:11,709 - INFO - 使用缓存的基金 019170 持仓数据
+2025-09-20 09:04:11,710 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,710 - INFO - 基金 019170 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,710 - INFO - --- 正在分析基金 019190 ---
+2025-09-20 09:04:11,710 - INFO - 使用缓存的基金 019190 数据
+2025-09-20 09:04:11,710 - INFO - 使用缓存的基金 019190 经理数据
+2025-09-20 09:04:11,710 - INFO - 使用缓存的基金 019190 持仓数据
+2025-09-20 09:04:11,711 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,711 - INFO - 基金 019190 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,711 - INFO - --- 正在分析基金 019213 ---
+2025-09-20 09:04:11,711 - INFO - 使用缓存的基金 019213 数据
+2025-09-20 09:04:11,711 - INFO - 使用缓存的基金 019213 经理数据
+2025-09-20 09:04:11,711 - INFO - 使用缓存的基金 019213 持仓数据
+2025-09-20 09:04:11,712 - INFO - 评分详情: {'sharpe_ratio_score': 7, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,712 - INFO - 基金 019213 评估完成，总分: 44，决策: 推荐
+2025-09-20 09:04:11,712 - INFO - --- 正在分析基金 019331 ---
+2025-09-20 09:04:11,712 - INFO - 使用缓存的基金 019331 数据
+2025-09-20 09:04:11,712 - INFO - 使用缓存的基金 019331 经理数据
+2025-09-20 09:04:11,712 - INFO - 使用缓存的基金 019331 持仓数据
+2025-09-20 09:04:11,713 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,713 - INFO - 基金 019331 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,713 - INFO - --- 正在分析基金 019348 ---
+2025-09-20 09:04:11,713 - INFO - 使用缓存的基金 019348 数据
+2025-09-20 09:04:11,713 - INFO - 使用缓存的基金 019348 经理数据
+2025-09-20 09:04:11,713 - INFO - 使用缓存的基金 019348 持仓数据
+2025-09-20 09:04:11,714 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,714 - INFO - 基金 019348 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,714 - INFO - --- 正在分析基金 019416 ---
+2025-09-20 09:04:11,714 - INFO - 使用缓存的基金 019416 数据
+2025-09-20 09:04:11,714 - INFO - 使用缓存的基金 019416 经理数据
+2025-09-20 09:04:11,715 - INFO - 使用缓存的基金 019416 持仓数据
+2025-09-20 09:04:11,715 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,715 - INFO - 基金 019416 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,715 - INFO - --- 正在分析基金 019458 ---
+2025-09-20 09:04:11,716 - INFO - 使用缓存的基金 019458 数据
+2025-09-20 09:04:11,716 - INFO - 使用缓存的基金 019458 经理数据
+2025-09-20 09:04:11,716 - INFO - 使用缓存的基金 019458 持仓数据
+2025-09-20 09:04:11,716 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,716 - INFO - 基金 019458 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:11,717 - INFO - --- 正在分析基金 019514 ---
+2025-09-20 09:04:11,717 - INFO - 使用缓存的基金 019514 数据
+2025-09-20 09:04:11,717 - INFO - 使用缓存的基金 019514 经理数据
+2025-09-20 09:04:11,717 - INFO - 使用缓存的基金 019514 持仓数据
+2025-09-20 09:04:11,717 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:11,718 - INFO - 基金 019514 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:11,718 - INFO - --- 正在分析基金 019671 ---
+2025-09-20 09:04:11,718 - INFO - 使用缓存的基金 019671 数据
+2025-09-20 09:04:11,718 - INFO - 使用缓存的基金 019671 经理数据
+2025-09-20 09:04:11,718 - INFO - 正在获取基金 019671 的持仓数据...
+2025-09-20 09:04:12,609 - INFO - 通过akshare获取基金 019671 持仓数据失败: '占净值比例'
+2025-09-20 09:04:13,130 - INFO - 获取基金 019671 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:13,130 - INFO - 评分详情: {'sharpe_ratio_score': 8, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:13,131 - INFO - 基金 019671 评估完成，总分: 35，决策: 推荐
+2025-09-20 09:04:13,131 - INFO - --- 正在分析基金 019703 ---
+2025-09-20 09:04:13,131 - INFO - 使用缓存的基金 019703 数据
+2025-09-20 09:04:13,131 - INFO - 使用缓存的基金 019703 经理数据
+2025-09-20 09:04:13,131 - INFO - 正在获取基金 019703 的持仓数据...
+2025-09-20 09:04:14,028 - INFO - 通过akshare获取基金 019703 持仓数据失败: '占净值比例'
+2025-09-20 09:04:14,538 - INFO - 获取基金 019703 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:14,539 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:14,539 - INFO - 基金 019703 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:14,539 - INFO - --- 正在分析基金 019786 ---
+2025-09-20 09:04:14,539 - INFO - 使用缓存的基金 019786 数据
+2025-09-20 09:04:14,539 - INFO - 使用缓存的基金 019786 经理数据
+2025-09-20 09:04:14,539 - INFO - 正在获取基金 019786 的持仓数据...
+2025-09-20 09:04:15,408 - INFO - 通过akshare获取基金 019786 持仓数据失败: '占净值比例'
+2025-09-20 09:04:15,923 - INFO - 获取基金 019786 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:15,923 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:15,924 - INFO - 基金 019786 评估完成，总分: 37，决策: 推荐
+2025-09-20 09:04:15,924 - INFO - --- 正在分析基金 019830 ---
+2025-09-20 09:04:15,924 - INFO - 使用缓存的基金 019830 数据
+2025-09-20 09:04:15,924 - INFO - 使用缓存的基金 019830 经理数据
+2025-09-20 09:04:15,924 - INFO - 使用缓存的基金 019830 持仓数据
+2025-09-20 09:04:15,925 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:15,925 - INFO - 基金 019830 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:15,925 - INFO - --- 正在分析基金 019865 ---
+2025-09-20 09:04:15,925 - INFO - 使用缓存的基金 019865 数据
+2025-09-20 09:04:15,925 - INFO - 使用缓存的基金 019865 经理数据
+2025-09-20 09:04:15,925 - INFO - 使用缓存的基金 019865 持仓数据
+2025-09-20 09:04:15,926 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:15,926 - INFO - 基金 019865 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:15,926 - INFO - --- 正在分析基金 019924 ---
+2025-09-20 09:04:15,926 - INFO - 使用缓存的基金 019924 数据
+2025-09-20 09:04:15,926 - INFO - 使用缓存的基金 019924 经理数据
+2025-09-20 09:04:15,926 - INFO - 使用缓存的基金 019924 持仓数据
+2025-09-20 09:04:15,927 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:15,928 - INFO - 基金 019924 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:15,928 - INFO - --- 正在分析基金 019994 ---
+2025-09-20 09:04:15,928 - INFO - 使用缓存的基金 019994 数据
+2025-09-20 09:04:15,928 - INFO - 使用缓存的基金 019994 经理数据
+2025-09-20 09:04:15,928 - INFO - 使用缓存的基金 019994 持仓数据
+2025-09-20 09:04:15,928 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:15,929 - INFO - 基金 019994 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:15,929 - INFO - --- 正在分析基金 020227 ---
+2025-09-20 09:04:15,929 - INFO - 使用缓存的基金 020227 数据
+2025-09-20 09:04:15,929 - INFO - 使用缓存的基金 020227 经理数据
+2025-09-20 09:04:15,929 - INFO - 正在获取基金 020227 的持仓数据...
+2025-09-20 09:04:16,887 - INFO - 通过akshare获取基金 020227 持仓数据失败: '占净值比例'
+2025-09-20 09:04:17,370 - INFO - 获取基金 020227 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:17,370 - INFO - 评分详情: {'sharpe_ratio_score': 9, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:17,371 - INFO - 基金 020227 评估完成，总分: 37，决策: 推荐
+2025-09-20 09:04:17,371 - INFO - --- 正在分析基金 020398 ---
+2025-09-20 09:04:17,371 - INFO - 使用缓存的基金 020398 数据
+2025-09-20 09:04:17,371 - INFO - 使用缓存的基金 020398 经理数据
+2025-09-20 09:04:17,371 - INFO - 使用缓存的基金 020398 持仓数据
+2025-09-20 09:04:17,372 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:17,372 - INFO - 基金 020398 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:17,372 - INFO - --- 正在分析基金 020477 ---
+2025-09-20 09:04:17,372 - INFO - 使用缓存的基金 020477 数据
+2025-09-20 09:04:17,372 - INFO - 使用缓存的基金 020477 经理数据
+2025-09-20 09:04:17,372 - INFO - 使用缓存的基金 020477 持仓数据
+2025-09-20 09:04:17,373 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:17,373 - INFO - 基金 020477 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:17,373 - INFO - --- 正在分析基金 020592 ---
+2025-09-20 09:04:17,373 - INFO - 使用缓存的基金 020592 数据
+2025-09-20 09:04:17,373 - INFO - 使用缓存的基金 020592 经理数据
+2025-09-20 09:04:17,373 - INFO - 使用缓存的基金 020592 持仓数据
+2025-09-20 09:04:17,374 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:17,374 - INFO - 基金 020592 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:17,374 - INFO - --- 正在分析基金 020629 ---
+2025-09-20 09:04:17,374 - INFO - 使用缓存的基金 020629 数据
+2025-09-20 09:04:17,374 - INFO - 使用缓存的基金 020629 经理数据
+2025-09-20 09:04:17,374 - INFO - 使用缓存的基金 020629 持仓数据
+2025-09-20 09:04:17,375 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:17,375 - INFO - 基金 020629 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:17,375 - INFO - --- 正在分析基金 020635 ---
+2025-09-20 09:04:17,375 - INFO - 使用缓存的基金 020635 数据
+2025-09-20 09:04:17,375 - INFO - 使用缓存的基金 020635 经理数据
+2025-09-20 09:04:17,375 - INFO - 正在获取基金 020635 的持仓数据...
+2025-09-20 09:04:18,250 - INFO - 通过akshare获取基金 020635 持仓数据失败: '占净值比例'
+2025-09-20 09:04:18,785 - INFO - 获取基金 020635 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:18,785 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:18,786 - INFO - 基金 020635 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:18,786 - INFO - --- 正在分析基金 020662 ---
+2025-09-20 09:04:18,786 - INFO - 使用缓存的基金 020662 数据
+2025-09-20 09:04:18,786 - INFO - 使用缓存的基金 020662 经理数据
+2025-09-20 09:04:18,786 - INFO - 使用缓存的基金 020662 持仓数据
+2025-09-20 09:04:18,787 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:18,787 - INFO - 基金 020662 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:18,787 - INFO - --- 正在分析基金 020671 ---
+2025-09-20 09:04:18,787 - INFO - 使用缓存的基金 020671 数据
+2025-09-20 09:04:18,787 - INFO - 使用缓存的基金 020671 经理数据
+2025-09-20 09:04:18,787 - INFO - 使用缓存的基金 020671 持仓数据
+2025-09-20 09:04:18,788 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:18,788 - INFO - 基金 020671 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:18,788 - INFO - --- 正在分析基金 020692 ---
+2025-09-20 09:04:18,788 - INFO - 使用缓存的基金 020692 数据
+2025-09-20 09:04:18,788 - INFO - 使用缓存的基金 020692 经理数据
+2025-09-20 09:04:18,788 - INFO - 使用缓存的基金 020692 持仓数据
+2025-09-20 09:04:18,789 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:18,789 - INFO - 基金 020692 评估完成，总分: 43，决策: 推荐
+2025-09-20 09:04:18,789 - INFO - --- 正在分析基金 020829 ---
+2025-09-20 09:04:18,789 - INFO - 使用缓存的基金 020829 数据
+2025-09-20 09:04:18,789 - INFO - 使用缓存的基金 020829 经理数据
+2025-09-20 09:04:18,789 - INFO - 使用缓存的基金 020829 持仓数据
+2025-09-20 09:04:18,790 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:18,790 - INFO - 基金 020829 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:18,790 - INFO - --- 正在分析基金 020900 ---
+2025-09-20 09:04:18,790 - INFO - 使用缓存的基金 020900 数据
+2025-09-20 09:04:18,790 - INFO - 使用缓存的基金 020900 经理数据
+2025-09-20 09:04:18,790 - INFO - 使用缓存的基金 020900 持仓数据
+2025-09-20 09:04:18,791 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:18,791 - INFO - 基金 020900 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:18,791 - INFO - --- 正在分析基金 021031 ---
+2025-09-20 09:04:18,791 - INFO - 使用缓存的基金 021031 数据
+2025-09-20 09:04:18,791 - INFO - 使用缓存的基金 021031 经理数据
+2025-09-20 09:04:18,792 - INFO - 正在获取基金 021031 的持仓数据...
+2025-09-20 09:04:19,650 - INFO - 通过akshare获取基金 021031 持仓数据失败: '占净值比例'
+2025-09-20 09:04:20,138 - INFO - 获取基金 021031 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:20,138 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:20,139 - INFO - 基金 021031 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:20,139 - INFO - --- 正在分析基金 021091 ---
+2025-09-20 09:04:20,139 - INFO - 正在获取基金 021091 的实时数据...
+2025-09-20 09:04:20,915 - INFO - 获取基金 021091 数据失败 (尝试 1/3): 数据不足，无法计算可靠的夏普比率和回撤
+2025-09-20 09:04:23,050 - INFO - 获取基金 021091 数据失败 (尝试 2/3): 数据不足，无法计算可靠的夏普比率和回撤
+2025-09-20 09:04:25,523 - INFO - 获取基金 021091 数据失败 (尝试 3/3): 数据不足，无法计算可靠的夏普比率和回撤
+2025-09-20 09:04:27,525 - INFO - 基金 021091 基本信息获取失败，跳过分析。
+2025-09-20 09:04:27,525 - INFO - --- 正在分析基金 021173 ---
+2025-09-20 09:04:27,525 - INFO - 使用缓存的基金 021173 数据
+2025-09-20 09:04:27,525 - INFO - 使用缓存的基金 021173 经理数据
+2025-09-20 09:04:27,525 - INFO - 使用缓存的基金 021173 持仓数据
+2025-09-20 09:04:27,526 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:27,526 - INFO - 基金 021173 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:27,527 - INFO - --- 正在分析基金 021225 ---
+2025-09-20 09:04:27,527 - INFO - 使用缓存的基金 021225 数据
+2025-09-20 09:04:27,527 - INFO - 使用缓存的基金 021225 经理数据
+2025-09-20 09:04:27,527 - INFO - 使用缓存的基金 021225 持仓数据
+2025-09-20 09:04:27,527 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:27,527 - INFO - 基金 021225 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:27,528 - INFO - --- 正在分析基金 021299 ---
+2025-09-20 09:04:27,528 - INFO - 使用缓存的基金 021299 数据
+2025-09-20 09:04:27,528 - INFO - 使用缓存的基金 021299 经理数据
+2025-09-20 09:04:27,528 - INFO - 使用缓存的基金 021299 持仓数据
+2025-09-20 09:04:27,528 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:27,528 - INFO - 基金 021299 评估完成，总分: 48，决策: 推荐
+2025-09-20 09:04:27,528 - INFO - --- 正在分析基金 021475 ---
+2025-09-20 09:04:27,529 - INFO - 使用缓存的基金 021475 数据
+2025-09-20 09:04:27,529 - INFO - 使用缓存的基金 021475 经理数据
+2025-09-20 09:04:27,529 - INFO - 正在获取基金 021475 的持仓数据...
+2025-09-20 09:04:28,409 - INFO - 通过akshare获取基金 021475 持仓数据失败: '占净值比例'
+2025-09-20 09:04:28,887 - INFO - 获取基金 021475 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:28,887 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:28,887 - INFO - 基金 021475 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:28,887 - INFO - --- 正在分析基金 021490 ---
+2025-09-20 09:04:28,887 - INFO - 使用缓存的基金 021490 数据
+2025-09-20 09:04:28,887 - INFO - 使用缓存的基金 021490 经理数据
+2025-09-20 09:04:28,887 - INFO - 使用缓存的基金 021490 持仓数据
+2025-09-20 09:04:28,888 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:28,888 - INFO - 基金 021490 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:28,888 - INFO - --- 正在分析基金 021500 ---
+2025-09-20 09:04:28,888 - INFO - 使用缓存的基金 021500 数据
+2025-09-20 09:04:28,889 - INFO - 使用缓存的基金 021500 经理数据
+2025-09-20 09:04:28,889 - INFO - 使用缓存的基金 021500 持仓数据
+2025-09-20 09:04:28,889 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:28,889 - INFO - 基金 021500 评估完成，总分: 47，决策: 推荐
+2025-09-20 09:04:28,889 - INFO - --- 正在分析基金 021523 ---
+2025-09-20 09:04:28,889 - INFO - 使用缓存的基金 021523 数据
+2025-09-20 09:04:28,889 - INFO - 使用缓存的基金 021523 经理数据
+2025-09-20 09:04:28,890 - INFO - 使用缓存的基金 021523 持仓数据
+2025-09-20 09:04:28,890 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:28,890 - INFO - 基金 021523 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:28,890 - INFO - --- 正在分析基金 021528 ---
+2025-09-20 09:04:28,890 - INFO - 使用缓存的基金 021528 数据
+2025-09-20 09:04:28,890 - INFO - 使用缓存的基金 021528 经理数据
+2025-09-20 09:04:28,891 - INFO - 使用缓存的基金 021528 持仓数据
+2025-09-20 09:04:28,891 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 7, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 5, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:28,891 - INFO - 基金 021528 评估完成，总分: 42，决策: 推荐
+2025-09-20 09:04:28,891 - INFO - --- 正在分析基金 021608 ---
+2025-09-20 09:04:28,891 - INFO - 使用缓存的基金 021608 数据
+2025-09-20 09:04:28,891 - INFO - 使用缓存的基金 021608 经理数据
+2025-09-20 09:04:28,891 - INFO - 使用缓存的基金 021608 持仓数据
+2025-09-20 09:04:28,892 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:28,892 - INFO - 基金 021608 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:28,892 - INFO - --- 正在分析基金 021934 ---
+2025-09-20 09:04:28,892 - INFO - 使用缓存的基金 021934 数据
+2025-09-20 09:04:28,892 - INFO - 使用缓存的基金 021934 经理数据
+2025-09-20 09:04:28,892 - INFO - 正在获取基金 021934 的持仓数据...
+2025-09-20 09:04:29,790 - INFO - 通过akshare获取基金 021934 持仓数据失败: '占净值比例'
+2025-09-20 09:04:30,454 - INFO - 获取基金 021934 持仓数据失败: 未找到持仓表格标题。
+2025-09-20 09:04:30,454 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 8, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 0, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:30,454 - INFO - 基金 021934 评估完成，总分: 38，决策: 推荐
+2025-09-20 09:04:30,454 - INFO - --- 正在分析基金 167507 ---
+2025-09-20 09:04:30,454 - INFO - 使用缓存的基金 167507 数据
+2025-09-20 09:04:30,454 - INFO - 使用缓存的基金 167507 经理数据
+2025-09-20 09:04:30,454 - INFO - 使用缓存的基金 167507 持仓数据
+2025-09-20 09:04:30,455 - INFO - 评分详情: {'sharpe_ratio_score': 4, 'max_drawdown_score': 5, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:30,455 - INFO - 基金 167507 评估完成，总分: 39，决策: 推荐
+2025-09-20 09:04:30,455 - INFO - --- 正在分析基金 519771 ---
+2025-09-20 09:04:30,455 - INFO - 使用缓存的基金 519771 数据
+2025-09-20 09:04:30,455 - INFO - 使用缓存的基金 519771 经理数据
+2025-09-20 09:04:30,455 - INFO - 使用缓存的基金 519771 持仓数据
+2025-09-20 09:04:30,456 - INFO - 评分详情: {'sharpe_ratio_score': 10, 'max_drawdown_score': 9, 'manager_years_score': 0, 'manager_return_score': 10, 'holding_concentration_score': 10, 'fund_type_score': 10, 'market_sentiment_adj_score': 0}
+2025-09-20 09:04:30,456 - INFO - 基金 519771 评估完成，总分: 49，决策: 推荐
+2025-09-20 09:04:30,457 - INFO - 
+--- 全部基金分析结果 ---
+2025-09-20 09:04:30,466 - INFO - 
+| decision   |   score |   fund_code | fund_name                |
+|:-----------|--------:|------------:|:-------------------------|
+| 推荐         |      46 |      001407 | 景顺长城稳健回报混合C              |
+| 推荐         |      41 |      001724 | 申万菱信多策略灵活配置混合C           |
+| 推荐         |      31 |      002052 | 诺安稳健回报混合C                |
+| 推荐         |      37 |      002112 | 德邦鑫星价值灵活配置混合C            |
+| 推荐         |      44 |      002163 | 东方惠新灵活配置混合C              |
+| 推荐         |      49 |      002170 | 东吴移动互联混合C                |
+| 推荐         |      41 |      002580 | 泰信鑫选灵活配置混合C              |
+| 推荐         |      52 |      002771 | 安信新回报混合C                 |
+| 观望         |      29 |      005118 | 金信价值精选混合C                |
+| 推荐         |      43 |      005312 | 万家经济新动能混合C               |
+| 推荐         |      33 |      005551 | 汇安成长优选混合C                |
+| 推荐         |      48 |      005959 | 财通新视野灵活配置混合C             |
+| 推荐         |      42 |      005963 | 宝盈人工智能股票C                |
+| 推荐         |      36 |      006503 | 财通集成电路产业股票C              |
+| 推荐         |      40 |      006523 | 财通新兴蓝筹混合C                |
+| 推荐         |      33 |      006888 | 诺德新生活混合C                 |
+| 推荐         |      38 |      007114 | 永赢高端制造混合C                |
+| 推荐         |      44 |      007356 | 汇添富科技创新混合C               |
+| 推荐         |      58 |      007509 | 华商润丰灵活配置混合C              |
+| 推荐         |      34 |      007771 | 同泰开泰混合C                  |
+| 推荐         |      51 |      007818 | 国泰中证全指通信设备ETF联接C         |
+| 推荐         |      38 |      008021 | 华富中证人工智能产业ETF联接C         |
+| 推荐         |      49 |      008087 | 华夏中证5G通信主题ETF联接C         |
+| 推荐         |      41 |      008327 | 东财通信C                    |
+| 推荐         |      48 |      008586 | 华夏人工智能ETF联接C             |
+| 推荐         |      34 |      008843 | 同泰远见混合C                  |
+| 推荐         |      38 |      008989 | 大成科技创新混合C                |
+| 推荐         |      39 |      009009 | 平安科技创新混合C                |
+| 推荐         |      35 |      009063 | 财通智慧成长混合C                |
+| 推荐         |      40 |      009239 | 融通人工智能指数(LOF)C           |
+| 推荐         |      34 |      009492 | 宝盈创新驱动股票C                |
+| 推荐         |      44 |      009645 | 东方阿尔法优势产业混合C             |
+| 推荐         |      44 |      009708 | 工银新兴制造混合C                |
+| 推荐         |      39 |      009856 | 中加新兴成长混合C                |
+| 推荐         |      48 |      010034 | 安信成长精选混合C                |
+| 推荐         |      45 |      010052 | 长城久嘉创新成长混合C              |
+| 推荐         |      39 |      010238 | 安信创新先锋混合发起C              |
+| 推荐         |      39 |      010392 | 易方达战略新兴产业股票C             |
+| 推荐         |      35 |      010416 | 华泰柏瑞质量精选混合C              |
+| 推荐         |      39 |      010422 | 海富通消费优选混合C               |
+| 观望         |      30 |      010524 | 银华中证5G通信主题ETF联接C         |
+| 推荐         |      39 |      010531 | 申万中证申万电子行业投资指数(LOF)C     |
+| 推荐         |      32 |      010647 | 融通价值趋势混合C                |
+| 推荐         |      45 |      011020 | 财通资管消费精选混合C              |
+| 推荐         |      47 |      011036 | 嘉实中证稀土产业ETF联接C           |
+| 推荐         |      34 |      011120 | 富国创新科技混合C                |
+| 推荐         |      42 |      011145 | 华安汇宏精选混合C                |
+| 推荐         |      34 |      011197 | 摩根优势成长混合C                |
+| 推荐         |      33 |      011223 | 信澳星奕混合C                  |
+| 推荐         |      38 |      011270 | 中银证券优势制造股票C              |
+| 推荐         |      47 |      011306 | 富国低碳新经济混合C               |
+| 推荐         |      39 |      011370 | 华商均衡成长混合C                |
+| 推荐         |      33 |      011372 | 华商远见价值C                  |
+| 推荐         |      46 |      011412 | 易方达远见成长混合C               |
+| 推荐         |      34 |      011452 | 华泰柏瑞质量成长C                |
+| 推荐         |      44 |      011487 | 博时创新精选混合C                |
+| 推荐         |      39 |      011833 | 西部利得人工智能主题指数增强C          |
+| 推荐         |      40 |      011840 | 天弘中证人工智能C                |
+| 推荐         |      47 |      011892 | 易方达先锋成长混合C               |
+| 推荐         |      48 |      012083 | 博时数字经济混合C                |
+| 推荐         |      34 |      012224 | 信澳成长精选混合C                |
+| 推荐         |      50 |      012322 | 东财云计算增强C                 |
+| 推荐         |      34 |      012457 | 鹏扬数字经济先锋混合C              |
+| 推荐         |      49 |      012478 | 富国匠心精选12个月持有混合C          |
+| 观望         |      29 |      012536 | 万家全球成长一年持有期混合(QDII)C     |
+| 推荐         |      33 |      012617 | 东吴新经济混合C                 |
+| 推荐         |      37 |      012651 | 博时半导体主题混合C               |
+| 推荐         |      46 |      012697 | 同泰数字经济股票C                |
+| 推荐         |      51 |      012734 | 易方达中证人工智能主题ETF联接C        |
+| 推荐         |      31 |      012800 | 宏利转型机遇股票C                |
+| 推荐         |      36 |      013153 | 长信电子信息量化灵活配置混合C          |
+| 推荐         |      40 |      013239 | 财通均衡优选一年持有混合C            |
+| 推荐         |      41 |      013370 | 汇添富自主核心科技一年持有混合C         |
+| 推荐         |      46 |      013722 | 信澳景气优选混合C                |
+| 推荐         |      47 |      014037 | 博时成长回报混合C                |
+| 推荐         |      40 |      014130 | 融通中证云计算与大数据主题指数(LOF)C    |
+| 推荐         |      40 |      014143 | 银河创新成长混合C                |
+| 推荐         |      44 |      014243 | 富国新材料新能源混合C              |
+| 推荐         |      49 |      014262 | 摩根沃享远见一年持有期混合C           |
+| 推荐         |      52 |      014318 | 广发价值领航一年持有混合C            |
+| 推荐         |      41 |      014320 | 德邦半导体产业混合发起式C            |
+| 推荐         |      47 |      014332 | 华泰柏瑞中证稀土产业ETF发起式联接C      |
+| 推荐         |      47 |      014417 | 泰康研究精选股票发起C              |
+| 推荐         |      36 |      014419 | 西部利得CES芯片指数增强C           |
+| 推荐         |      41 |      014544 | 汇添富中证沪港深云计算产业ETF联接C      |
+| 推荐         |      34 |      014581 | 东吴阿尔法灵活配置混合C             |
+| 推荐         |      50 |      014601 | 博时回报严选混合C                |
+| 推荐         |      47 |      014642 | 摩根新兴动力混合C                |
+| 推荐         |      55 |      014728 | 易方达成长动力混合C               |
+| 推荐         |      43 |      014916 | 财通匠心优选一年持有混合C            |
+| 推荐         |      42 |      014939 | 同泰产业升级混合C                |
+| 推荐         |      51 |      015044 | 西部利得时代动力混合发起C            |
+| 推荐         |      36 |      015097 | 东财数字经济C                  |
+| 推荐         |      52 |      015144 | 中欧智能制造混合C                |
+| 推荐         |      39 |      015152 | 东吴嘉禾优势精选混合C              |
+| 推荐         |      48 |      015271 | 财通多策略升级混合(LOF)C          |
+| 推荐         |      43 |      015290 | 格林高股息优选混合C               |
+| 推荐         |      45 |      015369 | 国泰君安领航成长一年持有混合发起C        |
+| 推荐         |      41 |      015389 | 宝盈转型动力混合C                |
+| 推荐         |      47 |      015456 | 信澳领先增长混合C                |
+| 推荐         |      38 |      015576 | 宏利绩优混合C                  |
+| 推荐         |      49 |      015608 | 信澳转型创新股票C                |
+| 推荐         |      51 |      015642 | 银华数字经济股票发起式C             |
+| 推荐         |      36 |      015683 | 景顺长城科技创新混合C              |
+| 推荐         |      52 |      015686 | 富国新兴产业股票C                |
+| 推荐         |      55 |      015690 | 富国中小盘精选混合C               |
+| 推荐         |      54 |      015692 | 富国通胀通缩主题轮动混合C            |
+| 推荐         |      53 |      015715 | 富国成长动力混合C                |
+| 推荐         |      42 |      015751 | 景顺长城品质长青混合C              |
+| 推荐         |      38 |      015849 | 富国创新企业灵活配置混合(LOF)C       |
+| 推荐         |      45 |      015857 | 格林碳中和主题混合C               |
+| 推荐         |      43 |      015881 | 中欧小盘成长混合C                |
+| 推荐         |      45 |      015916 | 永赢医药创新智选混合发起C            |
+| 推荐         |      36 |      015968 | 永赢半导体产业智选混合发起C           |
+| 推荐         |      47 |      016068 | 鹏华新能源汽车混合C               |
+| 推荐         |      37 |      016076 | 华夏智造升级混合C                |
+| 推荐         |      48 |      016234 | 财通景气行业混合C                |
+| 推荐         |      46 |      016244 | 广发成长领航一年持有混合C            |
+| 推荐         |      40 |      016251 | 华夏远见成长一年持有混合C            |
+| 推荐         |      45 |      016371 | 信澳业绩驱动混合C                |
+| 推荐         |      42 |      016373 | 信澳匠心严选一年持有混合C            |
+| 推荐         |      46 |      016461 | 华宝核心优势混合C                |
+| 推荐         |      39 |      016463 | 华宝万物互联混合C                |
+| 推荐         |      39 |      016531 | 鹏华碳中和主题混合C               |
+| 推荐         |      41 |      016919 | 摩根智慧互联股票C                |
+| 推荐         |      40 |      016971 | 华夏恒生生物科技ETF发起式联接(QDII)C  |
+| 推荐         |      38 |      017076 | 宝盈半导体产业混合发起式C            |
+| 推荐         |      40 |      017103 | 大摩数字经济混合C                |
+| 推荐         |      43 |      017290 | 中欧科创主题混合(LOF)C           |
+| 推荐         |      40 |      017366 | 泰康新锐成长混合C                |
+| 推荐         |      43 |      017461 | 长城久鑫混合C                  |
+| 推荐         |      43 |      017470 | 嘉实上证科创板芯片ETF发起联接C        |
+| 推荐         |      43 |      017484 | 财通资管数字经济混合发起式C           |
+| 推荐         |      40 |      017489 | 嘉实信息产业股票发起式C             |
+| 推荐         |      42 |      017491 | 财通景气甄选一年持有期混合C           |
+| 推荐         |      36 |      017511 | 鹏华稳健回报混合C                |
+| 推荐         |      43 |      017513 | 广发北证50成份指数C              |
+| 推荐         |      41 |      017516 | 易方达北证50成份指数C             |
+| 推荐         |      42 |      017518 | 招商北证50成份指数发起式C           |
+| 推荐         |      41 |      017520 | 汇添富北证50成份指数C             |
+| 推荐         |      41 |      017522 | 富国北证50成份指数C              |
+| 推荐         |      41 |      017524 | 南方北证50成份指数发起C            |
+| 推荐         |      41 |      017526 | 华夏北证50成份指数C              |
+| 推荐         |      41 |      017528 | 嘉实北证50成份指数C              |
+| 推荐         |      34 |      017560 | 华安上证科创板芯片ETF发起式联接C       |
+| 推荐         |      43 |      017612 | 宏利复兴混合C                  |
+| 推荐         |      35 |      017745 | 嘉实绿色主题股票发起式C             |
+| 推荐         |      44 |      017747 | 建信电子行业股票C                |
+| 推荐         |      48 |      017836 | 信澳匠心回报混合C                |
+| 推荐         |      32 |      017854 | 易方达云计算ETF联接C             |
+| 推荐         |      43 |      017968 | 华富科技动能混合C                |
+| 推荐         |      38 |      018082 | 光大产业新动力混合C               |
+| 推荐         |      43 |      018113 | 工银北证50成份指数C              |
+| 推荐         |      42 |      018115 | 鹏扬北证50成份指数C              |
+| 推荐         |      42 |      018121 | 万家北证50成份指数发起式C           |
+| 推荐         |      41 |      018123 | 永赢数字经济智选混合发起C            |
+| 推荐         |      46 |      018125 | 永赢先进制造智选混合发起C            |
+| 推荐         |      43 |      018129 | 博时北证50成份指数发起式C           |
+| 推荐         |      36 |      018216 | 长城久恒灵活配置混合C              |
+| 推荐         |      46 |      018227 | 瑞达先进制造混合型发起式C            |
+| 推荐         |      45 |      018241 | 嘉实制造升级股票发起式C             |
+| 推荐         |      42 |      018288 | 信澳优势产业混合C                |
+| 推荐         |      39 |      018326 | 国泰君安创新成长混合发起C            |
+| 推荐         |      42 |      018359 | 华富数字经济混合C                |
+| 推荐         |      40 |      018495 | 融通产业趋势臻选股票C              |
+| 推荐         |      43 |      018731 | 华夏招鑫鸿瑞混合C                |
+| 推荐         |      49 |      018836 | 广发成长启航混合C                |
+| 推荐         |      39 |      018933 | 长盛城镇化主题混合C               |
+| 推荐         |      42 |      018957 | 中航机遇领航混合发起C              |
+| 推荐         |      48 |      018986 | 信澳双创智选混合C                |
+| 推荐         |      48 |      018994 | 中欧数字经济混合发起C              |
+| 推荐         |      48 |      019018 | 易方达信息产业混合C               |
+| 推荐         |      48 |      019024 | 易方达信息行业精选股票C             |
+| 推荐         |      48 |      019053 | 华商元亨混合C                  |
+| 推荐         |      48 |      019170 | 天弘中证沪港深云计算产业ETF发起联接C     |
+| 推荐         |      48 |      019190 | 华商品质价值混合C                |
+| 推荐         |      44 |      019213 | 华富物联世界灵活配置混合C            |
+| 推荐         |      48 |      019331 | 华泰柏瑞中证沪港深云计算产业ETF发起式联接C  |
+| 推荐         |      48 |      019348 | 富国匠心成长混合C                |
+| 推荐         |      48 |      019416 | 南方港股医药行业混合发起(QDII)C      |
+| 推荐         |      48 |      019458 | 平安先进制造主题股票发起C            |
+| 推荐         |      49 |      019514 | 交银荣鑫灵活配置混合C              |
+| 推荐         |      35 |      019671 | 广发中证香港创新药ETF发起式联接(QDII)C |
+| 推荐         |      38 |      019703 | 易方达上证科创板成长ETF联接发起式C      |
+| 推荐         |      37 |      019786 | 广发上证科创板成长ETF发起式联接C       |
+| 推荐         |      48 |      019830 | 华夏数字产业混合C                |
+| 推荐         |      48 |      019865 | 浦银安盛高端装备混合C              |
+| 推荐         |      49 |      019924 | 华泰柏瑞中证2000指数增强C          |
+| 推荐         |      47 |      019994 | 创金合信北证50成份指数增强C          |
+| 推荐         |      37 |      020227 | 国泰中证全指集成电路ETF发起联接C       |
+| 推荐         |      43 |      020398 | 中银港股通医药混合发起C             |
+| 推荐         |      49 |      020477 | 泰康半导体量化选股股票发起式C          |
+| 推荐         |      48 |      020592 | 金信多策略精选混合C               |
+| 推荐         |      49 |      020629 | 汇添富上证科创板芯片ETF发起式联接C      |
+| 推荐         |      39 |      020635 | 汇添富恒生生物科技ETF发起式联接(QDII)C |
+| 推荐         |      47 |      020662 | 中加科技创新混合发起式C             |
+| 推荐         |      49 |      020671 | 易方达上证科创板芯片指数发起式C         |
+| 推荐         |      43 |      020692 | 博时中证全指通信设备指数发起式C         |
+| 推荐         |      48 |      020829 | 东财北证50C                  |
+| 推荐         |      42 |      020900 | 天弘中证全指通信设备指数发起C          |
+| 推荐         |      39 |      021031 | 汇添富国证港股通创新药ETF发起式联接C     |
+| Skip       |     nan |      021091 | 鹏华中证云计算与大数据主题ETF发起式联接C   |
+| 推荐         |      48 |      021173 | 华安北证50成份指数发起式C           |
+| 推荐         |      49 |      021225 | 华宝上证科创板芯片指数发起C           |
+| 推荐         |      48 |      021299 | 中欧北证50成份指数发起C            |
+| 推荐         |      39 |      021475 | 华安上证科创板新一代信息技术ETF发起式联接C  |
+| 推荐         |      47 |      021490 | 中航趋势领航混合发起C              |
+| 推荐         |      47 |      021500 | 景顺长城优质成长股票C              |
+| 推荐         |      42 |      021523 | 财通价值动量混合C                |
+| 推荐         |      42 |      021528 | 财通成长优选混合C                |
+| 推荐         |      49 |      021608 | 南方上证科创板芯片ETF发起联接C        |
+| 推荐         |      38 |      021934 | 富国中证通信设备主题ETF发起式联接C      |
+| 推荐         |      39 |      167507 | 安信深圳科技指数(LOF)C           |
+| 推荐         |      49 |      519771 | 交银优择回报灵活配置混合C            |
